@@ -1,0 +1,8 @@
+data/raw/*
+data/translated/*
+models/*
+*.pt
+*.bin
+*.log
+__pycache__/
+.env

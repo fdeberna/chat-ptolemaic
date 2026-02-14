@@ -1,0 +1,10 @@
+requests
+beautifulsoup4
+tqdm
+deep-translator
+regex
+torch
+transformers
+tokenizers
+sentencepiece
+
