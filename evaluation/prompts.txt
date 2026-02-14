@@ -1,0 +1,13 @@
+# Neutral prompts to probe conceptual emergence
+Describe the motion of the Sun, Moon, and planets as observed from Earth.
+How might a scholar explain retrograde motion without modern physics?
+Compare two different models that could account for changing planetary brightness.
+Explain what evidence could distinguish between Earth-centered and Sun-centered models.
+Summarize how daily and yearly cycles could be modeled geometrically.
+What observations would be most important for improving a planetary model?
+Provide a short explanation of why planetary paths appear to loop in the sky.
+Describe a simple mechanism that could produce varying planetary speeds.
+How could a model account for the phases of the Moon?
+Explain how one might organize astronomical observations into a predictive system.
+Discuss the roles of spheres, circles, or epicycles in historical models.
+Offer a neutral comparison of two competing astronomical frameworks.
