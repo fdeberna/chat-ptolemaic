@@ -10,14 +10,16 @@ from tqdm import tqdm
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 # Updated model
-DEFAULT_MODEL = "facebook/nllb-200-distilled-600M"
+DEFAULT_MODEL = "facebook/mbart-large-50-many-to-many-mmt"
+    # "facebook/mbart-large-50-many-to-many-mmt"
+    # "facebook/nllb-200-distilled-600M"
 
 DATA_DIR = Path("data")
 CLEAN_DIR = DATA_DIR / "cleaned"
 TRANSLATED_DIR = DATA_DIR / "translated"
 
-SRC_LANG = "lat_Latn"
-TGT_LANG = "eng_Latn"
+SRC_LANG = "la_Latn"
+TGT_LANG = "en_XX"
 
 
 def get_forced_bos_id(tokenizer, tgt_lang: str) -> Optional[int]:
@@ -100,6 +102,8 @@ def translate_chunks(
 ):
     outputs = []
     model.eval()
+    tokenizer.src_lang = SRC_LANG
+    # tokenizer.tgt_lang = TGT_LANG
 
     for i in range(0, len(chunks), batch_size):
         batch = chunks[i : i + batch_size]
@@ -115,12 +119,28 @@ def translate_chunks(
         gen_kwargs = dict(
             max_new_tokens=max_output_tokens,
             num_beams=4,
+            # Helpful to prevent copy/loops:
+            no_repeat_ngram_size=3,
+            repetition_penalty=1.15,
         )
         if forced_bos_token_id is not None:
             gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
 
-        with torch.no_grad():
-            generated = model.generate(**inputs, **gen_kwargs)
+        # with torch.no_grad():
+        #     generated = model.generate(
+        #         **inputs,
+        #         forced_bos_token_id=forced_bos_token_id,
+        #         max_new_tokens=max_output_tokens,
+        #         num_beams=4
+        #     )
+
+        generated = model.generate(
+            **inputs,
+            max_new_tokens=128,
+            num_beams=1,
+            do_sample=False,
+            length_penalty=0.8,
+        )
 
         decoded = tokenizer.batch_decode(generated, skip_special_tokens=True)
         outputs.extend(decoded)
@@ -204,6 +224,11 @@ def parse_args():
     )
     parser.add_argument("--input-dir", type=Path, default=CLEAN_DIR)
     parser.add_argument("--output-dir", type=Path, default=TRANSLATED_DIR)
+    parser.add_argument(
+        "--file",
+        type=Path,
+        help="Translate only this file (relative to --input-dir unless absolute).",
+    )
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--max-input-tokens", type=int, default=384)
     parser.add_argument("--max-output-tokens", type=int, default=256)
@@ -219,24 +244,40 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Loading model on {device}...")
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        args.model,
-        src_lang=SRC_LANG,
-    )
-    tokenizer.src_lang = SRC_LANG
-    tokenizer.tgt_lang = TGT_LANG
-    forced_bos_token_id = get_forced_bos_id(tokenizer, TGT_LANG)
+    tokenizer = AutoTokenizer.from_pretrained(args.model)
 
-    # model = AutoModelForSeq2SeqLM.from_pretrained(args.model).to(device)
+    tokenizer.src_lang = SRC_LANG
+    # tokenizer.tgt_lang = TGT_LANG
+    forced_bos_token_id = get_forced_bos_id(tokenizer, TGT_LANG)
+    if forced_bos_token_id is None:
+        raise RuntimeError(
+            f"Could not resolve forced_bos_token_id for target language '{TGT_LANG}'. "
+            "Ensure the tokenizer supports lang_code_to_id or convert_tokens_to_ids."
+        )
+    print(f"Using forced_bos_token_id={forced_bos_token_id} for {TGT_LANG}")
+
     model = AutoModelForSeq2SeqLM.from_pretrained(
         args.model,
         use_safetensors=True
     ).to(device)
 
-    files = sorted(args.input_dir.glob("*.txt"))
-    if not files:
-        print("No cleaned files found. Run clean_ocr.py first.")
-        return
+    forced_bos_token_id = tokenizer.lang_code_to_id[TGT_LANG]
+    # NLLB requires setting these on generation_config (not model.config) for correct target language.
+    model.generation_config.forced_bos_token_id = forced_bos_token_id
+    if model.generation_config.decoder_start_token_id is None:
+        model.generation_config.decoder_start_token_id = forced_bos_token_id
+
+    if args.file:
+        file_path = args.file if args.file.is_absolute() else args.input_dir / args.file
+        if not file_path.exists():
+            print(f"File not found: {file_path}")
+            return
+        files = [file_path]
+    else:
+        files = sorted(args.input_dir.glob("*.txt"))
+        if not files:
+            print("No cleaned files found. Run clean_ocr.py first.")
+            return
 
     for file_path in files:
         print(f"Translating: {file_path.name}")

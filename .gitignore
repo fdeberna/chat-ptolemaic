@@ -1,8 +1,9 @@
 data/raw/*
-data/translated/*
+data/cleaned/*
 models/*
 *.pt
 *.bin
 *.log
 __pycache__/
 .env
+references.txt
