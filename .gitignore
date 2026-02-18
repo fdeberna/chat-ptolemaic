@@ -1,5 +1,6 @@
 data/raw/*
 data/cleaned/*
+data/translated/*
 models/*
 *.pt
 *.bin
