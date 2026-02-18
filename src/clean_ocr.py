@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from utils import clean_latin_ocr, rebuild_paragraphs
 
 RAW_DIR = Path("data/raw")
@@ -18,7 +18,7 @@ def clean_file(filepath: Path):
     output_path = CLEAN_DIR / filepath.name
     output_path.write_text(cleaned, encoding="utf-8")
 
-    print(f"✓ Saved cleaned text → {output_path}")
+    print(f"Saved cleaned text -> {output_path}")
 
 
 def main():

@@ -5,13 +5,22 @@ This project builds a pre-Copernican astronomy corpus and trains a small languag
 ### Pipeline
 1. Download OCR texts
 2. Clean Renaissance Latin OCR
-3. Translate to English
+3. Translate to English (attempted for Sacrobosco - defaulted to codex translation)
 4. Build training corpus
 5. Train transformer model
 6. Evaluate conceptual emergence
 
 ### Data Sources
+
+Astro specific:
+
 - Sacrobosco — Sphaera Mundi
 - Aristotle — On the Heavens
 - Peuerbach — Theoricae Novae Planetarum
+- Ptolemy - Almagestus
+- Pliny The Elder - Naturalis Historia
+
+Additional classic authors from 
+https://classics.mit.edu/Browse/index.html 
+
 
