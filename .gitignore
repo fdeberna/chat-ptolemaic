@@ -1,6 +1,7 @@
 data/raw/*
 data/cleaned/*
 data/translated/*
+data/nanogpt/*
 models/*
 *.pt
 *.bin
