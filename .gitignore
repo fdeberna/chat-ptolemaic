@@ -1,5 +1,6 @@
 data/raw/*
 data/cleaned/*
+data/translated/*
 models/*
 *.pt
 *.bin
@@ -7,3 +8,4 @@ models/*
 __pycache__/
 .env
 references.txt
+data/corpus_char_counts.tsv
