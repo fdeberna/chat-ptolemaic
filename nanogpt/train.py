@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import argparse
 import importlib
-import math
-import os
 from pathlib import Path
 
 import numpy as np
@@ -75,11 +73,19 @@ def main():
     out_dir = Path(cfg["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # load data
-    train_data = np.memmap(data_dir / "train.bin", dtype=np.uint16, mode="r")
-    val_data = np.memmap(data_dir / "val.bin", dtype=np.uint16, mode="r")
-    data = {"train": train_data, "val": val_data}
+    log_path = out_dir / "train_log.csv"
+    if not log_path.exists():
+        log_path.write_text("iter,train_loss,val_loss\n", encoding="utf-8")
+
+    best_val = float("inf")
+    best_iter = -1
+
     meta = load_meta(data_dir)
+    dtype = np.dtype(meta.get("dtype", "uint16"))
+    # load data
+    train_data = np.memmap(data_dir / "train.bin", dtype=dtype, mode="r")
+    val_data = np.memmap(data_dir / "val.bin", dtype=dtype, mode="r")
+    data = {"train": train_data, "val": val_data}
     vocab_size = meta["vocab_size"]
     block_size = cfg["block_size"]
 
@@ -121,9 +127,22 @@ def main():
             print(
                 f"iter {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}"
             )
-            ckpt_path = out_dir / "ckpt.pt"
-            torch.save({"model_state_dict": model.state_dict(), "config": cfg, "iter": iter_num}, ckpt_path)
-            print(f"Saved checkpoint to {ckpt_path}")
+            with log_path.open("a", encoding="utf-8") as f:
+                f.write(f"{iter_num},{losses['train']:.6f},{losses['val']:.6f}\n")
+
+            ckpt_latest = out_dir / "ckpt.pt"
+            torch.save({"model_state_dict": model.state_dict(), "config": cfg, "iter": iter_num}, ckpt_latest)
+            print(f"Saved latest checkpoint to {ckpt_latest}")
+
+            if losses["val"] < best_val:
+                best_val = losses["val"]
+                best_iter = iter_num
+                ckpt_best = out_dir / "ckpt_best.pt"
+                torch.save(
+                    {"model_state_dict": model.state_dict(), "config": cfg, "iter": iter_num, "best_val": best_val},
+                    ckpt_best,
+                )
+                print(f"New best val loss {best_val:.4f} at iter {iter_num}; saved {ckpt_best}")
 
 
 if __name__ == "__main__":

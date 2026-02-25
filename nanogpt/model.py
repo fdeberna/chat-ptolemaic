@@ -108,20 +108,26 @@ class GPT(nn.Module):
             nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
     def configure_optimizers(self, weight_decay, learning_rate, betas):
+        # Build param groups without duplicates. Iterate parameters once and
+        # classify based on their owning module type.
         decay, no_decay = [], []
-        for mn, m in self.named_modules():
-            for pn, p in m.named_parameters():
-                if not p.requires_grad:
-                    continue
-                fpn = f"{mn}.{pn}" if mn else pn
-                if pn.endswith("bias") or pn.endswith("weight") and isinstance(
-                    m, nn.LayerNorm
-                ):
-                    no_decay.append(p)
-                elif pn == "weight" and isinstance(m, nn.Linear):
-                    decay.append(p)
-                else:
-                    no_decay.append(p)
+        module_lookup = dict(self.named_modules())
+        for param_name, param in self.named_parameters():
+            if not param.requires_grad:
+                continue
+            # Find the module that owns this parameter to decide weight decay.
+            module_name = ".".join(param_name.split(".")[:-1])
+            module = module_lookup.get(module_name, self)
+
+            if param_name.endswith("bias"):
+                no_decay.append(param)
+            elif isinstance(module, (nn.LayerNorm, nn.Embedding)):
+                no_decay.append(param)
+            elif param_name.endswith("weight") and isinstance(module, nn.Linear):
+                decay.append(param)
+            else:
+                no_decay.append(param)
+
         optim_groups = [
             {"params": decay, "weight_decay": weight_decay},
             {"params": no_decay, "weight_decay": 0.0},

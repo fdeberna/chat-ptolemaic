@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.9 (chat-ptolemaic)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (chat-ptolemaic)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="3.12 WSL (Ubuntu): (/home/fdebe/.virtualenvs/chat-ptolemaic/bin/python)" project-jdk-type="Python SDK" />
 </project>
