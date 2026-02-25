@@ -1,6 +1,7 @@
 data/raw/*
 data/cleaned/*
 data/translated/*
+data/nanogpt/*
 models/*
 *.pt
 *.bin
@@ -9,3 +10,4 @@ __pycache__/
 .env
 references.txt
 data/corpus_char_counts.tsv
+out/*
