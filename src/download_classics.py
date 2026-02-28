@@ -16,23 +16,32 @@ DATA_DIR = Path("data")
 TRANSLATED_DIR = DATA_DIR / "translated"
 BASE_URL = "http://classics.mit.edu/"
 
+# DEFAULT_AUTHORS = [
+#     "Aristotle",
+#     "Plato",
+#     "Marcus Aurelius",
+#     "Homer",
+#     "Virgil",
+#     "Herodotus",
+#     "Thucydides",
+#     "Sophocles",
+#     "Euripides",
+#     "Aeschylus",
+#     "Galen",
+#     "Euclid",
+# ]
+
 DEFAULT_AUTHORS = [
-    "Aristotle",
-    "Plato",
-    "Cicero",
-    "Marcus Aurelius",
-    "Homer",
-    "Virgil",
-    "Herodotus",
-    "Thucydides",
-    "Sophocles",
-    "Euripides",
-    "Aeschylus",
-    "Xenophon",
-    "Galen",
-    "Euclid",
+    "Aesop",
+    "Apollonius",
+    "Apuleius",
+    "Aristophanes",
+    "Augustus","Julius Caesar","Epictetus","Euripides",
+    "Hippocrates","Thucydides","Tacitus","Sophocles",
+    "Quintus","Porphyry","Plutarch","Plotinus","Ovid"
 ]
 
+#unsafe: lucretius, epicurus
 
 # -------- HTML helpers --------
 @dataclass

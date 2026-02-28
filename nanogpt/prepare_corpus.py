@@ -101,39 +101,69 @@ def main():
 
     args.out.mkdir(parents=True, exist_ok=True)
 
-    print(f"Reading corpus from {args.input} ...")
-    text = read_corpus(args.input)
-    print(f"Total characters: {len(text):,}")
+    files = sorted(args.input.glob("*.txt"))
+    if not files:
+        raise SystemExit(f"No .txt files found under {args.input}")
+
+    print(f"Found {len(files)} files in {args.input}")
+
+    # Concatenated text is still used for tokenizer training (and optional export)
+    print("Reading corpus for tokenizer training ...")
+    concat_text = "\n\n".join(
+        path.read_text(encoding="utf-8", errors="ignore").strip() for path in files
+    )
+    print(f"Total characters (concat): {len(concat_text):,}")
 
     if args.write_text:
-        (args.out / "corpus.txt").write_text(text, encoding="utf-8")
+        (args.out / "corpus.txt").write_text(concat_text, encoding="utf-8")
         print(f"Wrote concatenated text to {args.out / 'corpus.txt'}")
 
     if args.tokenizer == "char":
         print("Building character vocabulary ...")
-        stoi = build_vocab(text)
+        stoi = build_vocab(concat_text)
         vocab_size = len(stoi)
         print(f"Vocab size: {vocab_size}")
-        print("Encoding data (char-level) ...")
-        data = encode(text, stoi)
         dtype = "uint16"
     else:
         print("Training byte-level BPE tokenizer ...")
         special_tokens = ["[PAD]", "[UNK]", "[BOS]", "[EOS]"]
         tokenizer = train_bpe_tokenizer(
-            text, vocab_size=args.vocab_size, min_frequency=args.min_frequency, special_tokens=special_tokens
+            concat_text,
+            vocab_size=args.vocab_size,
+            min_frequency=args.min_frequency,
+            special_tokens=special_tokens,
         )
         vocab_size = tokenizer.get_vocab_size()
         tokenizer_path = args.out / "tokenizer.json"
         tokenizer.save(str(tokenizer_path))
         print(f"Trained BPE vocab size: {vocab_size}")
-        print("Encoding data (BPE) ...")
-        data = np.array(tokenizer.encode(text).ids, dtype=np.uint32)
         dtype = "uint32"
 
-    split_idx = int(len(data) * (1 - args.val_fraction))
-    train_data = data[:split_idx]
-    val_data = data[split_idx:]
+    print("Encoding files and splitting per-file ...")
+    train_parts = []
+    val_parts = []
+
+    for path in files:
+        raw = path.read_text(encoding="utf-8", errors="ignore").strip()
+        if not raw:
+            continue
+        # preserve file boundaries with a blank line separator
+        raw_with_sep = raw + "\n\n"
+
+        if args.tokenizer == "char":
+            ids = np.array([stoi[ch] for ch in raw_with_sep], dtype=np.uint16)
+        else:
+            ids = np.array(tokenizer.encode(raw_with_sep).ids, dtype=np.uint32)
+
+        split_idx = int(len(ids) * (1 - args.val_fraction))
+        train_parts.append(ids[:split_idx])
+        val_parts.append(ids[split_idx:])
+
+    if not train_parts:
+        raise SystemExit("No data encoded; aborting.")
+
+    train_data = np.concatenate(train_parts)
+    val_data = np.concatenate(val_parts) if val_parts else np.array([], dtype=train_data.dtype)
 
     np.memmap(args.out / "train.bin", dtype=data.dtype, mode="w+", shape=train_data.shape)[:] = train_data
     np.memmap(args.out / "val.bin", dtype=data.dtype, mode="w+", shape=val_data.shape)[:] = val_data

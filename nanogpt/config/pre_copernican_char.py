@@ -18,6 +18,8 @@ config = {
 
     # optimization
     "learning_rate": 3e-4,
+    "lr_scheduler_type": "cosine",
+    "early_stop_patience": 3,
     "max_iters": 5000,
     "weight_decay": 1e-1,
     "beta1": 0.9,

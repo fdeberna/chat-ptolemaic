@@ -5,3 +5,5 @@ transformers
 tokenizers
 sentencepiece
 numpy
+requests
+beautifulsoup4
