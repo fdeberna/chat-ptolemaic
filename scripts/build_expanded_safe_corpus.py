@@ -51,6 +51,7 @@ SCIENCE_KEYWORDS = [
 
 START_MARKER_RE = re.compile(r"\*\*\*\s*START", re.IGNORECASE)
 END_MARKER_RE = re.compile(r"\*\*\*\s*END", re.IGNORECASE)
+PARAGRAPH_BREAK_RE = re.compile(r"((?:\r?\n[ \t]*){2,})")
 
 
 @dataclass
@@ -169,7 +170,7 @@ def contains_science_keywords(title: str, subjects: List[str], bookshelves: List
     return any(keyword in text for keyword in SCIENCE_KEYWORDS)
 
 
-def parse_candidate_from_rdf(path: Path) -> Optional[BookCandidate]:
+def parse_candidate_from_rdf(path: Path, bypass_filters: bool = False) -> Optional[BookCandidate]:
     try:
         tree = ET.parse(path)
     except (ET.ParseError, OSError):
@@ -239,10 +240,11 @@ def parse_candidate_from_rdf(path: Path) -> Optional[BookCandidate]:
                     if parsed is not None:
                         formats.append(parsed)
 
-    if not is_english(languages):
-        return None
-    if contains_science_keywords(title, subjects, bookshelves):
-        return None
+    if not bypass_filters:
+        if not is_english(languages):
+            return None
+        if contains_science_keywords(title, subjects, bookshelves):
+            return None
 
     best = choose_best_plain_text(formats)
     if best is None:
@@ -268,6 +270,50 @@ def strip_gutenberg_boilerplate(text: str) -> str:
         text = text[: end_match.start()]
 
     return text.strip("\ufeff\r\n ")
+
+
+def is_mostly_uppercase(text: str, threshold: float = 0.6) -> bool:
+    letters = [ch for ch in text if ch.isalpha()]
+    if not letters:
+        return False
+    uppercase = sum(1 for ch in letters if ch.isupper())
+    return (uppercase / len(letters)) >= threshold
+
+
+def clean_gutenberg_text(raw_text: str) -> str:
+    """
+    Trim leading front-matter by finding the first substantial prose paragraph.
+
+    Paragraphs are defined by blank lines. We skip leading paragraphs that are
+    short, all-caps-ish, or not prose-like, then keep the first paragraph that
+    looks like real body text and everything after it unchanged.
+    """
+    parts = PARAGRAPH_BREAK_RE.split(raw_text)
+    start_idx = None
+
+    for idx in range(0, len(parts), 2):
+        paragraph = parts[idx]
+        candidate = paragraph.strip()
+        if not candidate:
+            continue
+        if is_mostly_uppercase(candidate):
+            continue
+        if "." not in candidate:
+            continue
+        if not any(ch.islower() for ch in candidate):
+            continue
+
+        normalized = " ".join(candidate.split())
+        if len(normalized) < 200:
+            continue
+
+        start_idx = idx
+        break
+
+    if start_idx is None:
+        return raw_text
+
+    return "".join(parts[start_idx:])
 
 
 def decode_text(data: bytes, preferred_charset: str) -> str:
@@ -373,6 +419,53 @@ def get_or_build_candidates(rdf_dir: Path, candidates_csv: Path, refresh: bool) 
     return built
 
 
+def parse_book_ids_arg(raw_ids: str) -> List[str]:
+    if not raw_ids:
+        return []
+
+    ordered: List[str] = []
+    seen = set()
+    for chunk in raw_ids.split(","):
+        book_id = normalize_id(clean_text(chunk))
+        if not book_id or book_id in seen:
+            continue
+        seen.add(book_id)
+        ordered.append(book_id)
+    return ordered
+
+
+def find_rdf_path_for_book_id(rdf_dir: Path, book_id: str) -> Optional[Path]:
+    common_path = rdf_dir / "cache" / "epub" / book_id / f"pg{book_id}.rdf"
+    if common_path.exists():
+        return common_path
+
+    filename = f"pg{book_id}.rdf"
+    for path in rdf_dir.rglob(filename):
+        if path.is_file():
+            return path
+    return None
+
+
+def build_forced_candidates(book_ids: List[str], rdf_dir: Path) -> Tuple[List[BookCandidate], List[str]]:
+    forced: List[BookCandidate] = []
+    missing: List[str] = []
+
+    for book_id in book_ids:
+        rdf_path = find_rdf_path_for_book_id(rdf_dir, book_id)
+        if rdf_path is None:
+            missing.append(book_id)
+            continue
+
+        candidate = parse_candidate_from_rdf(rdf_path, bypass_filters=True)
+        if candidate is None:
+            missing.append(book_id)
+            continue
+
+        forced.append(candidate)
+
+    return forced, missing
+
+
 def load_priority_ids(priority_csv: Path) -> List[str]:
     if not priority_csv.exists():
         return []
@@ -439,6 +532,8 @@ def run(args: argparse.Namespace) -> None:
     priority_csv = Path(args.priority_csv)
     priority_ids = load_priority_ids(priority_csv)
     ordered_candidates, priority_hits = order_candidates_with_priority(candidates, priority_ids)
+    forced_book_ids = parse_book_ids_arg(args.book_ids)
+    only_book_ids = args.only_book_ids
 
     if priority_ids:
         print(
@@ -448,13 +543,32 @@ def run(args: argparse.Namespace) -> None:
     else:
         print(f"Priority list not used or empty: {priority_csv}")
 
+    if forced_book_ids:
+        forced_candidates, forced_missing = build_forced_candidates(forced_book_ids, rdf_dir)
+        forced_set = {candidate.book_id for candidate in forced_candidates}
+        trailing_candidates = [c for c in ordered_candidates if c.book_id not in forced_set]
+
+        if only_book_ids:
+            ordered_candidates = forced_candidates
+        else:
+            ordered_candidates = forced_candidates + trailing_candidates
+
+        print(
+            f"Explicit book IDs requested: {len(forced_book_ids)} "
+            f"(resolved: {len(forced_candidates)}, unresolved: {len(forced_missing)})"
+        )
+        if forced_missing:
+            print(f"[warn] unresolved explicit IDs: {', '.join(forced_missing)}")
+    elif only_book_ids:
+        print("[warn] --only-book-ids was set but no --book-ids were provided.")
+
     saved_this_run = 0
     downloaded_this_run = 0
     skipped_already_saved = 0
     skipped_failed = 0
 
     for candidate in ordered_candidates:
-        if current_bytes >= target_bytes:
+        if (not only_book_ids) and current_bytes >= target_bytes:
             break
         if max_books > 0 and saved_this_run >= max_books:
             break
@@ -485,11 +599,12 @@ def run(args: argparse.Namespace) -> None:
 
         text = decode_text(raw, candidate.charset)
         stripped = strip_gutenberg_boilerplate(text)
-        if not stripped:
+        cleaned = clean_gutenberg_text(stripped)
+        if not cleaned:
             skipped_failed += 1
             continue
 
-        payload = (stripped + "\n").encode("utf-8")
+        payload = (cleaned + "\n").encode("utf-8")
         book_path.write_bytes(payload)
 
         current_bytes += len(payload)
@@ -508,7 +623,9 @@ def run(args: argparse.Namespace) -> None:
     print(f"New network downloads: {downloaded_this_run}")
     print(f"Skipped already saved: {skipped_already_saved}")
     print(f"Skipped failed/empty: {skipped_failed}")
-    if current_bytes >= target_bytes:
+    if only_book_ids:
+        print("Book-ID-only run complete.")
+    elif current_bytes >= target_bytes:
         print("Target reached.")
     else:
         print("Target not reached with available filtered candidates.")
@@ -539,6 +656,16 @@ def parse_args() -> argparse.Namespace:
         "--priority-csv",
         default="qualifying_pre1543_en.csv",
         help="CSV file whose book IDs should be downloaded first (expects a book_id column)",
+    )
+    parser.add_argument(
+        "--book-ids",
+        default="",
+        help="Comma-separated Gutenberg book IDs to force in front of queue (bypasses language/science filters)",
+    )
+    parser.add_argument(
+        "--only-book-ids",
+        action="store_true",
+        help="Process only --book-ids instead of continuing with the general candidate queue",
     )
     parser.add_argument(
         "--target-bytes",
