@@ -106,12 +106,24 @@ def main():
         learning_rate=cfg["learning_rate"],
         betas=(cfg["beta1"], cfg["beta2"]),
     )
+    scheduler = None
+    scheduler_type = cfg.get("lr_scheduler_type", "none")
+    if scheduler_type == "cosine":
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=cfg["max_iters"],
+            eta_min=cfg.get("min_lr", 0.0),
+        )
+    elif scheduler_type not in ("none", None):
+        raise ValueError(f"Unsupported lr_scheduler_type: {scheduler_type}")
 
     max_iters = cfg["max_iters"]
     eval_interval = cfg["eval_interval"]
     eval_iters = cfg["eval_iters"]
     batch_size = cfg["batch_size"]
     grad_clip = cfg["grad_clip"]
+    patience = cfg.get("early_stop_patience", None)
+    no_improve = 0
 
     for iter_num in range(max_iters):
         xb, yb = get_batch("train", data, block_size, batch_size, device)
@@ -121,6 +133,8 @@ def main():
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
         optimizer.step()
+        if scheduler is not None:
+            scheduler.step()
 
         if iter_num % eval_interval == 0 or iter_num == max_iters - 1:
             losses = estimate_loss(model, data, eval_iters, block_size, cfg["eval_batch_size"], device)
@@ -143,6 +157,13 @@ def main():
                     ckpt_best,
                 )
                 print(f"New best val loss {best_val:.4f} at iter {iter_num}; saved {ckpt_best}")
+                no_improve = 0
+            else:
+                if patience is not None:
+                    no_improve += 1
+                    if no_improve >= patience:
+                        print(f"Early stopping at iter {iter_num} after {no_improve} evals without improvement.")
+                        break
 
 
 if __name__ == "__main__":
