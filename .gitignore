@@ -11,3 +11,4 @@ __pycache__/
 references.txt
 data/corpus_char_counts.tsv
 out/*
+py311-embed/
