@@ -24,9 +24,8 @@ Tokenizer output:
 Token stream cache:
 - `data/nanogpt/streams/`
 
-Checkpoints:
-- `checkpoints/pretrain.pt`
-- `checkpoints/astro_model.pt`
+Runs:
+- `runs/<timestamp>_<experiment_name>/`
 
 ## Environment Setup
 
@@ -38,6 +37,41 @@ pip install torch
 ```
 
 `requirements.txt` already includes `numpy`, `tokenizers`, and related dependencies used by this pipeline.
+
+## Configuration Files
+
+Training is now config-driven. Edit JSON files in `configs/`:
+
+- `configs/model_config.json`
+- `configs/pretrain_config.json`
+- `configs/finetune_config.json`
+
+Each training entrypoint also supports command-line overrides with `--set key=value`.
+
+Examples:
+
+```bash
+python pipeline/train_pretrain.py --config configs/pretrain_config.json --set learning_rate=0.0002 --set model.n_layer=16
+python pipeline/train_finetune.py --config configs/finetune_config.json --set astronomy_ratio=0.9
+```
+
+Notable training knobs in config:
+- `eval_batch_size`
+- `lr_schedule` (supports `cosine` warmup+decay)
+- `adam_eps`
+- `checkpoint_interval`
+
+## Experiment Logging
+
+Each training run creates:
+
+- `runs/<timestamp>_<experiment_name>/config.json`
+- `runs/<timestamp>_<experiment_name>/metrics.csv`
+- `runs/<timestamp>_<experiment_name>/training_log.jsonl`
+- `runs/<timestamp>_<experiment_name>/model_checkpoint.pt`
+- `runs/<timestamp>_<experiment_name>/generation_samples.txt`
+
+Use `--experiment_name` to label the run. If omitted, a default name is used.
 
 ## Scripts (Pipeline Entry Points)
 
@@ -52,29 +86,29 @@ pip install torch
 - `pipeline/dataset.py`
   - Core dataset/stream builder:
     - prepends `<doc>` to each document before tokenization,
-    - splits each document into first 90% train and last 10% val before concatenation,
     - shuffles documents before concatenation,
-    - creates 1024-token blocks and `(input, target)` pairs via one-token shift,
-    - supports padding utilities (`<pad>`) for variable-length collation when needed.
+    - creates token streams cached under `data/nanogpt/streams/`,
+    - creates fixed-length token blocks and `(input, target)` pairs via one-token shift.
 
 - `pipeline/model.py`
-  - Decoder-only GPT model (12 layers, 12 heads, 768 embedding, context 1024, dropout 0.1).
-  - Uses causal self-attention and tied token/output embeddings.
+  - Decoder-only GPT model with configurable architecture.
+  - Supports configurable weight tying and layer norm epsilon.
 
 - `pipeline/train_pretrain.py`
-  - Pretrains on `data/corpus_general`.
-  - AdamW, lr `3e-4`, gradient clipping `1.0`, AMP on CUDA if available.
-  - Logs step/loss/lr and runs validation each epoch.
-  - Saves `checkpoints/pretrain.pt`.
+  - Loads settings from `configs/pretrain_config.json` and `configs/model_config.json`.
+  - Supports CLI overrides with `--set` and run naming with `--experiment_name`.
+  - Supports resuming from `--resume_checkpoint`.
+  - Uses per-document `90/10` train/validation split via `create_dataset_bundle`.
+  - Uses nanoGPT-style loop with max iters, grad accumulation, warmup + cosine LR decay.
+  - Logs run artifacts under `runs/`.
 
 - `pipeline/train_finetune.py`
-  - Loads `checkpoints/pretrain.pt`.
-  - Finetunes on astronomy with mixed batches:
-    - ~80% astronomy
-    - ~20% general
-  - Default lr `5e-5`, default 4 epochs.
-  - Logs step/loss/lr and runs validation each epoch.
-  - Saves `checkpoints/astro_model.pt`.
+  - Loads settings from `configs/finetune_config.json` and `configs/model_config.json`.
+  - Loads pretrained weights from configured checkpoint.
+  - Supports CLI overrides with `--set`, run naming with `--experiment_name`, and `--resume_checkpoint`.
+  - Finetunes with configurable astronomy/general mixing ratio.
+  - Uses nanoGPT-style loop with max iters, grad accumulation, warmup + cosine LR decay.
+  - Logs run artifacts under `runs/`.
 
 - `pipeline/generate.py`
   - Generates text from a checkpoint with:
@@ -112,29 +146,32 @@ Optional modes:
 ### 3) Pretrain on general corpus
 
 ```bash
-python pipeline/train_pretrain.py
+python pipeline/train_pretrain.py --config configs/pretrain_config.json --experiment_name pretrain_v1
 ```
 
-Key defaults:
-- context length: `1024`
-- batch size: `8`
-- learning rate: `3e-4`
-- checkpoint: `checkpoints/pretrain.pt`
-- log file: `checkpoints/pretrain_log.csv`
+Override example:
+
+```bash
+python pipeline/train_pretrain.py --config configs/pretrain_config.json --set learning_rate=0.0002 --set model.n_layer=16
+```
 
 ### 4) Finetune on astronomy corpus
 
 ```bash
-python pipeline/train_finetune.py
+python pipeline/train_finetune.py --config configs/finetune_config.json --experiment_name astro110m_ft_v1
 ```
 
-Key defaults:
-- checkpoint input: `checkpoints/pretrain.pt`
-- checkpoint output: `checkpoints/astro_model.pt`
-- astronomy/general mix: `80/20`
-- learning rate: `5e-5`
-- epochs: `4`
-- log file: `checkpoints/finetune_log.csv`
+Override example:
+
+```bash
+python pipeline/train_finetune.py --config configs/finetune_config.json --set astronomy_ratio=0.9 --set max_iters=20000
+```
+
+Resume example:
+
+```bash
+python pipeline/train_finetune.py --config configs/finetune_config.json --experiment_name astro110m_ft_resume --resume_checkpoint runs/2026-03-12_astro110m_ft_v1/model_checkpoint.pt
+```
 
 ### 5) Generate text
 
@@ -149,12 +186,17 @@ Useful generation args:
 
 ## Logging and Metrics
 
-Training scripts log:
+Metrics fields:
 - `step`
-- `training loss`
-- `validation loss`
-- `learning rate`
+- `epoch`
+- `train_loss`
+- `val_loss`
+- `learning_rate`
+- `tokens_processed`
+- `time_elapsed`
 
-CSV logs are written under `checkpoints/`:
-- `pretrain_log.csv`
-- `finetune_log.csv`
+Metrics are written per run in both:
+- `metrics.csv`
+- `training_log.jsonl`
+
+`training_log.jsonl` writes one JSON object per training step.

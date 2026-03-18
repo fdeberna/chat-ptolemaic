@@ -18,6 +18,8 @@ class GPTConfig:
     n_embd: int = 768
     dropout: float = 0.1
     bias: bool = True
+    weight_tying: bool = True
+    layer_norm_eps: float = 1e-5
     pad_token_id: Optional[int] = None
 
 
@@ -86,9 +88,9 @@ class MLP(nn.Module):
 class Block(nn.Module):
     def __init__(self, config: GPTConfig):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.n_embd)
+        self.ln_1 = nn.LayerNorm(config.n_embd, eps=config.layer_norm_eps)
         self.attn = CausalSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.n_embd)
+        self.ln_2 = nn.LayerNorm(config.n_embd, eps=config.layer_norm_eps)
         self.mlp = MLP(config)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -107,11 +109,12 @@ class GPT(nn.Module):
                 "wpe": nn.Embedding(config.block_size, config.n_embd),
                 "drop": nn.Dropout(config.dropout),
                 "h": nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
-                "ln_f": nn.LayerNorm(config.n_embd),
+                "ln_f": nn.LayerNorm(config.n_embd, eps=config.layer_norm_eps),
             }
         )
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
-        self.lm_head.weight = self.transformer.wte.weight
+        if config.weight_tying:
+            self.lm_head.weight = self.transformer.wte.weight
 
         self.apply(self._init_weights)
         for pn, p in self.named_parameters():
@@ -132,7 +135,13 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
 
-    def configure_optimizers(self, weight_decay: float, learning_rate: float, betas: Tuple[float, float]) -> torch.optim.Optimizer:
+    def configure_optimizers(
+        self,
+        weight_decay: float,
+        learning_rate: float,
+        betas: Tuple[float, float],
+        eps: float = 1e-8,
+    ) -> torch.optim.Optimizer:
         decay_params = []
         no_decay_params = []
         module_lookup = dict(self.named_modules())
@@ -154,7 +163,7 @@ class GPT(nn.Module):
             {"params": decay_params, "weight_decay": weight_decay},
             {"params": no_decay_params, "weight_decay": 0.0},
         ]
-        optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=betas)
+        optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=betas, eps=eps)
         return optimizer
 
     def forward(self, idx: torch.Tensor, targets: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:

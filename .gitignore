@@ -1,3 +1,4 @@
+*.png
 runs/
 data/
 data/raw/*

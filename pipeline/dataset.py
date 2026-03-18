@@ -32,6 +32,14 @@ class StreamArtifacts:
 
 
 @dataclass
+class SingleStreamArtifacts:
+    stream_path: Path
+    token_count: int
+    manifest_path: Path
+    doc_count: int
+
+
+@dataclass
 class DatasetBundle:
     tokenizer: Tokenizer
     train_dataset: "TokenBlockDataset"
@@ -42,6 +50,18 @@ class DatasetBundle:
     eos_token_id: int
     vocab_size: int
     artifacts: StreamArtifacts
+
+
+@dataclass
+class SingleDatasetBundle:
+    tokenizer: Tokenizer
+    dataset: "TokenBlockDataset"
+    pad_token_id: int
+    doc_token_id: int
+    bos_token_id: int
+    eos_token_id: int
+    vocab_size: int
+    artifacts: SingleStreamArtifacts
 
 
 def list_text_files(corpus_dirs: Sequence[Path]) -> List[Path]:
@@ -138,6 +158,120 @@ def _write_streams(
     train_mm.flush()
     val_mm.flush()
     return train_total, val_total
+
+
+def _compute_single_stream_fingerprint(
+    doc_paths: Sequence[Path],
+    tokenizer_path: Path,
+    seed: int,
+    max_documents: Optional[int],
+) -> str:
+    hasher = hashlib.sha256()
+    hasher.update(b"single_stream_v1")
+    hasher.update(tokenizer_path.resolve().as_posix().encode("utf-8"))
+    hasher.update(tokenizer_path.read_bytes())
+    hasher.update(str(seed).encode("utf-8"))
+    hasher.update(str(max_documents).encode("utf-8"))
+    for path in doc_paths:
+        stat = path.stat()
+        hasher.update(path.resolve().as_posix().encode("utf-8"))
+        hasher.update(str(stat.st_size).encode("utf-8"))
+        hasher.update(str(stat.st_mtime_ns).encode("utf-8"))
+    return hasher.hexdigest()
+
+
+def _write_single_stream(
+    tokenizer: Tokenizer,
+    doc_paths: Sequence[Path],
+    doc_token: str,
+    stream_path: Path,
+) -> int:
+    token_total = 0
+    for path in doc_paths:
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        token_total += len(_tokenize_document(tokenizer, text, doc_token=doc_token))
+
+    if token_total < 2:
+        raise RuntimeError(
+            f"Token stream too small ({token_total} tokens). Need at least 2 tokens for next-token prediction."
+        )
+
+    stream_mm = np.memmap(stream_path, dtype=np.int32, mode="w+", shape=(token_total,))
+
+    stream_pos = 0
+    for path in doc_paths:
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        token_ids = _tokenize_document(tokenizer, text, doc_token=doc_token)
+        if token_ids:
+            chunk = np.asarray(token_ids, dtype=np.int32)
+            stream_mm[stream_pos : stream_pos + len(chunk)] = chunk
+            stream_pos += len(chunk)
+
+    stream_mm.flush()
+    return token_total
+
+
+def prepare_single_token_stream(
+    tokenizer: Tokenizer,
+    tokenizer_path: Path,
+    corpus_dirs: Sequence[Path],
+    cache_dir: Path,
+    cache_name: str,
+    *,
+    seed: int = 1337,
+    max_documents: Optional[int] = None,
+    force_rebuild: bool = False,
+    doc_token: str = SPECIAL_TOKENS["doc"],
+) -> SingleStreamArtifacts:
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    stream_path = cache_dir / f"{cache_name}.bin"
+    manifest_path = cache_dir / f"{cache_name}_manifest.json"
+
+    doc_paths = list_text_files(corpus_dirs)
+    rng = random.Random(seed)
+    rng.shuffle(doc_paths)
+    if max_documents is not None:
+        doc_paths = doc_paths[:max_documents]
+
+    fingerprint = _compute_single_stream_fingerprint(
+        doc_paths=doc_paths,
+        tokenizer_path=tokenizer_path,
+        seed=seed,
+        max_documents=max_documents,
+    )
+
+    if not force_rebuild and stream_path.exists() and manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("fingerprint") == fingerprint:
+            return SingleStreamArtifacts(
+                stream_path=stream_path,
+                token_count=int(manifest["token_count"]),
+                manifest_path=manifest_path,
+                doc_count=int(manifest["doc_count"]),
+            )
+
+    token_count = _write_single_stream(
+        tokenizer=tokenizer,
+        doc_paths=doc_paths,
+        doc_token=doc_token,
+        stream_path=stream_path,
+    )
+
+    manifest = {
+        "fingerprint": fingerprint,
+        "token_count": token_count,
+        "doc_count": len(doc_paths),
+        "seed": seed,
+        "max_documents": max_documents,
+        "tokenizer_path": str(tokenizer_path),
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return SingleStreamArtifacts(
+        stream_path=stream_path,
+        token_count=token_count,
+        manifest_path=manifest_path,
+        doc_count=len(doc_paths),
+    )
 
 
 def prepare_token_streams(
@@ -345,6 +479,64 @@ def create_dataset_bundle(
         tokenizer=tokenizer,
         train_dataset=train_dataset,
         val_dataset=val_dataset,
+        pad_token_id=pad_token_id,
+        doc_token_id=doc_token_id,
+        bos_token_id=bos_token_id,
+        eos_token_id=eos_token_id,
+        vocab_size=tokenizer.get_vocab_size(),
+        artifacts=artifacts,
+    )
+
+
+def create_single_dataset_bundle(
+    *,
+    tokenizer_path: Path,
+    corpus_dirs: Sequence[Path],
+    cache_name: str,
+    context_length: int = 1024,
+    cache_dir: Path = Path("data/nanogpt/streams"),
+    seed: int = 1337,
+    max_documents: Optional[int] = None,
+    include_remainder: bool = False,
+    force_rebuild: bool = False,
+) -> SingleDatasetBundle:
+    tokenizer = Tokenizer.from_file(str(tokenizer_path))
+    pad_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["pad"])
+    doc_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["doc"])
+    bos_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["bos"])
+    eos_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["eos"])
+
+    artifacts = prepare_single_token_stream(
+        tokenizer=tokenizer,
+        tokenizer_path=tokenizer_path,
+        corpus_dirs=corpus_dirs,
+        cache_dir=cache_dir,
+        cache_name=cache_name,
+        seed=seed,
+        max_documents=max_documents,
+        force_rebuild=force_rebuild,
+        doc_token=SPECIAL_TOKENS["doc"],
+    )
+    if artifacts.token_count < context_length:
+        raise RuntimeError(
+            f"Token stream too small ({artifacts.token_count} tokens) for context length {context_length}."
+        )
+
+    dataset = TokenBlockDataset(
+        artifacts.stream_path,
+        context_length=context_length,
+        pad_token_id=pad_token_id,
+        include_remainder=include_remainder,
+    )
+    if len(dataset) == 0:
+        raise RuntimeError(
+            f"Dataset produced zero blocks from {artifacts.stream_path}. "
+            f"Lower context length or provide more data."
+        )
+
+    return SingleDatasetBundle(
+        tokenizer=tokenizer,
+        dataset=dataset,
         pad_token_id=pad_token_id,
         doc_token_id=doc_token_id,
         bos_token_id=bos_token_id,
