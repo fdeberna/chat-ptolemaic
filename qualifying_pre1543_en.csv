@@ -1,0 +1,606 @@
+title,book_id,death_year,plain_text_url,plain_text_extent_bytes
+Apocolocyntosis,10001,65,https://www.gutenberg.org/ebooks/10001.txt.utf-8,51028
+La Fiammetta,10006,1375,https://www.gutenberg.org/ebooks/10006.txt.utf-8,94393
+"Divine Comedy, Longfellow's Translation, Hell",1001,1321,https://www.gutenberg.org/ebooks/1001.txt.utf-8,249181
+"Divine Comedy, Longfellow's Translation, Purgatory",1002,1321,https://www.gutenberg.org/ebooks/1002.txt.utf-8,249125
+"Divine Comedy, Longfellow's Translation, Paradise",1003,1321,https://www.gutenberg.org/ebooks/1003.txt.utf-8,249889
+"Divine Comedy, Longfellow's Translation, Complete",1004,1321,https://www.gutenberg.org/ebooks/1004.txt.utf-8,709097
+"Divine Comedy, Cary's Translation, Hell",1005,1321,https://www.gutenberg.org/ebooks/1005.txt.utf-8,234536
+"Chinese literature : $b Comprising the Analects of Confucius, the Sayings of Mencius, the Shi-King, the Travels of Fâ-Hien, and the Sorrows of Han",10056,-479,https://www.gutenberg.org/ebooks/10056.txt.utf-8,531219
+"Divine Comedy, Cary's Translation, Purgatory",1006,1321,https://www.gutenberg.org/ebooks/1006.txt.utf-8,234785
+"Divine Comedy, Cary's Translation, Paradise",1007,1321,https://www.gutenberg.org/ebooks/1007.txt.utf-8,227980
+"Divine Comedy, Cary's Translation, Complete",1008,1321,https://www.gutenberg.org/ebooks/1008.txt.utf-8,912624
+The Trojan women of Euripides,10096,-406,https://www.gutenberg.org/ebooks/10096.txt.utf-8,128659
+"The Persian Literature, Comprising The Shah Nameh, The Rubaiyat, The Divan, and The Gulistan, Volume 1",10315,1122,https://www.gutenberg.org/ebooks/10315.txt.utf-8,883863
+Trips to the Moon,10430,180,https://www.gutenberg.org/ebooks/10430.txt.utf-8,230877
+Alcestis,10523,-406,https://www.gutenberg.org/ebooks/10523.txt.utf-8,124581
+The Travels of Marco Polo — Volume 1,10636,1324,https://www.gutenberg.org/ebooks/10636.txt.utf-8,2345917
+"""De Bello Gallico"" and Other Commentaries",10657,-43,https://www.gutenberg.org/ebooks/10657.txt.utf-8,964595
+A Selection from the Discourses of Epictetus with the Encheiridion,10661,135,https://www.gutenberg.org/ebooks/10661.txt.utf-8,351932
+"Game and Playe of the Chesse
+A Verbatim Reprint of the First Edition, 1474",10672,1491,https://www.gutenberg.org/ebooks/10672.txt.utf-8,379148
+"The Extant Odes of Pindar
+Translated with Introduction and Short Notes by Ernest Myers",10717,-446,https://www.gutenberg.org/ebooks/10717.txt.utf-8,321034
+Discourses on the First Decade of Titus Livius,10827,1527,https://www.gutenberg.org/ebooks/10827.txt.utf-8,834454
+"Roman History, Books I-III",10828,16,https://www.gutenberg.org/ebooks/10828.txt.utf-8,667243
+"The History of Rome, Books 09 to 26",10907,16,https://www.gutenberg.org/ebooks/10907.txt.utf-8,1305920
+"The Orations of Marcus Tullius Cicero, Volume 4",11080,-43,https://www.gutenberg.org/ebooks/11080.txt.utf-8,1284333
+"Theocritus, translated into English Verse",11533,-260,https://www.gutenberg.org/ebooks/11533.txt.utf-8,198842
+Agesilaus,1169,-355,https://www.gutenberg.org/ebooks/1169.txt.utf-8,102023
+Anabasis,1170,-355,https://www.gutenberg.org/ebooks/1170.txt.utf-8,558622
+The Apology,1171,-355,https://www.gutenberg.org/ebooks/1171.txt.utf-8,48059
+The Cavalry General,1172,-355,https://www.gutenberg.org/ebooks/1172.txt.utf-8,100084
+The Economist,1173,-355,https://www.gutenberg.org/ebooks/1173.txt.utf-8,235867
+Hellenica,1174,-355,https://www.gutenberg.org/ebooks/1174.txt.utf-8,759596
+Hiero,1175,-355,https://www.gutenberg.org/ebooks/1175.txt.utf-8,110511
+On Horsemanship,1176,-355,https://www.gutenberg.org/ebooks/1176.txt.utf-8,98609
+The Memorabilia,1177,-355,https://www.gutenberg.org/ebooks/1177.txt.utf-8,420971
+The Polity of the Athenians and the Lacedaemonians,1178,-355,https://www.gutenberg.org/ebooks/1178.txt.utf-8,136190
+On Revenues,1179,-355,https://www.gutenberg.org/ebooks/1179.txt.utf-8,75865
+"The Sportsman: On Hunting, a Sportsman's Manual, Commonly Called Cynegeticus",1180,-355,https://www.gutenberg.org/ebooks/1180.txt.utf-8,155822
+The Symposium,1181,-355,https://www.gutenberg.org/ebooks/1181.txt.utf-8,152263
+Roman Farm Management: The Treatises of Cato and Varro,12140,-149,https://www.gutenberg.org/ebooks/12140.txt.utf-8,564239
+The Prince,1232,1527,https://www.gutenberg.org/ebooks/1232.txt.utf-8,308064
+"Bagh O Bahar, or Tales of the Four Darweshes",12370,1325,https://www.gutenberg.org/ebooks/12370.txt.utf-8,568191
+The Travels of Marco Polo — Volume 2,12410,1324,https://www.gutenberg.org/ebooks/12410.txt.utf-8,2421300
+"De Orbe Novo, Volume 1 (of 2)
+The Eight Decades of Peter Martyr D'Anghera",12425,1526,https://www.gutenberg.org/ebooks/12425.txt.utf-8,793485
+Le Morte d'Arthur: Volume 1,1251,1471,https://www.gutenberg.org/files/1251/1251-0.txt,917658
+Le Morte d'Arthur: Volume 2,1252,1471,https://www.gutenberg.org/files/1252/1252-0.txt,1047345
+"The History of Rome, Books 27 to 36",12582,16,https://www.gutenberg.org/ebooks/12582.txt.utf-8,1402081
+The Legends of King Arthur and His Knights,12753,1471,https://www.gutenberg.org/ebooks/12753.txt.utf-8,529562
+The Banquet (Il Convito),12867,1321,https://www.gutenberg.org/ebooks/12867.txt.utf-8,486966
+The Diwan of Abu'l-Ala,13086,1057,https://www.gutenberg.org/ebooks/13086.txt.utf-8,81659
+"The Decameron, Volume II",13102,1375,https://www.gutenberg.org/ebooks/13102.txt.utf-8,918314
+The Theological Tractates and The Consolation of Philosophy,13316,524,https://www.gutenberg.org/ebooks/13316.txt.utf-8,665814
+Stories from the Odyssey,13725,-650,https://www.gutenberg.org/ebooks/13725.txt.utf-8,398698
+"Apology, Crito, and Phaedo of Socrates",13726,-348,https://www.gutenberg.org/ebooks/13726.txt.utf-8,310715
+Echoes from the Sabine Farm,13885,-8,https://www.gutenberg.org/ebooks/13885.txt.utf-8,94184
+The Works of Horace,14020,-8,https://www.gutenberg.org/ebooks/14020.txt.utf-8,485337
+"The Colloquies of Erasmus, Volume I.",14031,1536,https://www.gutenberg.org/ebooks/14031.txt.utf-8,869759
+"Plutarch's Lives, Volume 1 (of 4)",14033,119,https://www.gutenberg.org/ebooks/14033.txt.utf-8,1084108
+"Plutarch's Lives, Volume 2 (of 4)",14114,119,https://www.gutenberg.org/ebooks/14114.txt.utf-8,1160894
+"Plutarch's Lives, Volume 3 (of 4)",14140,119,https://www.gutenberg.org/ebooks/14140.txt.utf-8,1379635
+Historia Calamitatum,14268,1142,https://www.gutenberg.org/ebooks/14268.txt.utf-8,184517
+A Merry Dialogue Declaringe the Properties of Shrowde Shrews and Honest Wives,14282,1536,https://www.gutenberg.org/ebooks/14282.txt.utf-8,92058
+"The Electra of Euripides
+Translated into English rhyming verse",14322,-406,https://www.gutenberg.org/ebooks/14322.txt.utf-8,136789
+The Consolation of Philosophy,14328,524,https://www.gutenberg.org/ebooks/14328.txt.utf-8,275715
+"The Agamemnon of Aeschylus
+Translated into English Rhyming Verse with Explanatory Notes",14417,-456,https://www.gutenberg.org/ebooks/14417.txt.utf-8,144606
+The Seven Plays in English Verse,14484,-406,https://www.gutenberg.org/ebooks/14484.txt.utf-8,567051
+"Two Dyaloges (c. 1549)
+Wrytten in laten by the famous clerke, D. Erasm[us] of Roterodame, one called Polyphemus or the gospeller, the other dysposyng of thynges and names, translated in to Englyshe by Edmonde Becke.",14500,1536,https://www.gutenberg.org/ebooks/14500.txt.utf-8,68351
+The Elder Eddas of Saemund Sigfusson; and the Younger Eddas of Snorre Sturleson,14726,1133,https://www.gutenberg.org/ebooks/14726.txt.utf-8,527261
+"A dialoge or communication of two persons
+Deuysyd and set forthe in the late[n] tonge, by the noble and famose clarke. Desiderius Erasmus intituled [the] pylgremage of pure deuotyon. Newly tra[n]slatyd into Englishe.",14746,1536,https://www.gutenberg.org/ebooks/14746.txt.utf-8,101434
+Cato Maior de Senectute with Introduction and Notes,14945,-43,https://www.gutenberg.org/ebooks/14945.txt.utf-8,353858
+The Republic,1497,-348,https://www.gutenberg.org/ebooks/1497.txt.utf-8,1244214
+Academica,14970,-43,https://www.gutenberg.org/ebooks/14970.txt.utf-8,641598
+"Cicero's Tusculan Disputations
+Also, Treatises On The Nature Of The Gods, And On The Commonwealth",14988,-43,https://www.gutenberg.org/ebooks/14988.txt.utf-8,1069489
+The Republic,150,-348,https://www.gutenberg.org/ebooks/150.txt.utf-8,715588
+"A Dialogue Concerning Oratory, or the Causes of Corrupt Eloquence
+The Works of Cornelius Tacitus, Volume 8 (of 8); With an Essay on His Life and Genius, Notes, Supplements",15017,117,https://www.gutenberg.org/ebooks/15017.txt.utf-8,439668
+"The Tragedies of Euripides, Volume I.",15081,-406,https://www.gutenberg.org/ebooks/15081.txt.utf-8,896236
+Critias,1571,-348,https://www.gutenberg.org/ebooks/1571.txt.utf-8,75831
+Timaeus,1572,-348,https://www.gutenberg.org/ebooks/1572.txt.utf-8,475731
+"Machiavelli, Volume I",15772,1527,https://www.gutenberg.org/ebooks/15772.txt.utf-8,779707
+Lysis,1579,-348,https://www.gutenberg.org/ebooks/1579.txt.utf-8,87920
+Charmides,1580,-348,https://www.gutenberg.org/ebooks/1580.txt.utf-8,143860
+Laches,1584,-348,https://www.gutenberg.org/ebooks/1584.txt.utf-8,87824
+Thoughts of Marcus Aurelius Antoninus,15877,180,https://www.gutenberg.org/ebooks/15877.txt.utf-8,451756
+Protagoras,1591,-348,https://www.gutenberg.org/ebooks/1591.txt.utf-8,176244
+Euthydemus,1598,-348,https://www.gutenberg.org/ebooks/1598.txt.utf-8,136722
+Symposium,1600,-348,https://www.gutenberg.org/ebooks/1600.txt.utf-8,201016
+Cratylus,1616,-348,https://www.gutenberg.org/ebooks/1616.txt.utf-8,326492
+A Very Pleasaunt & Fruitful Diologe Called the Epicure,16246,1536,https://www.gutenberg.org/ebooks/16246.txt.utf-8,89077
+Ion,1635,-348,https://www.gutenberg.org/ebooks/1635.txt.utf-8,56054
+Phaedrus,1636,-348,https://www.gutenberg.org/ebooks/1636.txt.utf-8,235404
+Euthyphro,1642,-348,https://www.gutenberg.org/ebooks/1642.txt.utf-8,71350
+Meno,1643,-348,https://www.gutenberg.org/ebooks/1643.txt.utf-8,145498
+"The Iliad of Homer
+Translated into English Blank Verse by William Cowper",16452,-650,https://www.gutenberg.org/ebooks/16452.txt.utf-8,1052055
+The Imitation of Christ,1653,1471,https://www.gutenberg.org/ebooks/1653.txt.utf-8,374998
+Apology,1656,-348,https://www.gutenberg.org/files/1656/1656-0.txt,107813
+"Amphitryo, Asinaria, Aulularia, Bacchides, Captivi
+Amphitryon, The Comedy of Asses, The Pot of Gold, The Two
+Bacchises, The Captives",16564,-184,https://www.gutenberg.org/ebooks/16564.txt.utf-8,841660
+Crito,1657,-348,https://www.gutenberg.org/ebooks/1657.txt.utf-8,56164
+Phaedo,1658,-348,https://www.gutenberg.org/ebooks/1658.txt.utf-8,257145
+Gorgias,1672,-348,https://www.gutenberg.org/ebooks/1672.txt.utf-8,355879
+The Chronicle of the Canons Regular of Mount St. Agnes,16759,1471,https://www.gutenberg.org/ebooks/16759.txt.utf-8,330600
+Menexenus,1682,-348,https://www.gutenberg.org/ebooks/1682.txt.utf-8,77894
+"The Improvement of Human Reason
+Exhibited in the Life of Hai Ebn Yokdhan",16831,1185,https://www.gutenberg.org/ebooks/16831.txt.utf-8,283724
+Parmenides,1687,-348,https://www.gutenberg.org/ebooks/1687.txt.utf-8,221910
+"Tacitus: The Histories, Volumes I and II",16927,117,https://www.gutenberg.org/ebooks/16927.txt.utf-8,744408
+The Story of Troy,16990,-650,https://www.gutenberg.org/ebooks/16990.txt.utf-8,305708
+"Dialogue of Comfort Against Tribulation
+With Modifications To Obsolete Language By Monica Stevens",17075,1535,https://www.gutenberg.org/ebooks/17075.txt.utf-8,581117
+Theaetetus,1726,-348,https://www.gutenberg.org/ebooks/1726.txt.utf-8,397587
+"The Odyssey
+Rendered into English prose for the use of those who cannot read the original",1727,-650,https://www.gutenberg.org/ebooks/1727.txt.utf-8,717826
+The Odyssey of Homer,1728,-650,https://www.gutenberg.org/ebooks/1728.txt.utf-8,790930
+Sophist,1735,-348,https://www.gutenberg.org/ebooks/1735.txt.utf-8,286716
+Statesman,1738,-348,https://www.gutenberg.org/ebooks/1738.txt.utf-8,253004
+Philebus,1744,-348,https://www.gutenberg.org/ebooks/1744.txt.utf-8,286940
+The Memorable Thoughts of Socrates,17490,-355,https://www.gutenberg.org/ebooks/17490.txt.utf-8,335175
+Laws,1750,-348,https://www.gutenberg.org/ebooks/1750.txt.utf-8,1364463
+"Summa Theologica, Part I (Prima Pars)
+From the Complete American Edition",17611,1274,https://www.gutenberg.org/ebooks/17611.txt.utf-8,2911982
+"The Sonnets, Triumphs, and Other Poems of Petrarch",17650,1374,https://www.gutenberg.org/ebooks/17650.txt.utf-8,1196089
+"Summa Theologica, Part I-II (Pars Prima Secundae)
+From the Complete American Edition",17897,1274,https://www.gutenberg.org/ebooks/17897.txt.utf-8,2903089
+"The Norwegian account of Haco's expedition against Scotland, A.D. MCCLXIII.",18299,1284,https://www.gutenberg.org/ebooks/18299.txt.utf-8,95194
+Hypnerotomachia: The Strife of Loue in a Dreame,18459,1527,https://www.gutenberg.org/ebooks/18459.txt.utf-8,443678
+"The Æneid of Virgil, Translated into English Verse",18466,-19,https://www.gutenberg.org/ebooks/18466.txt.utf-8,688692
+"The Letters of Cassiodorus
+Being a Condensed Translation of the Variae Epistolae of Magnus Aurelius Cassiodorus Senator",18590,580,https://www.gutenberg.org/ebooks/18590.txt.utf-8,1210146
+"Summa Theologica, Part II-II (Secunda Secundae)
+Translated by Fathers of the English Dominican Province",18755,1274,https://www.gutenberg.org/ebooks/18755.txt.utf-8,4214883
+"The Poems and Fragments of Catullus
+Translated in the Metres of the Original",18867,-53,https://www.gutenberg.org/ebooks/18867.txt.utf-8,191524
+"The Younger Edda; Also called Snorre's Edda, or The Prose Edda",18947,1241,https://www.gutenberg.org/ebooks/18947.txt.utf-8,407658
+Book of illustrations : Ancient Tragedy,19559,-456,https://www.gutenberg.org/ebooks/19559.txt.utf-8,261477
+Cathay,19679,762,https://www.gutenberg.org/files/19679/19679.txt,23140
+"The History of Rome, Books 01 to 08",19725,16,https://www.gutenberg.org/ebooks/19725.txt.utf-8,1392142
+The Poetics of Aristotle,1974,-322,https://www.gutenberg.org/ebooks/1974.txt.utf-8,108556
+Euthyphro,19840,-348,https://www.gutenberg.org/files/19840/19840.txt,22504
+"The Divine Comedy, Volume 1, Hell",1995,1321,https://www.gutenberg.org/ebooks/1995.txt.utf-8,290862
+"Summa Theologica, Part III (Tertia Pars)
+From the Complete American Edition",19950,1274,https://www.gutenberg.org/files/19950/19950.txt,2757589
+"The Divine Comedy, Volume 2, Purgatory",1996,1321,https://www.gutenberg.org/ebooks/1996.txt.utf-8,309789
+"The Divine Comedy, Volume 3, Paradise",1997,1321,https://www.gutenberg.org/ebooks/1997.txt.utf-8,308334
+The Fourth Book of Virgil's Aeneid and the Ninth Book of Voltaire's Henriad,20144,-19,https://www.gutenberg.org/ebooks/20144.txt.utf-8,100765
+"The Ship of Fools, Volume 1",20179,1521,https://www.gutenberg.org/ebooks/20179.txt.utf-8,535420
+Poetics,20685,-322,https://www.gutenberg.org/files/20685/20685-readme.txt,22770
+The Carmina of Caius Valerius Catullus,20732,-53,https://www.gutenberg.org/ebooks/20732.txt.utf-8,430504
+Cyropaedia: The Education of Cyrus,2085,-355,https://www.gutenberg.org/ebooks/2085.txt.utf-8,668048
+Peach Blossom Shangri-la: Tao Hua Yuan Ji,2090,427,https://www.gutenberg.org/ebooks/2090.txt.utf-8,25486
+On Loving God,21152,1153,https://www.gutenberg.org/files/21152/21152-readme.txt,22904
+"The Letters of Cicero, Volume 1
+The Whole Extant Correspodence in Chronological Order",21200,-43,https://www.gutenberg.org/ebooks/21200.txt.utf-8,994216
+Utopia,2130,1535,https://www.gutenberg.org/ebooks/2130.txt.utf-8,261790
+An Account of Egypt,2131,-430,https://www.gutenberg.org/ebooks/2131.txt.utf-8,224479
+The Iliad for Boys and Girls,21584,-650,https://www.gutenberg.org/files/21584/21584-readme.txt,23713
+"The Metamorphoses of Ovid, Books I-VII",21765,17,https://www.gutenberg.org/ebooks/21765.txt.utf-8,780013
+The Last Poems of Ovid,21920,17,https://www.gutenberg.org/ebooks/21920.txt.utf-8,705161
+The Iliad,2199,-650,https://www.gutenberg.org/ebooks/2199.txt.utf-8,928999
+The First Four Books of Xenophon's Anabasis,22003,-355,https://www.gutenberg.org/ebooks/22003.txt.utf-8,378117
+"Stories of King Arthur and His Knights
+Retold from Malory's ""Morte dArthur""",22053,1471,https://www.gutenberg.org/ebooks/22053.txt.utf-8,392624
+The sagas of Olaf Tryggvason and of Harald the Tyrant (Harald Haardraade),22093,1241,https://www.gutenberg.org/ebooks/22093.txt.utf-8,412280
+On prayer and the contemplative life,22295,1274,https://www.gutenberg.org/ebooks/22295.txt.utf-8,451300
+The Iliad,22382,-650,https://www.gutenberg.org/ebooks/22382.txt.utf-8,1112929
+The Aeneid of Virgil,22456,-19,https://www.gutenberg.org/ebooks/22456.txt.utf-8,587099
+"Rubáiyát of Omar Khayyám, and Salámán and Absál
+Together with a Life of Edward Fitzgerald and an Essay on Persian Poetry by Ralph Waldo Emerson",22535,1122,https://www.gutenberg.org/ebooks/22535.txt.utf-8,155530
+On the Duties of the Clergy,22789,397,https://www.gutenberg.org/files/22789/22789-readme.txt,25328
+The Aeneid,228,-19,https://www.gutenberg.org/ebooks/228.txt.utf-8,746802
+The Bucolics and Eclogues,230,-19,https://www.gutenberg.org/ebooks/230.txt.utf-8,68420
+The Consolation of Philosophy,23082,524,https://www.gutenberg.org/files/23082/23082-readme.txt,25446
+The Georgics,232,-19,https://www.gutenberg.org/ebooks/232.txt.utf-8,145331
+Plutarch's Morals,23639,119,https://www.gutenberg.org/ebooks/23639.txt.utf-8,956648
+The Decameron of Giovanni Boccaccio,23700,1375,https://www.gutenberg.org/ebooks/23700.txt.utf-8,1750464
+To Lesbia,23720,-53,https://www.gutenberg.org/files/23720/23720-readme.txt,23683
+The Canterbury Tales,23722,1400,https://www.gutenberg.org/files/23722/23722-readme.txt,25284
+"The Canterbury Tales, and Other Poems",2383,1400,https://www.gutenberg.org/ebooks/2383.txt.utf-8,1729309
+The Sayings of Confucius,24055,-479,https://www.gutenberg.org/ebooks/24055.txt.utf-8,196046
+The Categories,2412,-322,https://www.gutenberg.org/ebooks/2412.txt.utf-8,103415
+The Odyssey of Homer,24269,-650,https://www.gutenberg.org/ebooks/24269.txt.utf-8,822189
+The History of Herodotus — Volume 2,2456,-430,https://www.gutenberg.org/ebooks/2456.txt.utf-8,856338
+The Rubaiyat of Omar Khayyam,246,1122,https://www.gutenberg.org/ebooks/246.txt.utf-8,90423
+"History of Florence and of the Affairs of Italy
+From the Earliest Times to the Death of Lorenzo the Magnificent",2464,1527,https://www.gutenberg.org/ebooks/2464.txt.utf-8,974569
+"The Boys' and Girls' Plutarch
+Being Parts of the ""Lives"" of Plutarch, Edited for Boys and Girls",2484,119,https://www.gutenberg.org/ebooks/2484.txt.utf-8,846881
+"Odysseus, the Hero of Ithaca
+Adapted from the Third Book of the Primary Schools of Athens, Greece",24856,-650,https://www.gutenberg.org/ebooks/24856.txt.utf-8,287053
+"The prophete Ionas with an introduccion
+before teachinge to vnderstonde him and the right vse also of all the scripture/ and why it was written/ and what is therin to be sought/ and shewenge wherewith the scripture is locked vpp that he which readeth it/ can not vnderstonde it/ though he studie therin neuer so moch: and agayne with what keyes it is so opened/ that the reader can be stopped out with no sotilte or false doctrine of man/ from the true sense and vnderstondynge therof.",24890,1536,https://www.gutenberg.org/ebooks/24890.txt.utf-8,72610
+The Clouds,2562,-388,https://www.gutenberg.org/ebooks/2562.txt.utf-8,115879
+Troilus and Criseyde,257,1400,https://www.gutenberg.org/ebooks/257.txt.utf-8,521436
+Peace,2571,-388,https://www.gutenberg.org/ebooks/2571.txt.utf-8,113083
+St. Bernard of Clairvaux's Life of St. Malachy of Armagh,25761,1153,https://www.gutenberg.org/ebooks/25761.txt.utf-8,532203
+The Form of Perfect Living and Other Prose Treatises,25856,1349,https://www.gutenberg.org/ebooks/25856.txt.utf-8,202981
+"The Metamorphoses of Ovid, Books VIII-XV",26073,17,https://www.gutenberg.org/ebooks/26073.txt.utf-8,853862
+The Athenian Constitution,26095,-322,https://www.gutenberg.org/ebooks/26095.txt.utf-8,164596
+The Imitation of Christ,26222,1471,https://www.gutenberg.org/files/26222/26222-readme.txt,23090
+The History of the Peloponnesian War,26245,-395,https://www.gutenberg.org/files/26245/26245-readme.txt,24674
+The Prince,26253,1527,https://www.gutenberg.org/files/26253/26253-readme.txt,23862
+"Confessio Amantis; Or, Tales of the Seven Deadly Sins",266,1408,https://www.gutenberg.org/ebooks/266.txt.utf-8,1159057
+Meditations,2680,180,https://www.gutenberg.org/ebooks/2680.txt.utf-8,425350
+The History of Herodotus — Volume 1,2707,-430,https://www.gutenberg.org/ebooks/2707.txt.utf-8,915847
+Aeschylus' Prometheus Bound and the Seven Against Thebes,27458,-456,https://www.gutenberg.org/ebooks/27458.txt.utf-8,190406
+"Oedipus King of Thebes
+Translated into English Rhyming Verse with Explanatory Notes",27673,-406,https://www.gutenberg.org/ebooks/27673.txt.utf-8,131798
+Treatises on Friendship and Old Age,2808,-43,https://www.gutenberg.org/ebooks/2808.txt.utf-8,187162
+Letters of Marcus Tullius Cicero,2812,-43,https://www.gutenberg.org/ebooks/2812.txt.utf-8,253167
+The Education of Children,28338,1536,https://www.gutenberg.org/ebooks/28338.txt.utf-8,166747
+The Metamorphoses of Publius Ovidus Naso in English blank verse Vols. I & II,28621,17,https://www.gutenberg.org/ebooks/28621.txt.utf-8,765202
+The Odyssey,28797,-650,https://www.gutenberg.org/files/28797/28797_readme.txt,24263
+"An Introductorie for to Lerne to Read, To Pronounce, and to Speke French Trewly",29068,1535,https://www.gutenberg.org/ebooks/29068.txt.utf-8,557567
+Dialogues in French and English,29214,1491,https://www.gutenberg.org/ebooks/29214.txt.utf-8,262577
+"The Academic Questions, Treatise De Finibus, and Tusculan Disputations, of M.T. Cicero, With a Sketch of the Greek Philosophers Mentioned by Cicero",29247,-43,https://www.gutenberg.org/ebooks/29247.txt.utf-8,1239125
+"The Æneids of Virgil, Done into English Verse",29358,-19,https://www.gutenberg.org/ebooks/29358.txt.utf-8,687102
+The Project Gutenberg Works of Plato: An Index,29441,-348,https://www.gutenberg.org/ebooks/29441.txt.utf-8,20641
+The Project Gutenberg Works of Xenophon: An Index,29459,-355,https://www.gutenberg.org/ebooks/29459.txt.utf-8,20347
+"An Essay on the Beautiful, from the Greek of Plotinus",29510,270,https://www.gutenberg.org/ebooks/29510.txt.utf-8,73807
+Thoughts on Art and Life,29904,1519,https://www.gutenberg.org/ebooks/29904.txt.utf-8,293886
+Tacitus on Germany,2995,117,https://www.gutenberg.org/ebooks/2995.txt.utf-8,87177
+The Acharnians,3012,-388,https://www.gutenberg.org/ebooks/3012.txt.utf-8,101998
+The Birds,3013,-388,https://www.gutenberg.org/ebooks/3013.txt.utf-8,145338
+"In Praise of Folly
+Illustrated with Many Curious Cuts",30201,1536,https://www.gutenberg.org/ebooks/30201.txt.utf-8,280107
+Complete Works of Plutarch — Volume 3: Essays and Miscellanies,3052,119,https://www.gutenberg.org/ebooks/3052.txt.utf-8,1633904
+The Iliad,3059,-650,https://www.gutenberg.org/ebooks/3059.txt.utf-8,897186
+Plays of Sophocles: Oedipus the King; Oedipus at Colonus; Antigone,31,-406,https://www.gutenberg.org/ebooks/31.txt.utf-8,245206
+"The Lovers Assistant; Or, New Art of Love",31036,17,https://www.gutenberg.org/ebooks/31036.txt.utf-8,117402
+The Odyssey,3160,-650,https://www.gutenberg.org/ebooks/3160.txt.utf-8,746439
+"Historic Tales: The Romance of Reality. Vol. 13 (of 15), King Arthur (1)",31900,1471,https://www.gutenberg.org/ebooks/31900.txt.utf-8,539687
+Records of Journeys to Venice and the Low Countries,3226,1528,https://www.gutenberg.org/ebooks/3226.txt.utf-8,156991
+"Historic Tales: The Romance of Reality. Vol. 14 (of 15), King Arthur (2)",32292,1471,https://www.gutenberg.org/ebooks/32292.txt.utf-8,521411
+The Pain and Sorrow of Evil Marriage,32445,1534,https://www.gutenberg.org/ebooks/32445.txt.utf-8,41233
+A Supplication for the Beggars,32464,1531,https://www.gutenberg.org/ebooks/32464.txt.utf-8,85407
+The Confessions of St. Augustine,3296,430,https://www.gutenberg.org/ebooks/3296.txt.utf-8,632209
+"Villani's Chronicle
+Being Selections from the First Nine Books of the Croniche Fiorentine of Giovanni Villani",33022,1348,https://www.gutenberg.org/ebooks/33022.txt.utf-8,901011
+The Analects of Confucius (from the Chinese Classics),3330,-479,https://www.gutenberg.org/ebooks/3330.txt.utf-8,191716
+"The Wisdom of Confucius
+with Critical and Biographical Sketches",33815,-479,https://www.gutenberg.org/ebooks/33815.txt.utf-8,356664
+Dante. An essay. To which is added a translation of De Monarchia.,33896,1321,https://www.gutenberg.org/ebooks/33896.txt.utf-8,555807
+"The Sarva-Darsana-Samgraha
+Or, Review of the Different Systems of Hindu Philosophy",34125,1386,https://www.gutenberg.org/ebooks/34125.txt.utf-8,682610
+The Awakening of the Soul,34572,1185,https://www.gutenberg.org/ebooks/34572.txt.utf-8,145867
+The Rhesus of Euripides,35170,-406,https://www.gutenberg.org/ebooks/35170.txt.utf-8,121994
+The Trojan Women of Euripides,35171,-406,https://www.gutenberg.org/ebooks/35171.txt.utf-8,138128
+The Bacchae of Euripides,35173,-406,https://www.gutenberg.org/ebooks/35173.txt.utf-8,133421
+"Rubáiyát of Omar Khayyam, Rendered into English Verse",35260,1122,https://www.gutenberg.org/ebooks/35260.txt.utf-8,134921
+Medea of Euripides,35451,-406,https://www.gutenberg.org/ebooks/35451.txt.utf-8,146311
+The Chronicle of the Discovery and Conquest of Guinea. Vol. I,35738,1473,https://www.gutenberg.org/ebooks/35738.txt.utf-8,482456
+The Chronicle of the Discovery and Conquest of Guinea. Vol. II,35764,1473,https://www.gutenberg.org/ebooks/35764.txt.utf-8,802171
+"Letters of Abelard and Heloise
+To which is prefix'd a particular account of their lives, amours, and misfortunes",35977,1142,https://www.gutenberg.org/ebooks/35977.txt.utf-8,292560
+King Arthur and the Knights of the Round Table,36462,1471,https://www.gutenberg.org/ebooks/36462.txt.utf-8,555153
+St. Dionysius of Alexandria: Letters and Treatises,36539,265,https://www.gutenberg.org/files/36539/36539-0.txt,213706
+The Book of the Duke of True Lovers,36737,1430,https://www.gutenberg.org/files/36737/36737-0.txt,195832
+"The Letters of Amerigo Vespucci, and Other Documents Illustrative of His Career",36924,1506,https://www.gutenberg.org/ebooks/36924.txt.utf-8,331659
+Of the Just Shaping of Letters,37103,1528,https://www.gutenberg.org/ebooks/37103.txt.utf-8,76010
+"The Decameron, Volume I",3726,1375,https://www.gutenberg.org/ebooks/3726.txt.utf-8,789037
+"Arguments of Celsus, Porphyry, and the Emperor Julian, Against the Christians
+Also Extracts from Diodorus Siculus, Josephus, and Tacitus, Relating to the Jews, Together with an Appendix",37696,117,https://www.gutenberg.org/ebooks/37696.txt.utf-8,185774
+The White Knight: Tirant Lo Blanc,378,1468,https://www.gutenberg.org/ebooks/378.txt.utf-8,904379
+L. Annaeus Seneca on Benefits,3794,65,https://www.gutenberg.org/ebooks/3794.txt.utf-8,476947
+Vidyāpati: Bangīya padābali; songs of the love of Rādhā and Krishna,38174,1448,https://www.gutenberg.org/ebooks/38174.txt.utf-8,189462
+Bede's Ecclesiastical History of England,38326,735,https://www.gutenberg.org/files/38326/38326-0.txt,1094636
+"The Homilies of the Anglo-Saxon Church
+Containing the Sermones Catholici, or Homilies of Ælfric, in the Original Anglo-Saxon, with an English Version. Volume I.",38334,1019,https://www.gutenberg.org/ebooks/38334.txt.utf-8,1293304
+The Sufistic Quatrains of Omar Khayyam,38511,1122,https://www.gutenberg.org/files/38511/38511-0.txt,545691
+True Heart/Mind,38580,606,https://www.gutenberg.org/files/38580/38580.txt,31720
+"One dialogue, or Colloquye of Erasmus (entituled Diuersoria)
+Translated oute of Latten into Englyshe: And Imprinted, to the ende that the Judgement of the Learned maye be hadde before the Translator procede in the reste.",39038,1536,https://www.gutenberg.org/files/39038/39038.txt,43563
+Speeches against Catilina,39355,-43,https://www.gutenberg.org/files/39355/39355-0.txt,350817
+Erasmus Against War,39487,1536,https://www.gutenberg.org/ebooks/39487.txt.utf-8,147400
+"The Teaching of Epictetus
+Being the 'Encheiridion of Epictetus,' with Selections from the 'Dissertations' and 'Fragments'",39855,135,https://www.gutenberg.org/files/39855/39855-0.txt,380715
+The love letters of Abelard and Heloise,40227,1142,https://www.gutenberg.org/ebooks/40227.txt.utf-8,143408
+"King Alfred's Old English Version of St. Augustine's Soliloquies
+Turned into Modern English",40341,430,https://www.gutenberg.org/ebooks/40341.txt.utf-8,114335
+The New Life (La Vita Nuova),41085,1321,https://www.gutenberg.org/ebooks/41085.txt.utf-8,163601
+The Divine Comedy of Dante Alighieri: The Inferno,41537,1321,https://www.gutenberg.org/ebooks/41537.txt.utf-8,715585
+The Adventures of Ulysses the Wanderer,41935,-650,https://www.gutenberg.org/ebooks/41935.txt.utf-8,152276
+"Chaucer's Translation of Boethius's ""De Consolatione Philosophiae""",42083,524,https://www.gutenberg.org/ebooks/42083.txt.utf-8,1147177
+"Plotinos: Complete Works, v. 1
+In Chronological Order, Grouped in Four Periods",42930,270,https://www.gutenberg.org/ebooks/42930.txt.utf-8,521158
+"Plotinos: Complete Works, v. 2
+In Chronological Order, Grouped in Four Periods",42931,270,https://www.gutenberg.org/ebooks/42931.txt.utf-8,665083
+"Plotinos: Complete Works, v. 3
+In Chronological Order, Grouped in Four Periods",42932,270,https://www.gutenberg.org/ebooks/42932.txt.utf-8,693891
+"Plotinos: Complete Works, v. 4
+In Chronological Order, Grouped in Four Periods",42933,270,https://www.gutenberg.org/ebooks/42933.txt.utf-8,865793
+"Chaucer's Works, Volume 5 — Notes to the Canterbury Tales",43016,1400,https://www.gutenberg.org/ebooks/43016.txt.utf-8,1539028
+"Chaucer's Works, Volume 1 — Romaunt of the Rose; Minor Poems",43089,1400,https://www.gutenberg.org/ebooks/43089.txt.utf-8,1529126
+"Chaucer's Works, Volume 6 —  Introduction, Glossary, and Indexes",43097,1400,https://www.gutenberg.org/ebooks/43097.txt.utf-8,1644250
+"The Poet Li Po, A.D. 701-762",43274,762,https://www.gutenberg.org/ebooks/43274.txt.utf-8,74258
+"The Symbolism of Churches and Church Ornaments
+A Translation of the First Book of the Rationale Divinorum Officiorum",43319,1296,https://www.gutenberg.org/ebooks/43319.txt.utf-8,672673
+"The Buke of the Order of Knyghthood
+Translated from the French by Sir Gilbert Hay, Knight",43365,1316,https://www.gutenberg.org/ebooks/43365.txt.utf-8,289183
+The Master of Game: The Oldest English Book on Hunting,43452,1391,https://www.gutenberg.org/ebooks/43452.txt.utf-8,521912
+Chaucer for Children: A Golden Key,43984,1400,https://www.gutenberg.org/ebooks/43984.txt.utf-8,418015
+"The Book of War: The Military Classic of the Far East
+The Articles of Suntzu; The Sayings of Wutzu",44024,-381,https://www.gutenberg.org/ebooks/44024.txt.utf-8,148716
+The Bruce,44292,1395,https://www.gutenberg.org/ebooks/44292.txt.utf-8,1169494
+"Plutarch's Lives, Volume 4 (of 4)",44315,119,https://www.gutenberg.org/ebooks/44315.txt.utf-8,1685272
+"The History of Rome, Books 37 to the End
+with the Epitomes and Fragments of the Lost Books",44318,16,https://www.gutenberg.org/ebooks/44318.txt.utf-8,1729778
+The Bābur-nāma in English (Memoirs of Bābur),44608,1530,https://www.gutenberg.org/ebooks/44608.txt.utf-8,2786917
+"Chaucer's Works, Volume 2 — Boethius and Troilus",44833,1400,https://www.gutenberg.org/ebooks/44833.txt.utf-8,1343595
+"Chaucer's Works, Volume 3 — The House of Fame; The Legend of Good Women; The Treatise on the Astrolabe; The Sources of the Canterbury Tales",45027,1400,https://www.gutenberg.org/ebooks/45027.txt.utf-8,1400311
+The Enchiridion,45109,135,https://www.gutenberg.org/ebooks/45109.txt.utf-8,91729
+The Persian Mystics: Jámí,45158,1492,https://www.gutenberg.org/ebooks/45158.txt.utf-8,109000
+The Persian Mystics: Jalálu'd-dín Rúmí,45159,1273,https://www.gutenberg.org/ebooks/45159.txt.utf-8,126900
+"The City of God, Volume I",45304,430,https://www.gutenberg.org/ebooks/45304.txt.utf-8,1357489
+"The City of God, Volume II",45305,430,https://www.gutenberg.org/ebooks/45305.txt.utf-8,1435095
+Writings in Connection with the Donatist Controversy,45843,430,https://www.gutenberg.org/ebooks/45843.txt.utf-8,1284282
+Lucian's True History,45858,180,https://www.gutenberg.org/ebooks/45858.txt.utf-8,131540
+"Two Tragedies of Seneca: Medea and The Daughters of Troy
+Rendered into English Verse",46058,65,https://www.gutenberg.org/ebooks/46058.txt.utf-8,161629
+"A Modest Meane to Mariage
+pleasauntly set foorth by that famous Clarke Erasmus Roterodamus, and translated into Englishe by N.L.",46239,1536,https://www.gutenberg.org/ebooks/46239.txt.utf-8,75436
+"The Sayings of Confucius
+A New Translation of the Greater Part of the Confucian Analects",46389,-479,https://www.gutenberg.org/ebooks/46389.txt.utf-8,195650
+"Le Morte Darthur
+Sir Thomas Malory's Book of King Arthur and his Noble
+Knights of the Round Table",46853,1471,https://www.gutenberg.org/ebooks/46853.txt.utf-8,2140716
+A Treatise on Painting,46915,1519,https://www.gutenberg.org/ebooks/46915.txt.utf-8,449020
+"The Anabasis of Alexander : $b or, The history of the wars and conquests of Alexander the Great",46976,175,https://www.gutenberg.org/ebooks/46976.txt.utf-8,920284
+De Officiis,47001,-43,https://www.gutenberg.org/ebooks/47001.txt.utf-8,740148
+The Works of Lucian of Samosata — Volume 04,47242,180,https://www.gutenberg.org/ebooks/47242.txt.utf-8,481660
+Parzival: A Knightly Epic (vol. 1 of 2),47297,1219,https://www.gutenberg.org/ebooks/47297.txt.utf-8,935082
+Parzival: A Knightly Epic (vol. 2 of 2),47298,1219,https://www.gutenberg.org/ebooks/47298.txt.utf-8,644378
+"The Amores; or, Amours
+Literally Translated into English Prose, with Copious Notes",47676,17,https://www.gutenberg.org/ebooks/47676.txt.utf-8,331494
+"Ars Amatoria; or, The Art Of Love
+Literally Translated into English Prose, with Copious Notes",47677,17,https://www.gutenberg.org/ebooks/47677.txt.utf-8,239551
+"Remedia Amoris; or, The Remedy of Love
+Literally Translated into English Prose, with Copious Notes",47678,17,https://www.gutenberg.org/ebooks/47678.txt.utf-8,87978
+"Theocritus, Bion and Moschus, Rendered into English Prose",4775,-260,https://www.gutenberg.org/ebooks/4775.txt.utf-8,325932
+Petrarch's Letters to Classical Authors,47859,1374,https://www.gutenberg.org/ebooks/47859.txt.utf-8,299576
+"The Works of the Emperor Julian, Vol. 1",48664,363,https://www.gutenberg.org/ebooks/48664.txt.utf-8,1056245
+"The Works of the Emperor Julian, Vol. 2",48768,363,https://www.gutenberg.org/ebooks/48768.txt.utf-8,1036193
+"Petrarch, the First Modern Scholar and Man of Letters
+A Selection from His Correspondence with Boccaccio and Other Friends, Designed to Illustrate the Beginnings of the Renaissance",48776,1374,https://www.gutenberg.org/ebooks/48776.txt.utf-8,694917
+Early Lives of Charlemagne by Eginhard and the Monk of St Gall edited by Prof. A. J. Grant,48870,840,https://www.gutenberg.org/ebooks/48870.txt.utf-8,276081
+"The Odysseys of Homer, together with the shorter poems",48895,-650,https://www.gutenberg.org/ebooks/48895.txt.utf-8,1024567
+"The Works of Garcilasso de la Vega, Surnamed the Prince of Castilian Poets, Translated into English Verse 
+With a Critical and Historical Essay on Spanish Poetry and a Life of the Author",49410,1536,https://www.gutenberg.org/ebooks/49410.txt.utf-8,561090
+"Petrarch's Secret; or, the Soul's Conflict with Passion
+Three Dialogues Between Himself and S. Augustine",49450,1374,https://www.gutenberg.org/ebooks/49450.txt.utf-8,302890
+St John Damascene on Holy Images (πρὸς τοὺς διαβάλλοντας τᾶς ἁγίας εἰκόνας). Followed by Three Sermons on the Assumption (κοίμησις),49917,749,https://www.gutenberg.org/ebooks/49917.txt.utf-8,358827
+The Notebooks of Leonardo Da Vinci — Volume 1,4998,1519,https://www.gutenberg.org/ebooks/4998.txt.utf-8,623238
+The Notebooks of Leonardo Da Vinci — Volume 2,4999,1519,https://www.gutenberg.org/ebooks/4999.txt.utf-8,825605
+The Notebooks of Leonardo Da Vinci — Complete,5000,1519,https://www.gutenberg.org/ebooks/5000.txt.utf-8,1433977
+St. Benedict's Rule for Monasteries,50040,547,https://www.gutenberg.org/ebooks/50040.txt.utf-8,149107
+Cathay,50155,762,https://www.gutenberg.org/ebooks/50155.txt.utf-8,43477
+Fifteen sonnets of Petrarch,50307,1374,https://www.gutenberg.org/ebooks/50307.txt.utf-8,54983
+"The Luzumiyat of Abu'l-Ala
+Selected from his Luzum ma la Yalzam and Suct us-Zand",50457,1057,https://www.gutenberg.org/ebooks/50457.txt.utf-8,89526
+"The Sufism of the Rubáiyát, or, the Secret of the Great Paradox",50619,1122,https://www.gutenberg.org/ebooks/50619.txt.utf-8,83015
+The Iphigenia in Tauris of Euripides,5063,-406,https://www.gutenberg.org/ebooks/5063.txt.utf-8,131711
+"Cicero: Letters to Atticus, Vol. 2 of 3",50692,-43,https://www.gutenberg.org/ebooks/50692.txt.utf-8,722493
+"William of Malmesbury's Chronicle of the Kings of England
+From the earliest period to the reign of King Stephen",50778,1143,https://www.gutenberg.org/ebooks/50778.txt.utf-8,1401353
+"The chronicles of Enguerrand de Monstrelet, Vol. 01 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",50839,1453,https://www.gutenberg.org/ebooks/50839.txt.utf-8,590367
+"Korean folk tales : $b Imps, ghosts and fairies",51002,1498,https://www.gutenberg.org/ebooks/51002.txt.utf-8,279091
+"Amadis of Gaul, Vol. 2",51099,1403,https://www.gutenberg.org/ebooks/51099.txt.utf-8,470558
+"The Iliads of Homer
+Translated according to the Greek",51355,-650,https://www.gutenberg.org/ebooks/51355.txt.utf-8,1012265
+"Cicero: Letters to Atticus, Vol. 3 of 3",51403,-43,https://www.gutenberg.org/ebooks/51403.txt.utf-8,778296
+"The Vision of Dante: A story for little children and a talk to their mothers
+(Second Edition)",51732,1321,https://www.gutenberg.org/ebooks/51732.txt.utf-8,47363
+The Satyricon — Volume 01: Introduction,5218,66,https://www.gutenberg.org/ebooks/5218.txt.utf-8,112622
+The Satyricon — Volume 02: Dinner of Trimalchio,5219,66,https://www.gutenberg.org/ebooks/5219.txt.utf-8,128584
+The Satyricon — Volume 03: Encolpius and His Companions,5220,66,https://www.gutenberg.org/ebooks/5220.txt.utf-8,66513
+The Satyricon — Volume 04 : Escape by Sea,5221,66,https://www.gutenberg.org/ebooks/5221.txt.utf-8,102330
+The Satyricon — Volume 05: Crotona Affairs,5222,66,https://www.gutenberg.org/ebooks/5222.txt.utf-8,78150
+The Satyricon — Volume 06: Editor's Notes,5223,66,https://www.gutenberg.org/ebooks/5223.txt.utf-8,142347
+The Satyricon — Volume 07: Marchena Notes,5224,66,https://www.gutenberg.org/ebooks/5224.txt.utf-8,85884
+The Satyricon — Complete,5225,66,https://www.gutenberg.org/ebooks/5225.txt.utf-8,602140
+"The chronicles of Enguerrand de Monstrelet, Vol. 02 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",52607,1453,https://www.gutenberg.org/ebooks/52607.txt.utf-8,433785
+"The Decameron (Day 1 to Day 5)
+Containing an hundred pleasant Novels",52617,1375,https://www.gutenberg.org/ebooks/52617.txt.utf-8,1198957
+"The Decameron (Day 6 to Day 10)
+Containing an hundred pleasant Novels",52618,1375,https://www.gutenberg.org/ebooks/52618.txt.utf-8,987836
+"The chronicles of Enguerrand de Monstrelet, Vol. 04 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",52889,1453,https://www.gutenberg.org/ebooks/52889.txt.utf-8,463751
+"The Chronicles of Enguerrand de Monstrelet, Vol. 03 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",52911,1453,https://www.gutenberg.org/ebooks/52911.txt.utf-8,433040
+"Amadis of Gaul, Vol. 3",52941,1403,https://www.gutenberg.org/ebooks/52941.txt.utf-8,441285
+Æschylos Tragedies and Fragments,53174,-456,https://www.gutenberg.org/ebooks/53174.txt.utf-8,699002
+"The republic of Cicero
+Translated from the Latin; and Accompanied With a Critical and Historical Introduction.",54161,-43,https://www.gutenberg.org/ebooks/54161.txt.utf-8,224580
+"The Satires, Epistles, and Art of Poetry of Horace",5419,-8,https://www.gutenberg.org/ebooks/5419.txt.utf-8,284546
+The Odes and Carmen Saeculare of Horace,5432,-8,https://www.gutenberg.org/ebooks/5432.txt.utf-8,214244
+Two Dramatizations from Vergil: I. Dido—the Phœnecian Queen; II. The Fall of Troy,54717,-19,https://www.gutenberg.org/ebooks/54717.txt.utf-8,131251
+"Amadis of Gaul, Vol. 4",55005,1403,https://www.gutenberg.org/ebooks/55005.txt.utf-8,403572
+The Republic of Plato,55201,-348,https://www.gutenberg.org/ebooks/55201.txt.utf-8,1457578
+"The Meditations of the Emperor Marcus Aurelius Antoninus
+A new rendering based on the Foulis translation of 1742",55317,180,https://www.gutenberg.org/ebooks/55317.txt.utf-8,252060
+Lustra of Ezra Pound,55564,762,https://www.gutenberg.org/ebooks/55564.txt.utf-8,105052
+"The Boys' and Girls' Herodotus
+Being Parts of the History of Herodotus, Edited for Boys and Girls",55758,-430,https://www.gutenberg.org/ebooks/55758.txt.utf-8,675064
+"Seneca's Morals of a Happy Life, Benefits, Anger and Clemency",56075,65,https://www.gutenberg.org/ebooks/56075.txt.utf-8,638145
+The Satyricon of Petronius Arbiter,5611,66,https://www.gutenberg.org/ebooks/5611.txt.utf-8,347823
+Tudor school-boy life: the dialogues of Juan Luis Vives,56286,1540,https://www.gutenberg.org/ebooks/56286.txt.utf-8,447764
+The Prince,57037,1527,https://www.gutenberg.org/ebooks/57037.txt.utf-8,195732
+"The Festival of Spring, from the Díván of Jeláleddín
+Rendered in English Gazels after Rückert's Versions, with an Introduction and a Criticism of the Rubáiyát of Omar Khayyám",57068,1273,https://www.gutenberg.org/ebooks/57068.txt.utf-8,152702
+The Book of Husbandry,57457,1538,https://www.gutenberg.org/ebooks/57457.txt.utf-8,495938
+"The Natural History of Pliny, Volume 1 (of 6)",57493,79,https://www.gutenberg.org/ebooks/57493.txt.utf-8,1437451
+"Plutarch's Romane Questions
+With dissertations on Italian cults, myths, taboos, man-worship, aryan marriage, sympathetic magic and the eating of beans",57513,119,https://www.gutenberg.org/ebooks/57513.txt.utf-8,341478
+The Orlando Innamorato,57869,1494,https://www.gutenberg.org/ebooks/57869.txt.utf-8,328757
+"The Tragedies of Seneca
+Translated into English Verse, to Which Have Been Appended Comparative Analyses of the Corresponding Greek and Roman Plays, and a Mythological Index",57999,65,https://www.gutenberg.org/ebooks/57999.txt.utf-8,1068087
+"The chronicles of Enguerrand de Monstrelet, Vol. 07 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",58083,1453,https://www.gutenberg.org/ebooks/58083.txt.utf-8,470379
+A Compendium on the Soul,58186,1037,https://www.gutenberg.org/ebooks/58186.txt.utf-8,129692
+"The Characters of Theophrastus
+A Translation, with Introduction",58242,-287,https://www.gutenberg.org/ebooks/58242.txt.utf-8,109635
+The Mirror of Alchimy,58393,1294,https://www.gutenberg.org/ebooks/58393.txt.utf-8,154246
+"Cicero: Letters to Atticus, Vol. 1 of 3",58418,-43,https://www.gutenberg.org/ebooks/58418.txt.utf-8,800794
+The Speeches & Table-Talk of the Prophet Mohammad,58426,632,https://www.gutenberg.org/ebooks/58426.txt.utf-8,314463
+Plutarch on the Delay of the Divine Justice,58567,119,https://www.gutenberg.org/ebooks/58567.txt.utf-8,187302
+"The Boys' and Girls' Pliny
+Being parts of Pliny's ""Natural History"" edited for boys and girls, with an Introduction",58589,79,https://www.gutenberg.org/ebooks/58589.txt.utf-8,686040
+"The Letters of S. Ambrose, Bishop of Milan",58783,397,https://www.gutenberg.org/ebooks/58783.txt.utf-8,1355466
+The Confessions of Al Ghazzali,58977,1111,https://www.gutenberg.org/ebooks/58977.txt.utf-8,103231
+Index of the Project Gutenberg Works of Lucius Annaeus Seneca,59025,65,https://www.gutenberg.org/ebooks/59025.txt.utf-8,25841
+"Aristotle's History of Animals
+In Ten Books",59058,-322,https://www.gutenberg.org/ebooks/59058.txt.utf-8,794914
+"The Natural History of Pliny, Volume 3 (of 6)",59131,79,https://www.gutenberg.org/ebooks/59131.txt.utf-8,1404227
+The Lyrical Dramas of Aeschylus Translated into English Verse,59225,-456,https://www.gutenberg.org/ebooks/59225.txt.utf-8,959090
+Ulysses of Ithaca,59750,-650,https://www.gutenberg.org/ebooks/59750.txt.utf-8,243030
+Index of the Project Gutenberg Works of Marcus Aurelius Antoninus,59784,180,https://www.gutenberg.org/ebooks/59784.txt.utf-8,61310
+Index of the Project Gutenberg Works of Cornelius Tacitus,59786,117,https://www.gutenberg.org/ebooks/59786.txt.utf-8,30095
+"Heimskringla; Or, The Chronicle of the Kings of Norway",598,1241,https://www.gutenberg.org/ebooks/598.txt.utf-8,1748902
+"The Poetical Works of John Skelton, Volume 1 (of 2)",59997,1529,https://www.gutenberg.org/ebooks/59997.txt.utf-8,881377
+"The Poetical Works of John Skelton, Volume 2 (of 2)",59998,1529,https://www.gutenberg.org/ebooks/59998.txt.utf-8,1035955
+Pharsalia; Dramatic Episodes of the Civil Wars,602,65,https://www.gutenberg.org/ebooks/602.txt.utf-8,506595
+"The Natural History of Pliny, Volume 2 (of 6)",60230,79,https://www.gutenberg.org/ebooks/60230.txt.utf-8,1551694
+Memoirs or Chronicle of the Fourth Crusade and the Conquest of Constantinople,6032,1212,https://www.gutenberg.org/ebooks/6032.txt.utf-8,319012
+"The Following of Christ, in Four Books
+Translated from the Original Latin of Thomas a Kempis",60377,1471,https://www.gutenberg.org/ebooks/60377.txt.utf-8,388429
+"The epistle of Othea to Hector; or, The boke of knyghthode",60567,1430,https://www.gutenberg.org/ebooks/60567.txt.utf-8,371556
+"The Natural History of Pliny, Volume 5 (of 6)",60688,79,https://www.gutenberg.org/ebooks/60688.txt.utf-8,1368572
+"The Book of the Lover and the Beloved
+Translated from the Catalan of Ramón Lull with an Introductory Essay by E. Allison Peers",60704,1316,https://www.gutenberg.org/ebooks/60704.txt.utf-8,153443
+"Between Heathenism and Christianity
+Being a translation of Seneca's De Providentia, and Plutarch's De sera numinis vindicta, together with notes, additional extracts from these writers and two essays on Graeco-Roman life in the first century after Christ.",60831,65,https://www.gutenberg.org/ebooks/60831.txt.utf-8,352845
+"A New Light of Alchymie
+Taken out of the Fountaine of Nature, and Manuall Experience.  Etc.",61112,1541,https://www.gutenberg.org/ebooks/61112.txt.utf-8,549344
+"The Natural History of Pliny, Volume 4 (of 6)",61113,79,https://www.gutenberg.org/ebooks/61113.txt.utf-8,1370594
+The Iliad,6130,-650,https://www.gutenberg.org/ebooks/6130.txt.utf-8,1161415
+Orlando Furioso,615,1533,https://www.gutenberg.org/ebooks/615.txt.utf-8,1860975
+The Iliad,6150,-650,https://www.gutenberg.org/ebooks/6150.txt.utf-8,889311
+The Aeneid of Virgil,61596,-19,https://www.gutenberg.org/ebooks/61596.txt.utf-8,580701
+"The Apostolic Tradition of Hippolytus
+Translated into English with Introduction and Notes",61614,235,https://www.gutenberg.org/ebooks/61614.txt.utf-8,232823
+The Mesnevi,61724,1273,https://www.gutenberg.org/ebooks/61724.txt.utf-8,824172
+Leaves from St. John Chrysostom,62447,407,https://www.gutenberg.org/ebooks/62447.txt.utf-8,543130
+The Love of Books: The Philobiblon of Richard de Bury,626,1345,https://www.gutenberg.org/ebooks/626.txt.utf-8,164811
+"Selected Essays of Plutarch, Vol. I.",62618,119,https://www.gutenberg.org/ebooks/62618.txt.utf-8,609247
+"The Natural History of Pliny, Volume 6 (of 6)",62704,79,https://www.gutenberg.org/ebooks/62704.txt.utf-8,1579298
+"Selected Essays of Plutarch, Vol. II.",62858,119,https://www.gutenberg.org/ebooks/62858.txt.utf-8,760455
+The Works of Lucian of Samosata — Volume 01,6327,180,https://www.gutenberg.org/ebooks/6327.txt.utf-8,518265
+Asser's Life of King Alfred,63384,909,https://www.gutenberg.org/ebooks/63384.txt.utf-8,186657
+The Story of the Odyssey,6370,-650,https://www.gutenberg.org/ebooks/6370.txt.utf-8,263303
+"The chronicles of Enguerrand de Monstrelet, Vol. 08 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",63913,1453,https://www.gutenberg.org/ebooks/63913.txt.utf-8,505373
+Translations from Lucretius,64024,-55,https://www.gutenberg.org/ebooks/64024.txt.utf-8,204951
+"Minor Dialogues, Together With the Dialogue on Clemency",64576,65,https://www.gutenberg.org/ebooks/64576.txt.utf-8,861548
+"The chronicles of Enguerrand de Monstrelet, Vol. 06 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",64948,1453,https://www.gutenberg.org/ebooks/64948.txt.utf-8,431255
+Songs of Kabir,6519,1518,https://www.gutenberg.org/ebooks/6519.txt.utf-8,119680
+"The chronicles of Enguerrand de Monstrelet, Vol. 10 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",65396,1453,https://www.gutenberg.org/ebooks/65396.txt.utf-8,547529
+"Philosophumena; or, The refutation of all heresies, Volume I",65478,235,https://www.gutenberg.org/ebooks/65478.txt.utf-8,518538
+The Philosophy and Theology of Averroes,65708,1198,https://www.gutenberg.org/ebooks/65708.txt.utf-8,319291
+"The chronicles of Enguerrand de Monstrelet, Vol. 12 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",65721,1453,https://www.gutenberg.org/ebooks/65721.txt.utf-8,446913
+The Works of Lucian of Samosata — Volume 02,6585,180,https://www.gutenberg.org/ebooks/6585.txt.utf-8,548817
+"The Plague of Athens, which hapned in the second year of the Peloponnesian Warre
+First described in Greek by Thucydides; then in Latin by Lucretius. Now attempted in English",65972,-395,https://www.gutenberg.org/ebooks/65972.txt.utf-8,73333
+The Lady Poverty: A XIII. Century Allegory,66025,1289,https://www.gutenberg.org/ebooks/66025.txt.utf-8,135009
+"Virgil & Lucretius
+Passages translated by William Stebbing",66399,-55,https://www.gutenberg.org/ebooks/66399.txt.utf-8,173504
+"The Boy's King Arthur
+Sir Thomas Malory's History of King Arthur and His Knights of the Round Table",66585,1471,https://www.gutenberg.org/ebooks/66585.txt.utf-8,494129
+Monumentum Ancyranum: The Deeds of Augustus,66595,14,https://www.gutenberg.org/ebooks/66595.txt.utf-8,254643
+"Philosophumena; or, The refutation of all heresies, Volume II",67116,235,https://www.gutenberg.org/ebooks/67116.txt.utf-8,527954
+Plutarch: Lives of the noble Grecians and Romans,674,119,https://www.gutenberg.org/ebooks/674.txt.utf-8,4324061
+Politics: A Treatise on Government,6762,-322,https://www.gutenberg.org/ebooks/6762.txt.utf-8,604456
+Aristotle on the art of poetry,6763,-322,https://www.gutenberg.org/ebooks/6763.txt.utf-8,128656
+The Book of the Courtier,67799,1529,https://www.gutenberg.org/ebooks/67799.txt.utf-8,1158885
+The Works of Lucian of Samosata — Volume 03,6829,180,https://www.gutenberg.org/ebooks/6829.txt.utf-8,553319
+"The Olynthiacs and the Phillippics of Demosthenes
+Literally translated with notes",6878,-322,https://www.gutenberg.org/ebooks/6878.txt.utf-8,219480
+"A boke made by John Fryth, prysoner in the Tower of London
+answerynge unto M. Mores letter, which he wrote agaynst the fyrste lytle treatyse that John Fryth made, concernynge the sacramente of the body and bloude of Christ",69199,1533,https://www.gutenberg.org/ebooks/69199.txt.utf-8,296082
+Thoughts of Marcus Aurelius,6920,180,https://www.gutenberg.org/ebooks/6920.txt.utf-8,350846
+The Orations of Lysias,6969,-380,https://www.gutenberg.org/ebooks/6969.txt.utf-8,293546
+The treatise of Lorenzo Valla on the Donation of Constantine,70092,1457,https://www.gutenberg.org/ebooks/70092.txt.utf-8,400781
+Buddhist Psalms translated from the Japanese of Shinran Shonin,7015,1263,https://www.gutenberg.org/ebooks/7015.txt.utf-8,111749
+The last age of the church,70258,1384,https://www.gutenberg.org/ebooks/70258.txt.utf-8,96789
+"The writings of Origen, Vol. 1 (of 2)",70561,253,https://www.gutenberg.org/ebooks/70561.txt.utf-8,1097096
+"The writings of Origen, Vol. 2 (of 2)",70693,253,https://www.gutenberg.org/ebooks/70693.txt.utf-8,1534433
+Specimens of Greek Tragedy — Aeschylus and Sophocles,7073,-456,https://www.gutenberg.org/ebooks/7073.txt.utf-8,272052
+"The complete works of John Gower, volume 1 : $b The French works",70998,1408,https://www.gutenberg.org/ebooks/70998.txt.utf-8,2096183
+A translation of Glanville,71142,1190,https://www.gutenberg.org/ebooks/71142.txt.utf-8,567152
+"The complete works of John Gower, volume 2 : $b The English works",71162,1408,https://www.gutenberg.org/ebooks/71162.txt.utf-8,1577780
+The History of the Peloponnesian War,7142,-395,https://www.gutenberg.org/ebooks/7142.txt.utf-8,1217362
+"The complete works of John Gower, volume 3 : $b The English works",71433,1408,https://www.gutenberg.org/ebooks/71433.txt.utf-8,1580957
+The retreat of the ten thousand,71894,-355,https://www.gutenberg.org/ebooks/71894.txt.utf-8,293407
+"The complete works of John Gower, volume 4 : $b The Latin works",72396,1408,https://www.gutenberg.org/ebooks/72396.txt.utf-8,1124325
+The Captivi and the Mostellaria,7282,-184,https://www.gutenberg.org/ebooks/7282.txt.utf-8,257725
+Some religious and moral teachings of Al-Ghazzali : $b Being brief extracts from his Ihya-u-Ulum-id-din,73140,1111,https://www.gutenberg.org/ebooks/73140.txt.utf-8,189981
+"The chronicles of Enguerrand de Monstrelet, Vol. 09 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",73160,1453,https://www.gutenberg.org/ebooks/73160.txt.utf-8,533081
+Poems and translations,73189,1374,https://www.gutenberg.org/ebooks/73189.txt.utf-8,52328
+The Æneid of Virgil translated into English prose,73488,-19,https://www.gutenberg.org/ebooks/73488.txt.utf-8,820559
+The guide for the perplexed,73584,1204,https://www.gutenberg.org/ebooks/73584.txt.utf-8,1618372
+"The chronicles of Enguerrand de Monstrelet, Vol. 05 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",73983,1453,https://www.gutenberg.org/ebooks/73983.txt.utf-8,441713
+C. Sallusti Crispi De Bello Catilinario Et Jugurthino,7402,-34,https://www.gutenberg.org/ebooks/7402.txt.utf-8,503420
+Letters of Catherine Benincasa,7403,1380,https://www.gutenberg.org/ebooks/7403.txt.utf-8,636832
+The story of the Iliad,74231,-650,https://www.gutenberg.org/ebooks/74231.txt.utf-8,254155
+"The philosophical and mathematical commentaries of Proclus on the first book of Euclid's elements (Vol. 1 of 2) : $b To which are added, A history of the restoration of Platonic theology, by the latter Platonists: And a translation from the Greek of Proclus's Theological elements",74253,485,https://www.gutenberg.org/ebooks/74253.txt.utf-8,736110
+The triumph of the cross,74508,1498,https://www.gutenberg.org/ebooks/74508.txt.utf-8,409109
+"The chronicles of Enguerrand de Monstrelet, Vol. 11 [of 13] : $b containing an account of the cruel civil wars between the houses of Orleans and Burgundy, of the possession of Paris and Normandy by the English, their expulsion thence, and of other memorable events that happened in the kingdom of France, as well as in other countries",74647,1453,https://www.gutenberg.org/ebooks/74647.txt.utf-8,521778
+Barlaam and Ioasaph,749,749,https://www.gutenberg.org/ebooks/749.txt.utf-8,487607
+Dryden's Palamon and Arcite,7490,1400,https://www.gutenberg.org/ebooks/7490.txt.utf-8,225846
+"De Amicitia, Scipio's Dream",7491,-43,https://www.gutenberg.org/ebooks/7491.txt.utf-8,178111
+History of the Franks,74955,594,https://www.gutenberg.org/ebooks/74955.txt.utf-8,717767
+The Germany and the Agricola of Tacitus,7524,117,https://www.gutenberg.org/ebooks/7524.txt.utf-8,314063
+"Travels to Tana and Persia : $b A narrative of Italian travels in Persia, in the 15th and 16th centuries",75292,1494,https://www.gutenberg.org/ebooks/75292.txt.utf-8,866274
+"Ocellus Lucanus on the nature of the universe : $b Taurus, the Platonic philosopher, on the eternity of the world. Julius Firmicus Maternus of the thema mundi. Select theorems on the perpetuity of time, by Proclus.",75391,485,https://www.gutenberg.org/ebooks/75391.txt.utf-8,177818
+The book of filial duty,75878,-479,https://www.gutenberg.org/ebooks/75878.txt.utf-8,90527
+The pillow-book of Sei Shōnagon,76016,1017,https://www.gutenberg.org/ebooks/76016.txt.utf-8,202692
+"The Mulfuzāt Timūry = $b or, Autobiographical memoirs of the Moghul emperor Timūr",76195,1405,https://www.gutenberg.org/ebooks/76195.txt.utf-8,507311
+Physical science in the time of Nero : $b being a translation of the Quaestiones naturales of Seneca,76392,65,https://www.gutenberg.org/ebooks/76392.txt.utf-8,752561
+"The dialogues of Plato in five volumes, Vol. 2 (of 5) : $b Translated into English with analyses and introductions",76464,-348,https://www.gutenberg.org/ebooks/76464.txt.utf-8,1319011
+Lysistrata,7700,-388,https://www.gutenberg.org/ebooks/7700.txt.utf-8,106828
+Hecuba and other plays,77336,-406,https://www.gutenberg.org/ebooks/77336.txt.utf-8,642172
+"Letters of John Huss, written during his exile and imprisonment : $b With Martin Luther's preface; and containing a general view of the works of Huss",77359,1415,https://www.gutenberg.org/ebooks/77359.txt.utf-8,343946
+"The six books of Proclus, the Platonic successor, on the theology of Plato (vol. 1 of 2) : $b  translated from the Greek, to which a seventh book is added, in order to supply the deficiency of another book on this subject, which was written by Proclus, but since lost, also, a translation from the Greek of Proclus' Elements of theology, to which are added a translation of the treatise of Proclus, On providence and fate, a translation of extracts from his treatise, entitled, Ten doubts concerning providence, and a translation of extracts from his treatise on the subsistence of evil; as preserved in the Bibliotheca Gr. of Fabricus",77393,485,https://www.gutenberg.org/ebooks/77393.txt.utf-8,1177087
+The Philoctetes of Sophocles,77548,-406,https://www.gutenberg.org/ebooks/77548.txt.utf-8,111056
+The writings of the Apostolic Fathers,77576,155,https://www.gutenberg.org/ebooks/77576.txt.utf-8,965774
+Confessions of St. Augustine,77585,430,https://www.gutenberg.org/ebooks/77585.txt.utf-8,119204
+Lysistrata : $b A modern paraphrase from the Greek of Aristophanes,77760,-388,https://www.gutenberg.org/ebooks/77760.txt.utf-8,147560
+Select letters of Christopher Columbus : $b With other original documents relating to his four voyages to the New World,77820,1506,https://www.gutenberg.org/files/77820/77820-0.txt,783202
+"The memoirs of Philip de Commines, Lord of Argenton, Volume 1 (of 2) : $b Containing the histories of Louis XI. and Charles VIII., Kings of France, and of Charles the Bold, Duke of Burgundy. To which is added the Scandalous chronicle, or, secret history of Louis XI., by Jean de Troyes.",77950,1511,https://www.gutenberg.org/ebooks/77950.txt.utf-8,1061305
+"The memoirs of Philip de Commines, Lord of Argenton, Volume 2 (of 2) : $b Containing the histories of Louis XI. and Charles VIII. Kings of France, and of Charles the Bold, Duke of Burgundy. To which is added the Scandalous Chronicle, or, secret history of Louis XI., by Jean de Troyes.",77951,1511,https://www.gutenberg.org/ebooks/77951.txt.utf-8,1112645
+Plutarch's Essays and Miscellanies (Vol. 5 of 5),78000,119,https://www.gutenberg.org/files/78000/78000-0.txt,1066354
+"Arrian on coursing : $b the Cynegeticus of the younger Xenophon, translated from the Greek, with classical and practical annotations, and a brief sketch of the life and writings of the author. To which is added an appendix, containing some account of the Canes Venatici of classical antiquity",78013,175,https://www.gutenberg.org/files/78013/78013-0.txt,771589
+On the Nature of Things,785,-55,https://www.gutenberg.org/ebooks/785.txt.utf-8,496604
+"The Reign of Tiberius, Out of the First Six Annals of Tacitus;
+With His Account of Germany, and Life of Agricola",7959,117,https://www.gutenberg.org/ebooks/7959.txt.utf-8,647012
+Conspiracy of Catiline and the Jurgurthine War,7990,-34,https://www.gutenberg.org/ebooks/7990.txt.utf-8,585884
+The Frogs,7998,-388,https://www.gutenberg.org/ebooks/7998.txt.utf-8,107606
+Philoktetes,806,-406,https://www.gutenberg.org/ebooks/806.txt.utf-8,94949
+Selections from Erasmus: Principally from his Epistles,8400,1536,https://www.gutenberg.org/ebooks/8400.txt.utf-8,301398
+Hippolytus; The Bacchae,8418,-406,https://www.gutenberg.org/ebooks/8418.txt.utf-8,193398
+The Ethics of Aristotle,8438,-322,https://www.gutenberg.org/ebooks/8438.txt.utf-8,671549
+"The House of Atreus; Being the Agamemnon, the Libation bearers, and the Furies",8604,-456,https://www.gutenberg.org/ebooks/8604.txt.utf-8,224143
+"The Eleven Comedies, Volume 1",8688,-388,https://www.gutenberg.org/ebooks/8688.txt.utf-8,544694
+"The Eleven Comedies, Volume 2",8689,-388,https://www.gutenberg.org/ebooks/8689.txt.utf-8,635182
+"The Golden Sayings of Epictetus, with the Hymn of Cleanthes",871,135,https://www.gutenberg.org/ebooks/871.txt.utf-8,152337
+Four Plays of Aeschylus,8714,-456,https://www.gutenberg.org/ebooks/8714.txt.utf-8,267485
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 01",8779,1321,https://www.gutenberg.org/ebooks/8779.txt.utf-8,32671
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 02",8780,1321,https://www.gutenberg.org/ebooks/8780.txt.utf-8,32494
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 03",8781,1321,https://www.gutenberg.org/ebooks/8781.txt.utf-8,31930
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 04",8782,1321,https://www.gutenberg.org/ebooks/8782.txt.utf-8,32251
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 05",8783,1321,https://www.gutenberg.org/ebooks/8783.txt.utf-8,44099
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 06",8784,1321,https://www.gutenberg.org/ebooks/8784.txt.utf-8,157978
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 07",8785,1321,https://www.gutenberg.org/ebooks/8785.txt.utf-8,126865
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 08",8786,1321,https://www.gutenberg.org/ebooks/8786.txt.utf-8,57959
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 09",8787,1321,https://www.gutenberg.org/ebooks/8787.txt.utf-8,39134
+"The Divine Comedy by Dante, Illustrated, Hell, Volume 10",8788,1321,https://www.gutenberg.org/ebooks/8788.txt.utf-8,39445
+"The vision of hell. 
+By Dante Alighieri.
+Translated by Rev. Henry Francis Cary, M.A.
+and illustrated with the seventy-five designs of Gustave Doré.",8789,1321,https://www.gutenberg.org/ebooks/8789.txt.utf-8,234549
+"The Divine Comedy by Dante, Illustrated, Purgatory, Volume 1",8790,1321,https://www.gutenberg.org/ebooks/8790.txt.utf-8,44453
+"The Divine Comedy by Dante, Illustrated, Purgatory, Volume 2",8791,1321,https://www.gutenberg.org/ebooks/8791.txt.utf-8,57138
+"The Divine Comedy by Dante, Illustrated, Purgatory, Volume 3",8792,1321,https://www.gutenberg.org/ebooks/8792.txt.utf-8,71230
+"The Divine Comedy by Dante, Illustrated, Purgatory, Volume 4",8793,1321,https://www.gutenberg.org/ebooks/8793.txt.utf-8,64828
+"The Divine Comedy by Dante, Illustrated, Purgatory, Volume 5",8794,1321,https://www.gutenberg.org/ebooks/8794.txt.utf-8,73109
+"The Divine Comedy by Dante, Illustrated, Purgatory, Complete",8795,1321,https://www.gutenberg.org/ebooks/8795.txt.utf-8,234780
+"The Divine Comedy by Dante, Illustrated, Paradise, Volume 1",8796,1321,https://www.gutenberg.org/ebooks/8796.txt.utf-8,106790
+"The Divine Comedy by Dante, Illustrated, Paradise, Volume 2",8797,1321,https://www.gutenberg.org/ebooks/8797.txt.utf-8,63422
+"The Divine Comedy by Dante, Illustrated, Paradise, Volume 3",8798,1321,https://www.gutenberg.org/ebooks/8798.txt.utf-8,94904
+"The Divine Comedy by Dante, Illustrated, Paradise, Complete",8799,1321,https://www.gutenberg.org/ebooks/8799.txt.utf-8,228062
+The divine comedy,8800,1321,https://www.gutenberg.org/ebooks/8800.txt.utf-8,656776
+"The Public Orations of Demosthenes, volume 1",9060,-322,https://www.gutenberg.org/ebooks/9060.txt.utf-8,492982
+"The Public Orations of Demosthenes, volume 2",9061,-322,https://www.gutenberg.org/ebooks/9061.txt.utf-8,395971
+Stories from Thucydides,9074,-395,https://www.gutenberg.org/ebooks/9074.txt.utf-8,402398
+Germania and Agricola,9090,117,https://www.gutenberg.org/ebooks/9090.txt.utf-8,436532
+"The Art of Poetry: an Epistle to the Pisos
+Q. Horatii Flacci Epistola Ad Pisones, De Arte Poetica.",9175,-8,https://www.gutenberg.org/ebooks/9175.txt.utf-8,236417
+The Praise of Folly,9371,1536,https://www.gutenberg.org/ebooks/9371.txt.utf-8,225938
+"The Elegies of Tibullus
+Being the Consolations of a Roman Lover Done in English Verse",9610,-19,https://www.gutenberg.org/ebooks/9610.txt.utf-8,115569
+"Cicero's Brutus or History of Famous Orators; also His Orator, or Accomplished Speaker.",9776,-43,https://www.gutenberg.org/ebooks/9776.txt.utf-8,488541

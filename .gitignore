@@ -8,6 +8,8 @@ data/cleaned/*
 data/translated/*
 data/nanogpt/*
 models/*
+data/corpus
+data/
 *.pt
 *.bin
 *.log
@@ -17,4 +19,5 @@ __pycache__/
 references.txt
 data/corpus_char_counts.tsv
 out/*
+data/rdf-files
 py311-embed/
