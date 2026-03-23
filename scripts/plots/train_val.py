@@ -3,7 +3,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-path = '/mnt/c/Users/fdebe/Documents/EPI/Models/chat-ptolemaic/runs/2026-03-12_16-18-00_gpt110m_general_pretrain_v2/metrics.csv'
+# path = '/mnt/c/Users/fdebe/Documents/EPI/Models/chat-ptolemaic/runs/2026-03-12_16-18-00_gpt110m_general_pretrain_v2/metrics.csv'
+path = "/mnt/c/Users/fdebe/Documents/EPI/Models/chat-ptolemaic/runs/2026-03-16_gpt110m_pretrain_v2_finetune/metrics.csv"
+out_path = 'train_val_loss_finetune.png'
 df = pd.read_csv(path)
 
 mask_val = ~df.val_loss.isna()
@@ -22,4 +24,4 @@ plt.plot(df.step, train_smooth, label="train")
 plt.plot(df.step[mask_val], val_smooth[mask_val], label="val")
 
 plt.legend()
-plt.savefig('train_val_loss.png')
+plt.savefig(out_path)

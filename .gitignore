@@ -1,4 +1,6 @@
 *.png
+*.tar.gz
+*.txt
 runs/
 data/
 data/raw/*
@@ -9,6 +11,7 @@ models/*
 *.pt
 *.bin
 *.log
+*.sh
 __pycache__/
 .env
 references.txt

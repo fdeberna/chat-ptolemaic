@@ -122,6 +122,117 @@ Use `--experiment_name` to label the run. If omitted, a default name is used.
     - prints token IDs,
     - decodes a sample back to text.
 
+## Heliocentric Review And Cleaning
+
+Two scripts in `scripts/` support contamination review and corpus cleanup:
+
+- `scripts/clean_heliocentric_contamination.py`
+- `scripts/build_clean_corpus_from_reviews.py`
+
+### 1) Generate Review Reports
+
+Use `clean_heliocentric_contamination.py` to classify candidate files as:
+- `REMOVE_FILE`
+- `REMOVE_SENTENCE`
+- `KEEP`
+
+It also writes summary CSV/JSON/Markdown outputs under:
+- `<output-dir>/review_package/summaries/`
+
+Main summary files:
+- `file_summary.csv`
+- `sentence_findings.csv`
+- `manual_review_queue.csv`
+- `triage_buckets.csv`
+- `quick_summary.md`
+- `decisions.json`
+- `run_summary.json`
+
+Example for `corpus_general` (exact + proximity):
+
+```bash
+python scripts/clean_heliocentric_contamination.py \
+  --corpus-dir data/corpus_general \
+  --corpus-name-in-report corpus_general \
+  --output-dir data/corpus_general_heliocentric_review \
+  --report-scope both
+```
+
+Example for `corpus_astronomy`:
+
+```bash
+python scripts/clean_heliocentric_contamination.py \
+  --corpus-dir data/corpus_astronomy \
+  --corpus-name-in-report corpus_astronomy \
+  --output-dir data/corpus_astronomy_heliocentric_review \
+  --report-scope both
+```
+
+Exact-only example:
+
+```bash
+python scripts/clean_heliocentric_contamination.py \
+  --corpus-dir data/corpus_astronomy \
+  --corpus-name-in-report corpus_astronomy \
+  --output-dir data/corpus_astronomy_heliocentric_review_exact_only \
+  --report-scope exact
+```
+
+Useful options:
+- `--report-scope {both,exact,proximity}` selects which report source(s) to parse.
+- `--exact-report` and `--proximity-report` override report file paths.
+- `--remove-file-threshold <int>` adjusts auto `REMOVE_FILE` cutoff (default: `5`).
+- `--no-science-heavy-force-remove` disables the extra science-heavy promotion rule.
+- `--dry-run` writes summaries only (no cleaned/quarantine copies).
+
+### 2) Build A Cleaned Corpus Copy From Review Summaries
+
+Use `build_clean_corpus_from_reviews.py` after manual review decisions are finalized.
+It creates a copy of the source corpus and then applies:
+- file removals for `REMOVE_FILE`
+- extra removals from `data/decision.txt` (or another decision file)
+- sentence removals for `REMOVE_SENTENCE`
+
+Default behavior for sentence removal is `all_mentioned`:
+- for `REMOVE_SENTENCE` files, remove all `sentence_text` entries in `sentence_findings.csv`
+
+Example for `corpus_general`:
+
+```bash
+python scripts/build_clean_corpus_from_reviews.py \
+  --source-dir data/corpus_general \
+  --output-dir data/corpus_general_cleaned_from_reviews
+```
+
+Example for `corpus_astronomy`:
+
+```bash
+python scripts/build_clean_corpus_from_reviews.py \
+  --source-dir data/corpus_astronomy \
+  --output-dir data/corpus_astronomy_cleaned_from_reviews
+```
+
+If the output directory exists:
+
+```bash
+python scripts/build_clean_corpus_from_reviews.py \
+  --source-dir data/corpus_astronomy \
+  --output-dir data/corpus_astronomy_cleaned_from_reviews \
+  --overwrite-output
+```
+
+Useful options:
+- `--review-dir <path>` can be passed multiple times to specify exact review folders.
+- If `--review-dir` is omitted, review folders are auto-discovered as:
+  `<source-dir-name>_heliocentric_review*` under the same parent directory.
+- `--decision-file <path>` overrides the additional removal list (default: `data/decision.txt`).
+- `--sentence-selection {all_mentioned,remove_only}` controls sentence-removal strictness.
+  - `all_mentioned` removes all sentences listed for `REMOVE_SENTENCE` files.
+  - `remove_only` removes only rows with `sentence_action=REMOVE`.
+
+The script writes an execution report to:
+- `<output-dir>/_cleanup_report.json`
+
 ## End-to-End Run Instructions
 
 ### 1) Train tokenizer
