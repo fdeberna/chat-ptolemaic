@@ -1,7 +1,7 @@
 ﻿## Copernicus Agent
 
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
-1. Train a BPE tokenizer.
+1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
 2. Pretrain GPT on general corpus.
 3. Finetune GPT on astronomy corpus (with 80/20 astronomy/general mixing).
 
@@ -29,11 +29,10 @@ Runs:
 
 ## Environment Setup
 
-Install dependencies (example):
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
-pip install torch
 ```
 
 `requirements.txt` already includes `numpy`, `tokenizers`, and related dependencies used by this pipeline.
@@ -60,6 +59,12 @@ Notable training knobs in config:
 - `lr_schedule` (supports `cosine` warmup+decay)
 - `adam_eps`
 - `checkpoint_interval`
+
+Notes:
+- `tokenizer_path` in pretrain/finetune config must point to an existing tokenizer JSON.
+- `pretrained_checkpoint` in `configs/finetune_config.json` must point to a real pretrain run checkpoint before finetuning.
+- Pretrain uses per-document splitting from `train_data_path`; `val_data_path` must match `train_data_path` (or be omitted).
+- Training checkpoints are written to `runs/<timestamp>_<experiment_name>/model_checkpoint.pt`.
 
 ## Experiment Logging
 
@@ -96,6 +101,7 @@ Use `--experiment_name` to label the run. If omitted, a default name is used.
 
 - `pipeline/train_pretrain.py`
   - Loads settings from `configs/pretrain_config.json` and `configs/model_config.json`.
+  - Requires an existing tokenizer file at `tokenizer_path`.
   - Supports CLI overrides with `--set` and run naming with `--experiment_name`.
   - Supports resuming from `--resume_checkpoint`.
   - Uses per-document `90/10` train/validation split via `create_dataset_bundle`.
@@ -104,6 +110,7 @@ Use `--experiment_name` to label the run. If omitted, a default name is used.
 
 - `pipeline/train_finetune.py`
   - Loads settings from `configs/finetune_config.json` and `configs/model_config.json`.
+  - Requires an existing tokenizer file and a valid pretrained checkpoint.
   - Loads pretrained weights from configured checkpoint.
   - Supports CLI overrides with `--set`, run naming with `--experiment_name`, and `--resume_checkpoint`.
   - Finetunes with configurable astronomy/general mixing ratio.
@@ -235,10 +242,18 @@ The script writes an execution report to:
 
 ## End-to-End Run Instructions
 
-### 1) Train tokenizer
+### 1) Train tokenizer (required once, then reuse)
+
+Run this if `data/nanogpt/tokenizer/tokenizer.json` does not exist, or if you changed corpus content and want a new vocabulary.
 
 ```bash
 python pipeline/train_tokenizer.py
+```
+
+Custom example (explicit corpora, vocab size, and output path):
+
+```bash
+python pipeline/train_tokenizer.py --corpus-dirs data/corpus_general data/corpus_astronomy --vocab-size 32000 --out data/nanogpt/tokenizer/tokenizer.json
 ```
 
 Output:
@@ -260,6 +275,9 @@ Optional modes:
 python pipeline/train_pretrain.py --config configs/pretrain_config.json --experiment_name pretrain_v1
 ```
 
+Pretrain writes checkpoint here:
+- `runs/<timestamp>_pretrain_v1/model_checkpoint.pt`
+
 Override example:
 
 ```bash
@@ -268,8 +286,10 @@ python pipeline/train_pretrain.py --config configs/pretrain_config.json --set le
 
 ### 4) Finetune on astronomy corpus
 
+Before running finetune, set `pretrained_checkpoint` in `configs/finetune_config.json` to the actual pretrain checkpoint from step 3, or override it on the command line.
+
 ```bash
-python pipeline/train_finetune.py --config configs/finetune_config.json --experiment_name astro110m_ft_v1
+python pipeline/train_finetune.py --config configs/finetune_config.json --experiment_name astro110m_ft_v1 --set pretrained_checkpoint=runs/<timestamp>_pretrain_v1/model_checkpoint.pt
 ```
 
 Override example:
@@ -287,7 +307,7 @@ python pipeline/train_finetune.py --config configs/finetune_config.json --experi
 ### 5) Generate text
 
 ```bash
-python pipeline/generate.py --checkpoint checkpoints/astro_model.pt --prompt "Explain why the planets move backwards in the sky"
+python pipeline/generate.py --checkpoint runs/<timestamp>_astro110m_ft_v1/model_checkpoint.pt --prompt "Explain why the planets move backwards in the sky"
 ```
 
 Useful generation args:
