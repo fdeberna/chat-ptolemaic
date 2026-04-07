@@ -118,6 +118,7 @@ def _write_streams(
     doc_token: str,
     train_path: Path,
     val_path: Path,
+    min_tokens_required: int,
 ) -> Tuple[int, int]:
     train_total = 0
     val_total = 0
@@ -128,13 +129,15 @@ def _write_streams(
         train_total += len(train_ids)
         val_total += len(val_ids)
 
-    if train_total < 1024:
+    if train_total < min_tokens_required:
         raise RuntimeError(
-            f"Train token stream too small ({train_total} tokens). Need at least 1024 tokens."
+            f"Train token stream too small ({train_total} tokens). "
+            f"Need at least {min_tokens_required} tokens."
         )
-    if val_total < 1024:
+    if val_total < min_tokens_required:
         raise RuntimeError(
-            f"Validation token stream too small ({val_total} tokens). Need at least 1024 tokens."
+            f"Validation token stream too small ({val_total} tokens). "
+            f"Need at least {min_tokens_required} tokens."
         )
 
     train_mm = np.memmap(train_path, dtype=np.int32, mode="w+", shape=(train_total,))
@@ -286,6 +289,7 @@ def prepare_token_streams(
     max_documents: Optional[int] = None,
     force_rebuild: bool = False,
     doc_token: str = SPECIAL_TOKENS["doc"],
+    min_tokens_required: int = 1024,
 ) -> StreamArtifacts:
     cache_dir.mkdir(parents=True, exist_ok=True)
     train_path = cache_dir / f"{cache_name}_train.bin"
@@ -325,6 +329,7 @@ def prepare_token_streams(
         doc_token=doc_token,
         train_path=train_path,
         val_path=val_path,
+        min_tokens_required=min_tokens_required,
     )
 
     manifest = {
@@ -449,6 +454,7 @@ def create_dataset_bundle(
     bos_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["bos"])
     eos_token_id = _require_special_id(tokenizer, SPECIAL_TOKENS["eos"])
 
+    min_tokens_required = 2 if include_remainder else context_length
     artifacts = prepare_token_streams(
         tokenizer=tokenizer,
         tokenizer_path=tokenizer_path,
@@ -460,6 +466,7 @@ def create_dataset_bundle(
         max_documents=max_documents,
         force_rebuild=force_rebuild,
         doc_token=SPECIAL_TOKENS["doc"],
+        min_tokens_required=min_tokens_required,
     )
 
     train_dataset = TokenBlockDataset(
@@ -517,9 +524,11 @@ def create_single_dataset_bundle(
         force_rebuild=force_rebuild,
         doc_token=SPECIAL_TOKENS["doc"],
     )
-    if artifacts.token_count < context_length:
+    min_tokens_required = 2 if include_remainder else context_length
+    if artifacts.token_count < min_tokens_required:
         raise RuntimeError(
-            f"Token stream too small ({artifacts.token_count} tokens) for context length {context_length}."
+            f"Token stream too small ({artifacts.token_count} tokens). "
+            f"Need at least {min_tokens_required} tokens."
         )
 
     dataset = TokenBlockDataset(

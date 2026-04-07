@@ -47,6 +47,8 @@ class RunLogger:
         self.jsonl_path = run_dir / "training_log.jsonl"
         self.samples_path = run_dir / "generation_samples.txt"
         self.checkpoint_path = run_dir / "model_checkpoint.pt"
+        self._checkpoint_stem = self.checkpoint_path.stem
+        self._checkpoint_suffix = self.checkpoint_path.suffix
         self._fieldnames = [
             "step",
             "epoch",
@@ -81,3 +83,6 @@ class RunLogger:
             handle.write("\n")
             handle.write("=" * 80)
             handle.write("\n")
+
+    def checkpoint_path_for_step(self, step: int) -> Path:
+        return self.run_dir / f"{self._checkpoint_stem}_{step}{self._checkpoint_suffix}"

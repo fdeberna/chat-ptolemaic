@@ -1,7 +1,7 @@
 {
   "model_config_path": "configs/model_config.json",
-  "train_data_path": "data/corpus_general",
-  "val_data_path": "data/corpus_general",
+  "train_data_path": "data/corpus_general_training",
+  "val_data_path": "data/corpus_general_training",
   "tokenizer_path": "data/nanogpt/tokenizer/tokenizer.json",
   "cache_dir": "data/nanogpt/streams",
   "cache_name": "general_pretrain",
