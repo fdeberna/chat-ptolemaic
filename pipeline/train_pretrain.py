@@ -474,8 +474,25 @@ def main() -> int:
                 generated = f"[sample generation failed] {exc}"
             logger.append_sample(step=step, prompt=sample_prompt, generated_text=generated)
 
+            checkpoint_payload = {
+                "step": step,
+                "epoch": epoch,
+                "model_state": raw_model.state_dict(),
+                "optimizer_state": optimizer.state_dict(),
+                "scaler_state": scaler.state_dict() if use_grad_scaler else None,
+                "tokens_processed": tokens_processed,
+                "best_val_loss": best_val_loss,
+                "val_loss": latest_val_loss,
+                "config": run_config,
+            }
+            versioned_checkpoint_path = logger.checkpoint_path_for_step(step)
+            torch.save(checkpoint_payload, versioned_checkpoint_path)
+            torch.save(checkpoint_payload, logger.checkpoint_path)
+            print(f"Saved checkpoint: {versioned_checkpoint_path}")
+            print(f"Updated latest checkpoint: {logger.checkpoint_path}")
+
         should_checkpoint = ((step + 1) % checkpoint_interval == 0) or (step == max_iters - 1)
-        if should_checkpoint:
+        if should_checkpoint and not should_eval:
             torch.save(
                 {
                     "step": step,

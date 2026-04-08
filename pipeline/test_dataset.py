@@ -23,13 +23,13 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.mode == "all":
-        corpus_dirs = [Path("data/corpus_general"), Path("data/corpus_astronomy")]
+        corpus_dirs = [Path("data/corpus_general_training"), Path("data/corpus_astronomy_training")]
         cache_name = "inspect_all"
     elif args.mode == "general":
-        corpus_dirs = [Path("data/corpus_general")]
+        corpus_dirs = [Path("data/corpus_general_training")]
         cache_name = "inspect_general"
     else:
-        corpus_dirs = [Path("data/corpus_astronomy")]
+        corpus_dirs = [Path("data/corpus_astronomy_training")]
         cache_name = "inspect_astronomy"
 
     bundle = create_dataset_bundle(

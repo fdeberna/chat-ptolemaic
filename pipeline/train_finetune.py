@@ -12,7 +12,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from config_utils import apply_overrides, load_json_config, resolve_path
-from dataset import create_single_dataset_bundle
+from dataset import create_dataset_bundle
 from model import GPT, GPTConfig
 from run_utils import RunLogger, make_run_dir
 
@@ -50,6 +50,40 @@ def nested_get(mapping: dict[str, Any], *keys: str) -> Any:
             return None
         value = value.get(key)
     return value
+
+
+def resolve_split_cache_name(
+    config: dict[str, Any],
+    *,
+    shared_key: str,
+    legacy_train_key: str,
+    legacy_val_key: str,
+    default: str,
+) -> str:
+    explicit = config.get(shared_key)
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+
+    for legacy_key in (legacy_train_key, legacy_val_key):
+        candidate = config.get(legacy_key)
+        if not isinstance(candidate, str):
+            continue
+        candidate = candidate.strip()
+        if not candidate:
+            continue
+        if candidate.endswith("_train") or candidate.endswith("_val"):
+            return candidate.rsplit("_", 1)[0]
+        return candidate
+
+    return default
+
+
+def clamp_batch_size(desired: int, available_blocks: int, *, name: str) -> int:
+    if available_blocks < 1:
+        raise RuntimeError(
+            f"{name} dataset produced zero blocks. Lower block_size, enable include_remainder, or add more data."
+        )
+    return max(1, min(desired, available_blocks))
 
 
 def parse_args() -> argparse.Namespace:
@@ -213,6 +247,7 @@ def main() -> int:
     config_path = resolve_path(args.config, base_dir=Path.cwd())
     finetune_config = load_json_config(config_path)
     apply_overrides(finetune_config, args.set)
+    explicit_model_config = args.model_config is not None or "model_config_path" in finetune_config
     if args.model_config is not None:
         finetune_config["model_config_path"] = str(args.model_config)
 
@@ -254,7 +289,12 @@ def main() -> int:
     if not isinstance(checkpoint_model_config, dict):
         checkpoint_model_config = nested_get(checkpoint, "config", "model_config")
     if isinstance(checkpoint_model_config, dict):
-        model_config_data.update(checkpoint_model_config)
+        if explicit_model_config:
+            merged_model_config = dict(checkpoint_model_config)
+            merged_model_config.update(model_config_data)
+            model_config_data = merged_model_config
+        else:
+            model_config_data.update(checkpoint_model_config)
     if model_overrides:
         model_config_data.update(model_overrides)
 
@@ -292,43 +332,52 @@ def main() -> int:
 
     astro_train_dirs = [resolve_path(finetune_config["astronomy_data_path"], base_dir=Path.cwd())]
     general_train_dirs = [resolve_path(finetune_config["general_data_path"], base_dir=Path.cwd())]
-    astro_val_dirs = [resolve_path(finetune_config.get("val_astronomy_data_path", finetune_config["astronomy_data_path"]), base_dir=Path.cwd())]
-    general_val_dirs = [resolve_path(finetune_config.get("val_general_data_path", finetune_config["general_data_path"]), base_dir=Path.cwd())]
+    configured_astro_val = finetune_config.get("val_astronomy_data_path")
+    if configured_astro_val is not None:
+        astro_val_dirs = [resolve_path(configured_astro_val, base_dir=Path.cwd())]
+        if [str(path) for path in astro_val_dirs] != [str(path) for path in astro_train_dirs]:
+            raise ValueError(
+                "Finetune now uses per-document train/validation splitting from astronomy_data_path. "
+                "Set val_astronomy_data_path equal to astronomy_data_path or remove val_astronomy_data_path."
+            )
+    configured_general_val = finetune_config.get("val_general_data_path")
+    if configured_general_val is not None:
+        general_val_dirs = [resolve_path(configured_general_val, base_dir=Path.cwd())]
+        if [str(path) for path in general_val_dirs] != [str(path) for path in general_train_dirs]:
+            raise ValueError(
+                "Finetune now uses per-document train/validation splitting from general_data_path. "
+                "Set val_general_data_path equal to general_data_path or remove val_general_data_path."
+            )
 
-    astro_train_bundle = create_single_dataset_bundle(
+    astro_cache_name = resolve_split_cache_name(
+        finetune_config,
+        shared_key="astro_cache_name",
+        legacy_train_key="astro_train_cache_name",
+        legacy_val_key="astro_val_cache_name",
+        default="astro_finetune",
+    )
+    general_cache_name = resolve_split_cache_name(
+        finetune_config,
+        shared_key="general_cache_name",
+        legacy_train_key="general_train_cache_name",
+        legacy_val_key="general_val_cache_name",
+        default="general_finetune",
+    )
+
+    astro_bundle = create_dataset_bundle(
         tokenizer_path=tokenizer_path,
         corpus_dirs=astro_train_dirs,
-        cache_name=str(finetune_config.get("astro_train_cache_name", "astro_finetune_train")),
+        cache_name=astro_cache_name,
         context_length=context_length,
         cache_dir=cache_dir,
         seed=seed,
         include_remainder=include_remainder,
         force_rebuild=force_rebuild,
     )
-    general_train_bundle = create_single_dataset_bundle(
+    general_bundle = create_dataset_bundle(
         tokenizer_path=tokenizer_path,
         corpus_dirs=general_train_dirs,
-        cache_name=str(finetune_config.get("general_train_cache_name", "general_finetune_train")),
-        context_length=context_length,
-        cache_dir=cache_dir,
-        seed=seed,
-        include_remainder=include_remainder,
-        force_rebuild=force_rebuild,
-    )
-    astro_val_bundle = create_single_dataset_bundle(
-        tokenizer_path=tokenizer_path,
-        corpus_dirs=astro_val_dirs,
-        cache_name=str(finetune_config.get("astro_val_cache_name", "astro_finetune_val")),
-        context_length=context_length,
-        cache_dir=cache_dir,
-        seed=seed,
-        include_remainder=include_remainder,
-        force_rebuild=force_rebuild,
-    )
-    general_val_bundle = create_single_dataset_bundle(
-        tokenizer_path=tokenizer_path,
-        corpus_dirs=general_val_dirs,
-        cache_name=str(finetune_config.get("general_val_cache_name", "general_finetune_val")),
+        cache_name=general_cache_name,
         context_length=context_length,
         cache_dir=cache_dir,
         seed=seed,
@@ -336,12 +385,10 @@ def main() -> int:
         force_rebuild=force_rebuild,
     )
 
-    vocab_size = int(model_config_data.get("vocab_size", astro_train_bundle.vocab_size))
+    vocab_size = int(model_config_data.get("vocab_size", astro_bundle.vocab_size))
     max_dataset_vocab = max(
-        astro_train_bundle.vocab_size,
-        general_train_bundle.vocab_size,
-        astro_val_bundle.vocab_size,
-        general_val_bundle.vocab_size,
+        astro_bundle.vocab_size,
+        general_bundle.vocab_size,
     )
     if vocab_size < max_dataset_vocab:
         raise ValueError(f"Configured vocab_size ({vocab_size}) is smaller than tokenizer vocab ({max_dataset_vocab}).")
@@ -356,7 +403,7 @@ def main() -> int:
         bias=bool(model_config_data["bias"]),
         weight_tying=bool(model_config_data.get("weight_tying", True)),
         layer_norm_eps=float(model_config_data.get("layer_norm_eps", 1e-5)),
-        pad_token_id=astro_train_bundle.pad_token_id,
+        pad_token_id=astro_bundle.pad_token_id,
     )
 
     batch_size = int(finetune_config["batch_size"])
@@ -372,14 +419,24 @@ def main() -> int:
     astro_eval_bs = int(round(eval_batch_size * astronomy_ratio))
     astro_eval_bs = max(1, min(eval_batch_size - 1, astro_eval_bs))
     general_eval_bs = eval_batch_size - astro_eval_bs
+
+    num_workers = int(finetune_config.get("num_workers", 0))
+    astro_train_blocks = len(astro_bundle.train_dataset)
+    general_train_blocks = len(general_bundle.train_dataset)
+    astro_val_blocks = len(astro_bundle.val_dataset)
+    general_val_blocks = len(general_bundle.val_dataset)
+
+    astro_bs = clamp_batch_size(astro_bs, astro_train_blocks, name="astronomy train")
+    general_bs = clamp_batch_size(general_bs, general_train_blocks, name="general train")
+    astro_eval_bs = clamp_batch_size(astro_eval_bs, astro_val_blocks, name="astronomy val")
+    general_eval_bs = clamp_batch_size(general_eval_bs, general_val_blocks, name="general val")
     print(
         f"Finetune batch mix: train(astronomy={astro_bs}, general={general_bs}) "
         f"| eval(astronomy={astro_eval_bs}, general={general_eval_bs})"
     )
 
-    num_workers = int(finetune_config.get("num_workers", 0))
     astro_train_loader = DataLoader(
-        astro_train_bundle.dataset,
+        astro_bundle.train_dataset,
         batch_size=astro_bs,
         shuffle=True,
         drop_last=True,
@@ -387,7 +444,7 @@ def main() -> int:
         pin_memory=(device.type == "cuda"),
     )
     general_train_loader = DataLoader(
-        general_train_bundle.dataset,
+        general_bundle.train_dataset,
         batch_size=general_bs,
         shuffle=True,
         drop_last=True,
@@ -395,7 +452,7 @@ def main() -> int:
         pin_memory=(device.type == "cuda"),
     )
     astro_val_loader = DataLoader(
-        astro_val_bundle.dataset,
+        astro_bundle.val_dataset,
         batch_size=astro_eval_bs,
         shuffle=False,
         drop_last=True,
@@ -403,7 +460,7 @@ def main() -> int:
         pin_memory=(device.type == "cuda"),
     )
     general_val_loader = DataLoader(
-        general_val_bundle.dataset,
+        general_bundle.val_dataset,
         batch_size=general_eval_bs,
         shuffle=False,
         drop_last=True,
@@ -500,10 +557,15 @@ def main() -> int:
         "dataset": {
             "astronomy_data_path": [str(path) for path in astro_train_dirs],
             "general_data_path": [str(path) for path in general_train_dirs],
-            "val_astronomy_data_path": [str(path) for path in astro_val_dirs],
-            "val_general_data_path": [str(path) for path in general_val_dirs],
+            "split_strategy": "per_document",
+            "train_fraction": 0.9,
+            "val_fraction": 0.1,
             "tokenizer_path": str(tokenizer_path),
             "cache_dir": str(cache_dir),
+            "cache_names": {
+                "astronomy": astro_cache_name,
+                "general": general_cache_name,
+            },
             "astronomy_ratio": astronomy_ratio,
             "mixed_batch_sizes": {
                 "train": {"astronomy": astro_bs, "general": general_bs, "total": batch_size},
@@ -604,20 +666,37 @@ def main() -> int:
             try:
                 generated = generate_sample(
                     model=raw_model,
-                    tokenizer=astro_train_bundle.tokenizer,
+                    tokenizer=astro_bundle.tokenizer,
                     prompt=sample_prompt,
                     device=device,
                     max_new_tokens=sample_max_new_tokens,
                     temperature=sample_temperature,
                     top_k=sample_top_k,
-                    eos_token_id=astro_train_bundle.eos_token_id,
+                    eos_token_id=astro_bundle.eos_token_id,
                 )
             except Exception as exc:  # noqa: BLE001
                 generated = f"[sample generation failed] {exc}"
             logger.append_sample(step=step, prompt=sample_prompt, generated_text=generated)
 
+            checkpoint_payload = {
+                "step": step,
+                "epoch": epoch,
+                "model_state": raw_model.state_dict(),
+                "optimizer_state": optimizer.state_dict(),
+                "scaler_state": scaler.state_dict() if use_grad_scaler else None,
+                "tokens_processed": tokens_processed,
+                "best_val_loss": best_val_loss,
+                "val_loss": latest_val_loss,
+                "config": run_config,
+            }
+            versioned_checkpoint_path = logger.checkpoint_path_for_step(step)
+            torch.save(checkpoint_payload, versioned_checkpoint_path)
+            torch.save(checkpoint_payload, logger.checkpoint_path)
+            print(f"Saved checkpoint: {versioned_checkpoint_path}")
+            print(f"Updated latest checkpoint: {logger.checkpoint_path}")
+
         should_checkpoint = ((step + 1) % checkpoint_interval == 0) or (step == max_iters - 1)
-        if should_checkpoint:
+        if should_checkpoint and not should_eval:
             torch.save(
                 {
                     "step": step,

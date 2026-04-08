@@ -64,7 +64,7 @@ Notes:
 - `tokenizer_path` in pretrain/finetune config must point to an existing tokenizer JSON.
 - `pretrained_checkpoint` in `configs/finetune_config.json` must point to a real pretrain run checkpoint before finetuning.
 - Pretrain uses per-document splitting from `train_data_path`; `val_data_path` must match `train_data_path` (or be omitted).
-- Training checkpoints are written to `runs/<timestamp>_<experiment_name>/model_checkpoint.pt`.
+- Training checkpoints are written to `runs/<timestamp>_<experiment_name>/model_checkpoint.pt`, with per-evaluation snapshots saved as `model_checkpoint_<step>.pt`.
 
 ## Experiment Logging
 
@@ -74,6 +74,7 @@ Each training run creates:
 - `runs/<timestamp>_<experiment_name>/metrics.csv`
 - `runs/<timestamp>_<experiment_name>/training_log.jsonl`
 - `runs/<timestamp>_<experiment_name>/model_checkpoint.pt`
+- `runs/<timestamp>_<experiment_name>/model_checkpoint_<step>.pt`
 - `runs/<timestamp>_<experiment_name>/generation_samples.txt`
 
 Use `--experiment_name` to label the run. If omitted, a default name is used.

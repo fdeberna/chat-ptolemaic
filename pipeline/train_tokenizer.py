@@ -43,7 +43,7 @@ def main() -> int:
     parser.add_argument(
         "--corpus-dirs",
         nargs="+",
-        default=["data/corpus_general", "data/corpus_astronomy"],
+        default=["data/corpus_general_training", "data/corpus_astronomy_training"],
         help="One or more directories containing .txt documents.",
     )
     parser.add_argument("--vocab-size", type=int, default=32000, help="BPE vocabulary size.")

@@ -21,3 +21,4 @@ data/corpus_char_counts.tsv
 out/*
 data/rdf-files
 py311-embed/
+finetune.log
