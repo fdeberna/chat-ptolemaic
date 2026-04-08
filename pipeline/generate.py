@@ -71,6 +71,9 @@ def main() -> int:
     parser.add_argument("--max-new-tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--top-k", type=int, default=50)
+    parser.add_argument("--top-p", type=float, default=1.0)
+    parser.add_argument("--repetition-penalty", type=float, default=1.0)
+    parser.add_argument("--no-repeat-ngram-size", type=int, default=0)
     parser.add_argument("--device", type=str, default=None, choices=["cpu", "cuda"])
     args = parser.parse_args()
 
@@ -112,6 +115,9 @@ def main() -> int:
             max_new_tokens=args.max_new_tokens,
             temperature=args.temperature,
             top_k=args.top_k,
+            top_p=args.top_p,
+            repetition_penalty=args.repetition_penalty,
+            no_repeat_ngram_size=args.no_repeat_ngram_size,
             eos_token_id=eos_token_id,
         )
 

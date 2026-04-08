@@ -15,18 +15,104 @@ def load_meta(meta_path: Path):
     return json.loads(meta_path.read_text(encoding="utf-8"))
 
 
-def sample(model, idx, max_new_tokens, temperature, top_k=None):
+def apply_repetition_penalty(logits, generated_tokens, repetition_penalty):
+    if repetition_penalty <= 1.0:
+        return logits
+
+    for batch_idx in range(logits.size(0)):
+        unique_tokens = torch.unique(generated_tokens[batch_idx])
+        token_logits = logits[batch_idx, unique_tokens]
+        token_logits = torch.where(
+            token_logits > 0,
+            token_logits / repetition_penalty,
+            token_logits * repetition_penalty,
+        )
+        logits[batch_idx, unique_tokens] = token_logits
+    return logits
+
+
+def get_banned_tokens_ngram(tokens, ngram_size):
+    if ngram_size <= 0:
+        return set()
+    if len(tokens) + 1 < ngram_size:
+        return set()
+    if ngram_size == 1:
+        return set(tokens)
+
+    ngram_prefixes = {}
+    for i in range(len(tokens) - ngram_size + 1):
+        ngram = tuple(tokens[i : i + ngram_size])
+        prefix = ngram[:-1]
+        ngram_prefixes.setdefault(prefix, set()).add(ngram[-1])
+
+    current_prefix = tuple(tokens[-(ngram_size - 1) :])
+    return ngram_prefixes.get(current_prefix, set())
+
+
+def top_p_filtering(logits, top_p):
+    if top_p >= 1.0:
+        return logits
+
+    sorted_logits, sorted_indices = torch.sort(logits, descending=True, dim=-1)
+    sorted_probs = torch.softmax(sorted_logits, dim=-1)
+    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+    sorted_indices_to_remove = cumulative_probs > top_p
+    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+    sorted_indices_to_remove[..., 0] = False
+
+    indices_to_remove = torch.zeros_like(logits, dtype=torch.bool)
+    indices_to_remove.scatter_(1, sorted_indices, sorted_indices_to_remove)
+    logits[indices_to_remove] = -float("inf")
+    return logits
+
+
+def has_repeated_ngram(tokens, ngram_size):
+    if len(tokens) < ngram_size:
+        return False
+    last_ngram = tuple(tokens[-ngram_size:])
+    for i in range(len(tokens) - ngram_size):
+        if tuple(tokens[i : i + ngram_size]) == last_ngram:
+            return True
+    return False
+
+
+def sample(
+    model,
+    idx,
+    max_new_tokens,
+    temperature,
+    top_k=None,
+    repetition_penalty=1.0,
+    no_repeat_ngram_size=0,
+    top_p=1.0,
+):
     model.eval()
     for _ in range(max_new_tokens):
         idx_cond = idx[:, -model.config.block_size :]
         logits, _ = model(idx_cond)
         logits = logits[:, -1, :] / temperature
+
+        logits = apply_repetition_penalty(logits, idx, repetition_penalty)
+
+        if no_repeat_ngram_size > 0:
+            for batch_idx in range(idx.size(0)):
+                banned_tokens = get_banned_tokens_ngram(idx[batch_idx].tolist(), no_repeat_ngram_size)
+                if banned_tokens:
+                    logits[batch_idx, list(banned_tokens)] = -float("inf")
+
         if top_k is not None:
             v, _ = torch.topk(logits, top_k)
             logits[logits < v[:, [-1]]] = -float("inf")
+
+        logits = top_p_filtering(logits, top_p)
+
         probs = torch.softmax(logits, dim=-1)
         next_token = torch.multinomial(probs, num_samples=1)
         idx = torch.cat((idx, next_token), dim=1)
+
+        if has_repeated_ngram(idx[0].tolist(), 3):
+            break
     return idx
 
 
@@ -38,6 +124,9 @@ def main():
     parser.add_argument("--max-new-tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--top-k", type=int, default=None)
+    parser.add_argument("--top-p", type=float, default=1.0)
+    parser.add_argument("--repetition-penalty", type=float, default=1.0)
+    parser.add_argument("--no-repeat-ngram-size", type=int, default=0)
     parser.add_argument("--device", type=str, default=None, help="cpu or cuda")
     args = parser.parse_args()
 
@@ -84,14 +173,32 @@ def main():
             missing = {ch for ch in prompt if ch not in stoi}
             raise ValueError(f"Prompt contains characters not in vocabulary: {missing}")
         idx = torch.tensor([stoi[ch] for ch in prompt], dtype=torch.long).unsqueeze(0).to(device)
-        out_idx = sample(model, idx, args.max_new_tokens, args.temperature, args.top_k)
+        out_idx = sample(
+            model,
+            idx,
+            args.max_new_tokens,
+            args.temperature,
+            top_k=args.top_k,
+            repetition_penalty=args.repetition_penalty,
+            no_repeat_ngram_size=args.no_repeat_ngram_size,
+            top_p=args.top_p,
+        )
         out_text = "".join([itos[int(i)] for i in out_idx[0].tolist()])
     else:
         tok_path = args.meta.parent / meta["tokenizer_file"]
         tokenizer = Tokenizer.from_file(str(tok_path))
         idx_ids = tokenizer.encode(prompt).ids
         idx = torch.tensor(idx_ids, dtype=torch.long).unsqueeze(0).to(device)
-        out_idx = sample(model, idx, args.max_new_tokens, args.temperature, args.top_k)
+        out_idx = sample(
+            model,
+            idx,
+            args.max_new_tokens,
+            args.temperature,
+            top_k=args.top_k,
+            repetition_penalty=args.repetition_penalty,
+            no_repeat_ngram_size=args.no_repeat_ngram_size,
+            top_p=args.top_p,
+        )
         out_text = tokenizer.decode(out_idx[0].tolist())
 
     print(out_text)
