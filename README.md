@@ -122,7 +122,40 @@ Use `--experiment_name` to label the run. If omitted, a default name is used.
   - Generates text from a checkpoint with:
     - `<bos>` prompt prefix,
     - temperature sampling,
-    - top-k sampling.
+    - repetition penalty,
+    - no-repeat n-gram blocking,
+    - top-k sampling,
+    - optional top-p (nucleus) sampling,
+    - multinomial token sampling.
+  - Decoding order per step:
+    - temperature,
+    - repetition penalty,
+    - no-repeat n-gram blocking,
+    - top-k,
+    - top-p,
+    - softmax,
+    - multinomial sampling.
+  - Stops early if a 3-gram repeats.
+  - Defaults preserve prior behavior unless the new flags are set.
+
+- `archive/legacy/nanogpt/generate.py`
+  - Generates text from a legacy nanoGPT checkpoint with:
+    - temperature sampling,
+    - repetition penalty,
+    - no-repeat n-gram blocking,
+    - top-k sampling,
+    - optional top-p (nucleus) sampling,
+    - multinomial token sampling.
+  - Decoding order per step:
+    - temperature,
+    - repetition penalty,
+    - no-repeat n-gram blocking,
+    - top-k,
+    - top-p,
+    - softmax,
+    - multinomial sampling.
+  - Stops early if a 3-gram repeats.
+  - Defaults preserve prior behavior unless the new flags are set.
 
 - `pipeline/test_dataset.py`
   - Sanity-check helper:
@@ -315,6 +348,33 @@ Useful generation args:
 - `--max-new-tokens 200`
 - `--temperature 0.8`
 - `--top-k 50`
+- `--top-p 0.9`
+- `--repetition-penalty 1.1`
+- `--no-repeat-ngram-size 3`
+
+Notes:
+- `--top-p 1.0`, `--repetition-penalty 1.0`, and `--no-repeat-ngram-size 0` disable the new decoding controls and match the previous default behavior.
+- Generation also stops early if the same 3-gram appears twice.
+
+### 6) Legacy nanoGPT generation
+
+Use this only with checkpoints and metadata produced by the archived legacy nanoGPT flow under `archive/legacy/nanogpt/`.
+
+```bash
+python archive/legacy/nanogpt/generate.py --ckpt runs/<timestamp>_legacy_run/ckpt.pt --meta data/nanogpt/meta.json --prompt "Explain why the planets move backwards in the sky"
+```
+
+Useful generation args:
+- `--max-new-tokens 200`
+- `--temperature 0.8`
+- `--top-k 50`
+- `--top-p 0.9`
+- `--repetition-penalty 1.1`
+- `--no-repeat-ngram-size 3`
+
+Notes:
+- `--top-p 1.0`, `--repetition-penalty 1.0`, and `--no-repeat-ngram-size 0` disable the new decoding controls and match the previous default behavior.
+- Generation also stops early if the same 3-gram appears twice.
 
 ## Logging and Metrics
 

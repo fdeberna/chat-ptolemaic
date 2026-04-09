@@ -9,6 +9,73 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def apply_repetition_penalty(
+    logits: torch.Tensor,
+    generated_tokens: torch.Tensor,
+    repetition_penalty: float,
+) -> torch.Tensor:
+    if repetition_penalty <= 1.0:
+        return logits
+
+    for batch_idx in range(logits.size(0)):
+        unique_tokens = torch.unique(generated_tokens[batch_idx])
+        token_logits = logits[batch_idx, unique_tokens]
+        token_logits = torch.where(
+            token_logits > 0,
+            token_logits / repetition_penalty,
+            token_logits * repetition_penalty,
+        )
+        logits[batch_idx, unique_tokens] = token_logits
+    return logits
+
+
+def get_banned_tokens_ngram(tokens: list[int], ngram_size: int) -> set[int]:
+    if ngram_size <= 0:
+        return set()
+    if len(tokens) + 1 < ngram_size:
+        return set()
+    if ngram_size == 1:
+        return set(tokens)
+
+    ngram_prefixes: dict[tuple[int, ...], set[int]] = {}
+    for i in range(len(tokens) - ngram_size + 1):
+        ngram = tuple(tokens[i : i + ngram_size])
+        prefix = ngram[:-1]
+        ngram_prefixes.setdefault(prefix, set()).add(ngram[-1])
+
+    current_prefix = tuple(tokens[-(ngram_size - 1) :])
+    return ngram_prefixes.get(current_prefix, set())
+
+
+def top_p_filtering(logits: torch.Tensor, top_p: float) -> torch.Tensor:
+    if top_p >= 1.0:
+        return logits
+
+    sorted_logits, sorted_indices = torch.sort(logits, descending=True, dim=-1)
+    sorted_probs = F.softmax(sorted_logits, dim=-1)
+    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+    sorted_indices_to_remove = cumulative_probs > top_p
+    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+    sorted_indices_to_remove[..., 0] = False
+
+    indices_to_remove = torch.zeros_like(logits, dtype=torch.bool)
+    indices_to_remove.scatter_(1, sorted_indices, sorted_indices_to_remove)
+    logits[indices_to_remove] = -float("inf")
+    return logits
+
+
+def has_repeated_ngram(tokens: list[int], ngram_size: int) -> bool:
+    if len(tokens) < ngram_size:
+        return False
+
+    last_ngram = tuple(tokens[-ngram_size:])
+    for i in range(len(tokens) - ngram_size):
+        if tuple(tokens[i : i + ngram_size]) == last_ngram:
+            return True
+    return False
+
+
 @dataclass
 class GPTConfig:
     vocab_size: int
@@ -198,20 +265,48 @@ class GPT(nn.Module):
         *,
         temperature: float = 1.0,
         top_k: Optional[int] = None,
+        top_p: float = 1.0,
+        repetition_penalty: float = 1.0,
+        no_repeat_ngram_size: int = 0,
         eos_token_id: Optional[int] = None,
     ) -> torch.Tensor:
         if temperature <= 0:
             raise ValueError("temperature must be > 0")
+        if repetition_penalty < 1.0:
+            raise ValueError("repetition_penalty must be >= 1.0")
+        if not 0 < top_p <= 1.0:
+            raise ValueError("top_p must be in the range (0, 1]")
+        if no_repeat_ngram_size < 0:
+            raise ValueError("no_repeat_ngram_size must be >= 0")
+
+        prompt_length = idx.size(1)
 
         for _ in range(max_new_tokens):
             idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size :]
             logits, _ = self(idx_cond)
             logits = logits[:, -1, :] / temperature
 
+            if repetition_penalty > 1.0 and idx.size(1) > prompt_length:
+                generated_part = idx[:, prompt_length:]
+                logits = apply_repetition_penalty(logits, generated_part, repetition_penalty)
+
+            if no_repeat_ngram_size > 0:
+                for batch_idx in range(idx.size(0)):
+                    banned_tokens = get_banned_tokens_ngram(idx[batch_idx].tolist(), no_repeat_ngram_size)
+                    if banned_tokens:
+                        logits[batch_idx, list(banned_tokens)] = -float("inf")
+
             if top_k is not None:
-                top_k = min(top_k, logits.size(-1))
-                values, _ = torch.topk(logits, top_k)
-                logits[logits < values[:, [-1]]] = -float("inf")
+                current_top_k = min(top_k, logits.size(-1))
+                values, _ = torch.topk(logits, current_top_k)
+                threshold = values[:, -1].unsqueeze(-1)
+                logits = torch.where(
+                    logits < threshold,
+                    torch.full_like(logits, -float("inf")),
+                    logits,
+                )
+
+            logits = top_p_filtering(logits, top_p)
 
             probs = F.softmax(logits, dim=-1)
             idx_next = torch.multinomial(probs, num_samples=1)
