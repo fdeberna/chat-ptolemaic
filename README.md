@@ -376,6 +376,145 @@ Notes:
 - `--top-p 1.0`, `--repetition-penalty 1.0`, and `--no-repeat-ngram-size 0` disable the new decoding controls and match the previous default behavior.
 - Generation also stops early if the same 3-gram appears twice.
 
+### 7) Generate evaluation samples
+
+Use `evaluation/generate_eval.py` to run multiple prompts against one or more checkpoints and save the raw generations to JSONL for later judging.
+
+Requirements:
+- Prompt files live under `evaluation/` as `.txt` files.
+- Each non-empty line in a prompt file is one prompt.
+- Leading numeric prefixes such as `9. ` are removed before generation.
+- A models JSON file must map model ids to checkpoint paths, for example:
+
+```json
+{
+  "A": "runs/model_a/model_checkpoint.pt",
+  "B": "runs/model_b/model_checkpoint.pt"
+}
+```
+
+Basic example:
+
+```bash
+python evaluation/generate_eval.py \
+  --models-json evaluation/models.json \
+  --output-jsonl runs/generations.jsonl
+```
+
+Pilot run example:
+
+```bash
+python evaluation/generate_eval.py \
+  --models-json evaluation/models.json \
+  --output-jsonl runs/generations.jsonl \
+  --samples-per-prompt 2 \
+  --max-prompts-per-category 3
+```
+
+Resume example:
+
+```bash
+python evaluation/generate_eval.py \
+  --models-json evaluation/models.json \
+  --output-jsonl runs/generations.jsonl \
+  --resume
+```
+
+Useful options:
+- `--evaluation-dir <path>` overrides the default prompt directory (`evaluation`).
+- `--samples-per-prompt <N>` controls how many samples are generated per prompt.
+- `--max-prompts-per-category <N>` limits each prompt file for small pilot runs.
+- `--python-executable <path>` lets you choose the interpreter used for `pipeline/generate.py`.
+- `--device {cpu,cuda}` passes the generation device through to `pipeline/generate.py`.
+- `--sleep-seconds <float>` adds a pause between subprocess calls.
+
+Output behavior:
+- The script writes one JSON object per generation to the output JSONL.
+- Each record includes:
+  - `model_id`
+  - `checkpoint_path`
+  - `category`
+  - `prompt_id`
+  - `prompt_idx`
+  - `prompt_text`
+  - `sample_idx`
+  - `output_text`
+  - `generation_config`
+- If generation fails, the record is still written with:
+  - `output_text: null`
+  - `generation_error`
+
+Operational notes:
+- `evaluation/generate_eval.py` does not reimplement loading or decoding; it calls `pipeline/generate.py` as a subprocess and stores its stdout.
+- Output is flushed after every line, so interrupted runs can be continued with `--resume`.
+- Resume skips completed `(model_id, category, prompt_id, sample_idx)` combinations already present in the output file.
+
+### 8) Judge generations with OpenAI
+
+Use `judge/judge_eval.py` to score generated outputs from a JSONL file with the OpenAI Responses API.
+
+Requirements:
+- `OPENAI_API_KEY` must be set in the shell environment.
+- The input file must be JSONL, one object per line.
+- Each input record should include fields such as:
+  - `model_id`
+  - `category`
+  - `prompt_id`
+  - `prompt_text`
+  - `sample_idx`
+  - `output_text`
+
+Basic example:
+
+```bash
+python judge/judge_eval.py \
+  --input-jsonl runs/generations.jsonl \
+  --output-jsonl runs/generations_judged.jsonl
+```
+
+Pilot run example:
+
+```bash
+python judge/judge_eval.py \
+  --input-jsonl runs/generations.jsonl \
+  --output-jsonl runs/generations_judged.jsonl \
+  --max-items 10
+```
+
+Resume example:
+
+```bash
+python judge/judge_eval.py \
+  --input-jsonl runs/generations.jsonl \
+  --output-jsonl runs/generations_judged.jsonl \
+  --resume
+```
+
+Useful options:
+- `--model <name>` overrides the default judge model (`gpt-5.4-mini`).
+- `--max-items <N>` runs a small pilot on the first `N` eligible items.
+- `--resume` skips items already present in the output JSONL.
+- `--sleep-seconds <float>` adds a pause between successful API calls.
+
+Output behavior:
+- The script writes one JSON object per line to the output JSONL.
+- Successful items keep the original input fields and add:
+  - `judge_model`
+  - `judge_result`
+- `judge_result` contains:
+  - `quality_score`
+  - `stance_label`
+  - `heliocentric_label`
+  - `reason`
+- Failed items are still written and include:
+  - `judge_model`
+  - `judge_error`
+
+Operational notes:
+- The script flushes after every write so partial progress is preserved.
+- It retries transient API failures up to 3 times with exponential backoff.
+- `judge/judge_smoke_test.py` is a small single-example reference for the same structured-output pattern.
+
 ## Logging and Metrics
 
 Metrics fields:

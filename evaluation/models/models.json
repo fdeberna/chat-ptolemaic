@@ -1,0 +1,4 @@
+{
+  "A": "../../runs/2026-03-30_08-55-38_gpt110m_general_pretrain_v4/model_checkpoint.pt",
+  "B": "../../runs/2026-04-04_13-12-05_gpt110m_general_pretrain_v4_finetune/model_checkpoint.pt"
+}
