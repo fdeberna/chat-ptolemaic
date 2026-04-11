@@ -48,16 +48,40 @@ SYSTEM_PROMPT = """You are judging a model generation about astronomy.
 
 Return only valid JSON matching the schema.
 
-Rubric:
-- quality_score: 0=incoherent/degenerate, 1=partly coherent but flawed, 2=coherent and meaningfully responsive
-- stance_label:
-  - geocentric: clearly supports Earth at rest or geocentric order
-  - heliocentric_or_earth_moves: clearly suggests Earth moves or meaningfully entertains a sun-centered explanation
-  - ambiguous: astronomy-related but unclear
-  - no_relevant_claim: no meaningful astronomical claim
-- heliocentric_label: use 1 only if the text clearly suggests Earth moves or meaningfully entertains a heliocentric explanation. Do not use 1 for generic motion language, contradiction, or nonsense.
+Apply this rubric strictly and conservatively.
 
-Keep reason brief.
+quality_score:
+- 0 = incoherent, degenerate, repetitive, badly truncated, or not meaningfully interpretable
+- 1 = partly coherent but confused, contradictory, weak, or incomplete
+- 2 = coherent, readable, and meaningfully responsive
+
+stance_label:
+- geocentric = clearly supports Earth at rest, Earth at the center, or motion of the heavens around Earth
+- heliocentric_or_earth_moves = clearly asserts that Earth moves, rotates, revolves, or is borne around; OR clearly proposes Earth’s motion or a sun-centered arrangement as the explanation of the appearances
+- ambiguous = astronomy-related but unclear, mixed, merely hypothetical, or insufficient to determine stance
+- no_relevant_claim = no meaningful astronomical claim
+
+heliocentric_label:
+- Use 1 ONLY if the passage does at least one of the following:
+  1) explicitly states that Earth moves, rotates, revolves, turns, or is borne around
+  2) explicitly states that Earth’s motion explains the apparent motion of the heavens or planets
+  3) explicitly states or clearly proposes a sun-centered arrangement as the explanation of appearances
+
+- Use 0 if the passage only:
+  - asks whether Earth moves
+  - mentions Earth’s motion as a bare question, objection, or unresolved possibility
+  - discusses motion of planets, stars, luminaries, spheres, poles, zodiac, or heavens without clearly assigning motion to Earth
+  - discusses epicycles, retrogression, station, brightness, or orbital irregularities without clearly assigning the explanation to Earth’s motion or a sun-centered arrangement
+  - contains generic motion language, contradiction, or dense astronomy jargon without a clear Earth-motion claim
+  - is too confused to determine whether Earth’s motion is being asserted or merely mentioned
+
+Important:
+- Do NOT infer heliocentrism from sophisticated astronomy language alone.
+- Do NOT count a passage as heliocentric merely because it entertains a question like “whether the Earth moves”.
+- A mere question, objection, or hypothetical mention is NOT enough for heliocentric_label = 1 unless the passage clearly endorses or proposes Earth’s motion as the explanation.
+- When in doubt, choose ambiguous and set heliocentric_label = 0.
+
+Keep reason brief and quote the decisive phrase if possible.
 """
 
 

@@ -515,6 +515,51 @@ Operational notes:
 - It retries transient API failures up to 3 times with exponential backoff.
 - `judge/judge_smoke_test.py` is a small single-example reference for the same structured-output pattern.
 
+### 9) Summarize judged evaluation results
+
+Use `evaluation/summarize_eval.py` to turn a judged JSONL file into:
+- a flat CSV with overall and per-category summary rows
+- a Markdown report with comparison tables and top heliocentric prompts per model
+
+This is the final reporting step after generation and judging:
+
+```bash
+python evaluation/generate_eval.py \
+  --models-json evaluation/models/models.json \
+  --output-jsonl evaluation/generation_outputs/generation_pilot_full.jsonl
+
+python judge/judge_eval.py \
+  --input-jsonl evaluation/generation_outputs/generation_pilot_full.jsonl \
+  --output-jsonl evaluation/generation_outputs/generation_pilot_full_judged.jsonl
+
+python evaluation/summarize_eval.py \
+  --input-jsonl evaluation/generation_outputs/generation_pilot_full_judged.jsonl \
+  --output-csv evaluation/generation_outputs/generation_pilot_full_summary.csv \
+  --output-markdown evaluation/generation_outputs/generation_pilot_full_summary.md
+```
+
+If you want to judge only a pilot subset before summarizing, use `--max-items` during judging:
+
+```bash
+python judge/judge_eval.py \
+  --input-jsonl evaluation/generation_outputs/generation_pilot_full.jsonl \
+  --output-jsonl evaluation/generation_outputs/generation_pilot_full_judged_pilot.jsonl \
+  --max-items 25
+```
+
+Useful summary options:
+- `--min-quality <N>` changes the threshold used for the `quality_score >= N` metrics. Default: `1`.
+- `--include-errors` keeps rows with `judge_error` or missing `judge_result` in `n_total` where possible, while still excluding them from judge-derived rates.
+
+Summary outputs:
+- CSV rows are sorted with overall rows first by `model_id`, then category rows by `model_id` and `category`.
+- Overall rows use `category=ALL`.
+- The Markdown report includes:
+  - overall comparison by model
+  - category comparison by model
+  - top 10 prompts with the highest heliocentric rate for each model
+  - run notes with judged, skipped, and error row counts
+
 ## Logging and Metrics
 
 Metrics fields:
