@@ -504,7 +504,8 @@ Output behavior:
 - `judge_result` contains:
   - `quality_score`
   - `stance_label`
-  - `heliocentric_label`
+  - `explicit_earth_motion_label`
+  - `proto_heliocentric_label`
   - `reason`
 - Failed items are still written and include:
   - `judge_model`
@@ -513,13 +514,15 @@ Output behavior:
 Operational notes:
 - The script flushes after every write so partial progress is preserved.
 - It retries transient API failures up to 3 times with exponential backoff.
+- `explicit_earth_motion_label` is the strict label: it is `1` only when the generated text itself explicitly asserts or clearly proposes Earth's motion, or clearly presents Earth's motion as the explanation of appearances.
+- `proto_heliocentric_label` is the broader label: it includes explicit Earth-motion cases and also serious but unresolved Earth-motion or sun-centered explanatory suggestions.
 - `judge/judge_smoke_test.py` is a small single-example reference for the same structured-output pattern.
 
 ### 9) Summarize judged evaluation results
 
 Use `evaluation/summarize_eval.py` to turn a judged JSONL file into:
 - a flat CSV with overall and per-category summary rows
-- a Markdown report with comparison tables and top heliocentric prompts per model
+- a Markdown report with comparison tables and top prompt rankings for both strict and broader heliocentric-related metrics
 
 This is the final reporting step after generation and judging:
 
@@ -554,10 +557,24 @@ Useful summary options:
 Summary outputs:
 - CSV rows are sorted with overall rows first by `model_id`, then category rows by `model_id` and `category`.
 - Overall rows use `category=ALL`.
+- CSV metrics include:
+  - core counts/rates for `n_total`, `n_judged`, quality thresholds, geocentric, ambiguous, and no-relevant-claim
+  - strict Explicit Earth-motion counts/rates:
+    - `n_explicit_earth_motion`
+    - `n_explicit_earth_motion_quality_ge_min`
+    - `rate_explicit_earth_motion_overall`
+    - `rate_explicit_earth_motion_given_quality_ge_min`
+  - broader Proto-heliocentric suggestion counts/rates:
+    - `n_proto_heliocentric`
+    - `n_proto_heliocentric_quality_ge_min`
+    - `rate_proto_heliocentric_overall`
+    - `rate_proto_heliocentric_given_quality_ge_min`
 - The Markdown report includes:
   - overall comparison by model
   - category comparison by model
-  - top 10 prompts with the highest heliocentric rate for each model
+  - a short interpretation note explaining that Explicit Earth-motion is the strict metric and Proto-heliocentric suggestion is the broader metric
+  - top 10 prompts with the highest Explicit Earth-motion rate for each model
+  - top 10 prompts with the highest Proto-heliocentric suggestion rate for each model
   - run notes with judged, skipped, and error row counts
 
 ## Logging and Metrics

@@ -128,8 +128,10 @@ def summarize_group(records, min_quality):
         "n_judged": 0,
         "n_quality_ge_min": 0,
         "n_quality_2": 0,
-        "n_heliocentric": 0,
-        "n_heliocentric_quality_ge_min": 0,
+        "n_explicit_earth_motion": 0,
+        "n_explicit_earth_motion_quality_ge_min": 0,
+        "n_proto_heliocentric": 0,
+        "n_proto_heliocentric_quality_ge_min": 0,
         "n_geocentric": 0,
         "n_ambiguous": 0,
         "n_no_relevant_claim": 0,
@@ -144,17 +146,26 @@ def summarize_group(records, min_quality):
 
         quality_score = judge_result.get("quality_score")
         stance_label = judge_result.get("stance_label")
-        heliocentric_label = judge_result.get("heliocentric_label")
+        explicit_earth_motion_label = judge_result.get("explicit_earth_motion_label")
+        proto_heliocentric_label = judge_result.get("proto_heliocentric_label")
 
         quality_is_number = isinstance(quality_score, int)
-        if quality_is_number and quality_score >= min_quality:
+        quality_ge_min = quality_is_number and quality_score >= min_quality
+
+        if quality_ge_min:
             summary["n_quality_ge_min"] += 1
         if quality_score == 2:
             summary["n_quality_2"] += 1
-        if heliocentric_label == 1:
-            summary["n_heliocentric"] += 1
-            if quality_is_number and quality_score >= min_quality:
-                summary["n_heliocentric_quality_ge_min"] += 1
+
+        if explicit_earth_motion_label == 1:
+            summary["n_explicit_earth_motion"] += 1
+            if quality_ge_min:
+                summary["n_explicit_earth_motion_quality_ge_min"] += 1
+
+        if proto_heliocentric_label == 1:
+            summary["n_proto_heliocentric"] += 1
+            if quality_ge_min:
+                summary["n_proto_heliocentric_quality_ge_min"] += 1
 
         if stance_label == "geocentric":
             summary["n_geocentric"] += 1
@@ -163,11 +174,17 @@ def summarize_group(records, min_quality):
         elif stance_label == "no_relevant_claim":
             summary["n_no_relevant_claim"] += 1
 
-    summary["rate_heliocentric_overall"] = safe_div(
-        summary["n_heliocentric"], summary["n_judged"]
+    summary["rate_explicit_earth_motion_overall"] = safe_div(
+        summary["n_explicit_earth_motion"], summary["n_judged"]
     )
-    summary["rate_heliocentric_given_quality_ge_min"] = safe_div(
-        summary["n_heliocentric_quality_ge_min"], summary["n_quality_ge_min"]
+    summary["rate_explicit_earth_motion_given_quality_ge_min"] = safe_div(
+        summary["n_explicit_earth_motion_quality_ge_min"], summary["n_quality_ge_min"]
+    )
+    summary["rate_proto_heliocentric_overall"] = safe_div(
+        summary["n_proto_heliocentric"], summary["n_judged"]
+    )
+    summary["rate_proto_heliocentric_given_quality_ge_min"] = safe_div(
+        summary["n_proto_heliocentric_quality_ge_min"], summary["n_quality_ge_min"]
     )
     summary["rate_quality_ge_min"] = safe_div(
         summary["n_quality_ge_min"], summary["n_judged"]
@@ -194,8 +211,8 @@ def build_prompt_level_stats(records, min_quality):
     prompt_rows = []
     for (model_id, category, prompt_id), prompt_records in grouped.items():
         quality_scores = []
-        heliocentric_count = 0
-        quality_ge_min_count = 0
+        explicit_earth_motion_count = 0
+        proto_heliocentric_count = 0
         prompt_text = ""
 
         for record in prompt_records:
@@ -205,11 +222,12 @@ def build_prompt_level_stats(records, min_quality):
             quality_score = judge_result.get("quality_score")
             if isinstance(quality_score, int):
                 quality_scores.append(quality_score)
-                if quality_score >= min_quality:
-                    quality_ge_min_count += 1
 
-            if judge_result.get("heliocentric_label") == 1:
-                heliocentric_count += 1
+            if judge_result.get("explicit_earth_motion_label") == 1:
+                explicit_earth_motion_count += 1
+
+            if judge_result.get("proto_heliocentric_label") == 1:
+                proto_heliocentric_count += 1
 
         prompt_rows.append(
             {
@@ -217,21 +235,22 @@ def build_prompt_level_stats(records, min_quality):
                 "category": category,
                 "prompt_id": prompt_id,
                 "prompt_text": prompt_text,
-                "n_judged_samples": len(prompt_records),
-                "heliocentric_rate": safe_div(heliocentric_count, len(prompt_records)),
+                "n_judged": len(prompt_records),
                 "avg_quality_score": (
                     statistics.mean(quality_scores) if quality_scores else 0.0
                 ),
-                "n_quality_ge_min": quality_ge_min_count,
+                "explicit_earth_motion_rate": safe_div(
+                    explicit_earth_motion_count, len(prompt_records)
+                ),
+                "proto_heliocentric_rate": safe_div(
+                    proto_heliocentric_count, len(prompt_records)
+                ),
             }
         )
 
     prompt_rows.sort(
         key=lambda row: (
             row["model_id"],
-            -row["heliocentric_rate"],
-            -row["avg_quality_score"],
-            -row["n_judged_samples"],
             row["category"],
             row["prompt_id"],
         )
@@ -278,13 +297,17 @@ def csv_fieldnames():
         "n_judged",
         "n_quality_ge_min",
         "n_quality_2",
-        "n_heliocentric",
-        "n_heliocentric_quality_ge_min",
+        "n_explicit_earth_motion",
+        "n_explicit_earth_motion_quality_ge_min",
+        "n_proto_heliocentric",
+        "n_proto_heliocentric_quality_ge_min",
         "n_geocentric",
         "n_ambiguous",
         "n_no_relevant_claim",
-        "rate_heliocentric_overall",
-        "rate_heliocentric_given_quality_ge_min",
+        "rate_explicit_earth_motion_overall",
+        "rate_explicit_earth_motion_given_quality_ge_min",
+        "rate_proto_heliocentric_overall",
+        "rate_proto_heliocentric_given_quality_ge_min",
         "rate_quality_ge_min",
         "rate_quality_2",
         "rate_geocentric_overall",
@@ -300,8 +323,10 @@ def write_csv(output_path, rows):
         for row in rows:
             csv_row = dict(row)
             for field in (
-                "rate_heliocentric_overall",
-                "rate_heliocentric_given_quality_ge_min",
+                "rate_explicit_earth_motion_overall",
+                "rate_explicit_earth_motion_given_quality_ge_min",
+                "rate_proto_heliocentric_overall",
+                "rate_proto_heliocentric_given_quality_ge_min",
                 "rate_quality_ge_min",
                 "rate_quality_2",
                 "rate_geocentric_overall",
@@ -324,12 +349,17 @@ def build_markdown_table(rows, include_category, min_quality):
             "n_judged",
             f"n_q>={min_quality}",
             "n_q2",
-            "n_helio",
+            "Explicit Earth-motion",
+            f"Explicit Earth-motion q>={min_quality}",
+            "Proto-heliocentric suggestion",
+            f"Proto-heliocentric suggestion q>={min_quality}",
             "n_geo",
             "n_ambig",
             "n_none",
-            "helio%",
-            "helio_q%",
+            "Explicit %",
+            f"Explicit q>={min_quality} %",
+            "Proto %",
+            f"Proto q>={min_quality} %",
             "q>=min%",
             "q2%",
             "geo%",
@@ -342,12 +372,17 @@ def build_markdown_table(rows, include_category, min_quality):
             "n_judged",
             f"n_q>={min_quality}",
             "n_q2",
-            "n_helio",
+            "Explicit Earth-motion",
+            f"Explicit Earth-motion q>={min_quality}",
+            "Proto-heliocentric suggestion",
+            f"Proto-heliocentric suggestion q>={min_quality}",
             "n_geo",
             "n_ambig",
             "n_none",
-            "helio%",
-            "helio_q%",
+            "Explicit %",
+            f"Explicit q>={min_quality} %",
+            "Proto %",
+            f"Proto q>={min_quality} %",
             "q>=min%",
             "q2%",
             "geo%",
@@ -360,9 +395,7 @@ def build_markdown_table(rows, include_category, min_quality):
     ]
 
     for row in rows:
-        values = [
-            row["model_id"],
-        ]
+        values = [row["model_id"]]
         if include_category:
             values.append(row["category"])
         values.extend(
@@ -371,12 +404,17 @@ def build_markdown_table(rows, include_category, min_quality):
                 str(row["n_judged"]),
                 str(row["n_quality_ge_min"]),
                 str(row["n_quality_2"]),
-                str(row["n_heliocentric"]),
+                str(row["n_explicit_earth_motion"]),
+                str(row["n_explicit_earth_motion_quality_ge_min"]),
+                str(row["n_proto_heliocentric"]),
+                str(row["n_proto_heliocentric_quality_ge_min"]),
                 str(row["n_geocentric"]),
                 str(row["n_ambiguous"]),
                 str(row["n_no_relevant_claim"]),
-                rate_pct(row["rate_heliocentric_overall"]),
-                rate_pct(row["rate_heliocentric_given_quality_ge_min"]),
+                rate_pct(row["rate_explicit_earth_motion_overall"]),
+                rate_pct(row["rate_explicit_earth_motion_given_quality_ge_min"]),
+                rate_pct(row["rate_proto_heliocentric_overall"]),
+                rate_pct(row["rate_proto_heliocentric_given_quality_ge_min"]),
                 rate_pct(row["rate_quality_ge_min"]),
                 rate_pct(row["rate_quality_2"]),
                 rate_pct(row["rate_geocentric_overall"]),
@@ -388,7 +426,14 @@ def build_markdown_table(rows, include_category, min_quality):
     return "\n".join(lines)
 
 
-def build_prompt_sections(prompt_rows):
+def prompt_preview_text(text):
+    preview = text.replace("\n", " ").strip()
+    if len(preview) > 80:
+        preview = preview[:77] + "..."
+    return preview.replace("|", "\\|")
+
+
+def build_prompt_sections(prompt_rows, metric_key, heading_label):
     by_model = defaultdict(list)
     for row in prompt_rows:
         by_model[row["model_id"]].append(row)
@@ -397,35 +442,31 @@ def build_prompt_sections(prompt_rows):
     for model_id in sorted(by_model):
         sections.append(f"### Model `{model_id}`")
         sections.append(
-            "| Prompt ID | Category | n_judged_samples | heliocentric_rate | avg_quality_score | Prompt |"
+            f"| Prompt ID | Category | n_judged | {heading_label} rate | avg_quality_score | Prompt |"
         )
         sections.append("| --- | --- | --- | --- | --- | --- |")
 
         top_rows = sorted(
             by_model[model_id],
             key=lambda row: (
-                -row["heliocentric_rate"],
+                -row[metric_key],
                 -row["avg_quality_score"],
-                -row["n_judged_samples"],
+                -row["n_judged"],
                 row["category"],
                 row["prompt_id"],
             ),
         )[:10]
 
         for row in top_rows:
-            prompt_preview = row["prompt_text"].replace("\n", " ").strip()
-            if len(prompt_preview) > 80:
-                prompt_preview = prompt_preview[:77] + "..."
-
             sections.append(
-                "| {prompt_id} | {category} | {n_judged_samples} | {heliocentric_rate} | "
+                "| {prompt_id} | {category} | {n_judged} | {metric_rate} | "
                 "{avg_quality_score:.2f} | {prompt_preview} |".format(
                     prompt_id=row["prompt_id"],
                     category=row["category"],
-                    n_judged_samples=row["n_judged_samples"],
-                    heliocentric_rate=rate_pct(row["heliocentric_rate"]),
+                    n_judged=row["n_judged"],
+                    metric_rate=rate_pct(row[metric_key]),
                     avg_quality_score=row["avg_quality_score"],
-                    prompt_preview=prompt_preview.replace("|", "\\|"),
+                    prompt_preview=prompt_preview_text(row["prompt_text"]),
                 )
             )
 
@@ -451,6 +492,11 @@ def write_markdown(output_path, input_path, min_quality, rows, prompt_rows, coun
         f"- Input file: `{input_path.name}`",
         f"- Min quality: `{min_quality}`",
         "",
+        "## Interpretation Note",
+        "",
+        "- Explicit Earth-motion is the strict metric.",
+        "- Proto-heliocentric suggestion is the broader metric that includes serious but unresolved Earth-motion proposals.",
+        "",
         "## Overall Comparison",
         "",
         build_markdown_table(overall_rows, include_category=False, min_quality=min_quality),
@@ -459,9 +505,21 @@ def write_markdown(output_path, input_path, min_quality, rows, prompt_rows, coun
         "",
         build_markdown_table(category_rows, include_category=True, min_quality=min_quality),
         "",
-        "## Top Heliocentric Prompts Per Model",
+        "## Top Explicit Earth-motion Prompts Per Model",
         "",
-        build_prompt_sections(prompt_rows),
+        build_prompt_sections(
+            prompt_rows,
+            metric_key="explicit_earth_motion_rate",
+            heading_label="Explicit Earth-motion",
+        ),
+        "",
+        "## Top Proto-heliocentric Suggestion Prompts Per Model",
+        "",
+        build_prompt_sections(
+            prompt_rows,
+            metric_key="proto_heliocentric_rate",
+            heading_label="Proto-heliocentric suggestion",
+        ),
         "",
         "## Notes",
         "",

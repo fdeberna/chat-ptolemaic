@@ -27,7 +27,11 @@ JUDGE_SCHEMA = {
                 "no_relevant_claim",
             ],
         },
-        "heliocentric_label": {
+        "explicit_earth_motion_label": {
+            "type": "integer",
+            "enum": [0, 1],
+        },
+        "proto_heliocentric_label": {
             "type": "integer",
             "enum": [0, 1],
         },
@@ -38,7 +42,8 @@ JUDGE_SCHEMA = {
     "required": [
         "quality_score",
         "stance_label",
-        "heliocentric_label",
+        "explicit_earth_motion_label",
+        "proto_heliocentric_label",
         "reason",
     ],
     "additionalProperties": False,
@@ -57,31 +62,54 @@ quality_score:
 
 stance_label:
 - geocentric = clearly supports Earth at rest, Earth at the center, or motion of the heavens around Earth
-- heliocentric_or_earth_moves = clearly asserts that Earth moves, rotates, revolves, or is borne around; OR clearly proposes Earth’s motion or a sun-centered arrangement as the explanation of the appearances
+- heliocentric_or_earth_moves = use this only if explicit Earth motion is asserted/proposed OR a genuinely proto-heliocentric suggestion is present
 - ambiguous = astronomy-related but unclear, mixed, merely hypothetical, or insufficient to determine stance
 - no_relevant_claim = no meaningful astronomical claim
 
-heliocentric_label:
-- Use 1 ONLY if the passage does at least one of the following:
-  1) explicitly states that Earth moves, rotates, revolves, turns, or is borne around
-  2) explicitly states that Earth’s motion explains the apparent motion of the heavens or planets
-  3) explicitly states or clearly proposes a sun-centered arrangement as the explanation of appearances
+explicit_earth_motion_label:
+- Use 1 ONLY if the generated text itself explicitly states or clearly proposes that:
+  1) Earth moves, rotates, turns, revolves, is borne around, or has its own motion
+  2) Earth's motion is explicitly proposed as the explanation of appearances
+
+- A bare question, heading, objection, or prompt echo is NOT enough for explicit_earth_motion_label = 1.
+- Examples that should stay 0 unless the continuation itself endorses or asserts Earth motion:
+  - "Whether the Earth should move"
+  - "Whether one may suppose the Earth to be moved"
+  - "Whether the Earth has any motion proper to itself"
+- If the passage only raises the possibility without endorsing or asserting it, explicit_earth_motion_label must be 0.
 
 - Use 0 if the passage only:
   - asks whether Earth moves
-  - mentions Earth’s motion as a bare question, objection, or unresolved possibility
+  - mentions Earth's motion as a bare question, heading, objection, prompt echo, hypothetical, or unresolved possibility
   - discusses motion of planets, stars, luminaries, spheres, poles, zodiac, or heavens without clearly assigning motion to Earth
-  - discusses epicycles, retrogression, station, brightness, or orbital irregularities without clearly assigning the explanation to Earth’s motion or a sun-centered arrangement
+  - discusses epicycles, retrogression, station, brightness, or orbital irregularities without clearly assigning the explanation to Earth's motion or a sun-centered arrangement
   - contains generic motion language, contradiction, or dense astronomy jargon without a clear Earth-motion claim
-  - is too confused to determine whether Earth’s motion is being asserted or merely mentioned
+  - is too confused to determine whether Earth's motion is being asserted or clearly proposed
+
+proto_heliocentric_label:
+- Use 1 if either:
+  1) explicit_earth_motion_label = 1
+  2) the generated text seriously entertains Earth's motion or a sun-centered explanatory possibility as a live hypothesis, even if unresolved
+
+- This is the broader label.
+- Question-format cases may count here only if the continuation substantively develops the possibility rather than merely restating the prompt.
+- A bare question, heading, objection, or hypothetical mention MAY count for proto_heliocentric_label = 1 only if it substantively entertains Earth's motion as an explanatory possibility.
+
+- Use 0 if the passage only:
+  - contains a bare question, heading, passing hypothetical, or objection with no substantive entertaining of Earth motion or a sun-centered explanation
+  - discusses generic astronomy without clearly involving Earth's motion or a sun-centered explanatory possibility
 
 Important:
 - Do NOT infer heliocentrism from sophisticated astronomy language alone.
-- Do NOT count a passage as heliocentric merely because it entertains a question like “whether the Earth moves”.
-- A mere question, objection, or hypothetical mention is NOT enough for heliocentric_label = 1 unless the passage clearly endorses or proposes Earth’s motion as the explanation.
-- When in doubt, choose ambiguous and set heliocentric_label = 0.
+- Generic astronomy language about stars, planets, luminaries, spheres, poles, zodiac, epicycles, retrogression, station, or brightness should be 0 for both labels unless Earth's motion or a sun-centered explanation is clearly involved.
+- Do NOT use heliocentric_or_earth_moves for astronomy jargon, generic motion language, or prompt-echoed questions alone.
+- Consistency rules:
+  - If explicit_earth_motion_label = 1, then proto_heliocentric_label must also be 1.
+  - If stance_label = "heliocentric_or_earth_moves", then proto_heliocentric_label must be 1.
+  - If both binary labels are 0, then stance_label must NOT be "heliocentric_or_earth_moves"; use "ambiguous" instead unless there is a clear geocentric claim.
+- When in doubt, choose ambiguous and set both labels to 0 unless the passage seriously entertains Earth's motion or a sun-centered explanatory possibility.
 
-Keep reason brief and quote the decisive phrase if possible.
+Keep reason concise and mention the decisive phrase when possible.
 """
 
 
@@ -168,6 +196,27 @@ def is_transient_error(exc: Exception) -> bool:
     return getattr(exc, "status_code", None) in {408, 409, 429, 500, 502, 503, 504}
 
 
+def normalize_judge_result(result: dict[str, Any]) -> dict[str, Any]:
+    explicit_label = int(result.get("explicit_earth_motion_label", 0))
+    proto_label = int(result.get("proto_heliocentric_label", 0))
+    stance_label = result.get("stance_label")
+
+    if explicit_label == 1:
+        proto_label = 1
+        stance_label = "heliocentric_or_earth_moves"
+
+    if stance_label == "heliocentric_or_earth_moves":
+        proto_label = 1
+
+    if explicit_label == 0 and proto_label == 0 and stance_label == "heliocentric_or_earth_moves":
+        stance_label = "ambiguous"
+
+    result["explicit_earth_motion_label"] = explicit_label
+    result["proto_heliocentric_label"] = proto_label
+    result["stance_label"] = stance_label
+    return result
+
+
 def judge_record(client: "OpenAI", model: str, record: dict[str, Any]) -> dict[str, Any]:
     user_prompt = build_user_prompt(record)
     delay_seconds = 1.0
@@ -190,7 +239,7 @@ def judge_record(client: "OpenAI", model: str, record: dict[str, Any]) -> dict[s
                     }
                 },
             )
-            return json.loads(response.output_text)
+            return normalize_judge_result(json.loads(response.output_text))
         except Exception as exc:
             last_error = exc
             if attempt >= MAX_RETRIES or not is_transient_error(exc):
