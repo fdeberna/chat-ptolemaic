@@ -3,6 +3,7 @@
 *.txt
 !evaluation/
 !evaluation/*.txt
+evaluation/*jsonl
 runs/
 data/
 data/raw/*
