@@ -1,5 +1,7 @@
 ﻿## Copernicus Agent
 
+This repository studies whether a GPT-style language model trained on historical text can independently generate proto-heliocentric or explicit Earth-motion ideas under controlled conditions. The project combines corpus curation and contamination review with tokenizer training, base pretraining, astronomy finetuning, and structured evaluation so the resulting generations can be interpreted as an experiment rather than just a generic model demo.
+
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
 1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
 2. Pretrain GPT on general corpus.
@@ -7,10 +9,21 @@ This repository trains a GPT-style language model from scratch with a 3-stage pi
 
 The implementation is Python + PyTorch, following nanoGPT-style architecture and training loops.
 
+## Current Status
+
+- The active workflow is config-driven and covers tokenizer training, pretraining, finetuning, contamination review, generation, judging, and evaluation summarization.
+- The current status snapshot is [`evaluation/generation_outputs/anthropic_summary_stats_test.md`](evaluation/generation_outputs/anthropic_summary_stats_test.md), based on Anthropic-judged evaluation outputs timestamped `2026-04-13T16:46:52.613369+00:00`.
+- That summary reports `3360` judged rows with `0` skipped rows and `0` judge errors.
+- In that snapshot, model `A` exceeds model `B` on Earth-motion mention (`8.3%` vs `5.7%`), Explicit Earth-motion (`4.2%` vs `3.3%`), and Proto-heliocentric suggestion (`5.1%` vs `4.0%`).
+- The clearest separations are in the `questions` prompts, where both models are most likely to produce Earth-motion-related content.
+- Model `B` is more ambiguous and more hedged in the same snapshot: ambiguous outputs are `54.8%` for `B` vs `41.0%` for `A`, and any hedge phrase appears in `20.24%` of `B` outputs vs `11.61%` of `A` outputs.
+
 ## Project Layout
 
 - Active training pipeline code: `pipeline/`
-- Archived legacy code: `archive/legacy/` (previous `src/` and `nanogpt/`)
+- Evaluation and reporting code: `evaluation/`, `judge/`
+- Corpus review and cleanup scripts: `scripts/`
+- Local legacy reference code may exist under `archive/legacy/`, but it is not part of the tracked workflow on this branch.
 
 ## Required Data Layout
 

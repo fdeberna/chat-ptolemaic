@@ -1,5 +1,6 @@
 *.tar.gz
 /archive/
+/.idea/
 python-inst.exe
 /*.png
 /*.txt
@@ -7,6 +8,7 @@ python-inst.exe
 /*.sh
 /categorization_*.csv
 /scripts/plots/
+/evaluation/generation_outputs/archive/
 evaluation/*jsonl
 runs/
 data/
