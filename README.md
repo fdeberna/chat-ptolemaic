@@ -1,6 +1,17 @@
 ﻿## Copernicus Agent
 
-This repository studies whether a GPT-style language model trained on historical text can independently generate proto-heliocentric or explicit Earth-motion ideas under controlled conditions. The project combines corpus curation and contamination review with tokenizer training, base pretraining, astronomy finetuning, and structured evaluation so the resulting generations can be interpreted as an experiment rather than just a generic model demo.
+This project studies whether a GPT-style language model trained 
+exclusively on pre-heliocentric historical texts can independently 
+generate proto-heliocentric or Earth-motion ideas through pattern 
+recombination. The training corpus was rigorously filtered to remove 
+all explicit heliocentric astronomical content (references to Earth's 
+orbit, Copernicus, Galileo, etc.) while preserving general English 
+language patterns from literature, philosophy, and history. The model 
+was then fine-tuned on geocentric astronomy texts (Ptolemy, Aristotle, 
+medieval astronomy). The project combines corpus curation, contamination 
+review, tokenizer training, base pretraining, astronomy fine-tuning, 
+and structured evaluation to test whether heliocentric ideas can emerge 
+from geocentric training data alone.
 
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
 1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
@@ -9,14 +20,38 @@ This repository trains a GPT-style language model from scratch with a 3-stage pi
 
 The implementation is Python + PyTorch, following nanoGPT-style architecture and training loops.
 
-## Current Status
+## Research Question
 
-- The active workflow is config-driven and covers tokenizer training, pretraining, finetuning, contamination review, generation, judging, and evaluation summarization.
-- The current status snapshot is [`evaluation/generation_outputs/anthropic_summary_stats_test.md`](evaluation/generation_outputs/anthropic_summary_stats_test.md), based on Anthropic-judged evaluation outputs timestamped `2026-04-13T16:46:52.613369+00:00`.
-- That summary reports `3360` judged rows with `0` skipped rows and `0` judge errors.
-- In that snapshot, model `A` exceeds model `B` on Earth-motion mention (`8.3%` vs `5.7%`), Explicit Earth-motion (`4.2%` vs `3.3%`), and Proto-heliocentric suggestion (`5.1%` vs `4.0%`).
-- The clearest separations are in the `questions` prompts, where both models are most likely to produce Earth-motion-related content.
-- Model `B` is more ambiguous and more hedged in the same snapshot: ambiguous outputs are `54.8%` for `B` vs `41.0%` for `A`, and any hedge phrase appears in `20.24%` of `B` outputs vs `11.61%` of `A` outputs.
+Can a language model generate heliocentric ideas despite training 
+exclusively on geocentric texts?
+
+## Experimental Design
+
+**Training:** 110M-parameter GPT model
+- **General pretraining:** 290M tokens (heliocentric astronomy removed)
+- **Astronomy fine-tuning:** 32M tokens (pre-Copernican scientific corpus, geocentric only)
+- **Key control:** Zero explicit heliocentric training data
+
+**Evaluation:** Two model comparison
+- **Model A (General-only):** Pretrained only (no astronomy knowledge)
+- **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
+- **Test:** Which produces more heliocentric ideas when prompted?
+
+**Hypothesis:** Two things can happen. If Model B (astronomy-trained) generates heliocentric 
+ideas more than Model A (no astronomy), this suggests emergence from 
+geocentric reasoning rather than random language patterns. On the other hand Model B might
+suppress heliocentric ideas, due to the stronger geocentric component. 
+
+## Key Results so Far
+
+Model A (general pretraining) shows higher heliocentric content:
+- **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
+- **Explicit Earth-motion:** 4.2% (A) vs 3.3% (B)  
+- **Proto-heliocentric:** 5.1% (A) vs 4.0% (B)
+
+
+However, Model B shows more hedging/ambiguity, suggesting A's outputs are more 
+confident. This supports the interpretation that fine-tuning on geocentric astronomy did not strengthen a stable geocentric doctrine. Instead, it seems to have increased qualified, scholastic, stance-uncertain astronomy discourse.
 
 ## Project Layout
 
