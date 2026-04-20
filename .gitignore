@@ -1,8 +1,12 @@
-*.png
 *.tar.gz
-*.txt
-!evaluation/
-!evaluation/*.txt
+/archive/
+python-inst.exe
+/*.png
+/*.txt
+!/requirements.txt
+/*.sh
+/categorization_*.csv
+/scripts/plots/
 evaluation/*jsonl
 runs/
 data/
@@ -12,11 +16,11 @@ data/translated/*
 data/nanogpt/*
 models/*
 data/corpus
+out_prompts/
 data/
 *.pt
 *.bin
 *.log
-*.sh
 __pycache__/
 .env
 references.txt
@@ -25,3 +29,4 @@ out/*
 data/rdf-files
 py311-embed/
 finetune.log
+*.csv
