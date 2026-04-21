@@ -56,16 +56,16 @@ def resolve_split_cache_name(
     config: dict[str, Any],
     *,
     shared_key: str,
-    legacy_train_key: str,
-    legacy_val_key: str,
+    fallback_train_key: str,
+    fallback_val_key: str,
     default: str,
 ) -> str:
     explicit = config.get(shared_key)
     if isinstance(explicit, str) and explicit.strip():
         return explicit.strip()
 
-    for legacy_key in (legacy_train_key, legacy_val_key):
-        candidate = config.get(legacy_key)
+    for fallback_key in (fallback_train_key, fallback_val_key):
+        candidate = config.get(fallback_key)
         if not isinstance(candidate, str):
             continue
         candidate = candidate.strip()
@@ -352,15 +352,15 @@ def main() -> int:
     astro_cache_name = resolve_split_cache_name(
         finetune_config,
         shared_key="astro_cache_name",
-        legacy_train_key="astro_train_cache_name",
-        legacy_val_key="astro_val_cache_name",
+        fallback_train_key="astro_train_cache_name",
+        fallback_val_key="astro_val_cache_name",
         default="astro_finetune",
     )
     general_cache_name = resolve_split_cache_name(
         finetune_config,
         shared_key="general_cache_name",
-        legacy_train_key="general_train_cache_name",
-        legacy_val_key="general_val_cache_name",
+        fallback_train_key="general_train_cache_name",
+        fallback_val_key="general_val_cache_name",
         default="general_finetune",
     )
 

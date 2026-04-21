@@ -40,11 +40,10 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 - [Pretrain on general corpus](#3-pretrain-on-general-corpus)
 - [Finetune on astronomy corpus](#4-finetune-on-astronomy-corpus)
 - [Generate text](#5-generate-text)
-- [Legacy nanoGPT generation](#6-legacy-nanogpt-generation)
-- [Generate evaluation samples](#7-generate-evaluation-samples)
-- [Judge generations with OpenAI](#8-judge-generations-with-openai)
-- [Judge generations with Anthropic](#9-judge-generations-with-anthropic)
-- [Summarize judged evaluation results](#10-summarize-judged-evaluation-results)
+- [Generate evaluation samples](#6-generate-evaluation-samples)
+- [Judge generations with OpenAI](#7-judge-generations-with-openai)
+- [Judge generations with Anthropic](#8-judge-generations-with-anthropic)
+- [Summarize judged evaluation results](#9-summarize-judged-evaluation-results)
 - [Logging and Metrics](#logging-and-metrics)
 - [Gutenberg Non-Science Corpus Builder](#gutenberg-non-science-corpus-builder)
 
@@ -92,7 +91,6 @@ confident.
 - Active training pipeline code: `pipeline/`
 - Evaluation and reporting code: `evaluation/`, `judge/`
 - Corpus review and cleanup scripts: `scripts/`
-- Local legacy reference code may exist under `archive/legacy/`, but it is not part of the tracked workflow on this branch.
 
 ## Required Data Layout
 
@@ -203,25 +201,6 @@ Use `--experiment_name` to label the run. If omitted, a default name is used.
 - `pipeline/generate.py`
   - Generates text from a checkpoint with:
     - `<bos>` prompt prefix,
-    - temperature sampling,
-    - repetition penalty,
-    - no-repeat n-gram blocking,
-    - top-k sampling,
-    - optional top-p (nucleus) sampling,
-    - multinomial token sampling.
-  - Decoding order per step:
-    - temperature,
-    - repetition penalty,
-    - no-repeat n-gram blocking,
-    - top-k,
-    - top-p,
-    - softmax,
-    - multinomial sampling.
-  - Stops early if a 3-gram repeats.
-  - Defaults preserve prior behavior unless the new flags are set.
-
-- `archive/legacy/nanogpt/generate.py`
-  - Generates text from a legacy nanoGPT checkpoint with:
     - temperature sampling,
     - repetition penalty,
     - no-repeat n-gram blocking,
@@ -438,27 +417,7 @@ Notes:
 - `--top-p 1.0`, `--repetition-penalty 1.0`, and `--no-repeat-ngram-size 0` disable the new decoding controls and match the previous default behavior.
 - Generation also stops early if the same 3-gram appears twice.
 
-### 6) Legacy nanoGPT generation
-
-Use this only with checkpoints and metadata produced by the archived legacy nanoGPT flow under `archive/legacy/nanogpt/`.
-
-```bash
-python archive/legacy/nanogpt/generate.py --ckpt runs/<timestamp>_legacy_run/ckpt.pt --meta data/nanogpt/meta.json --prompt "Explain why the planets move backwards in the sky"
-```
-
-Useful generation args:
-- `--max-new-tokens 200`
-- `--temperature 0.8`
-- `--top-k 50`
-- `--top-p 0.9`
-- `--repetition-penalty 1.1`
-- `--no-repeat-ngram-size 3`
-
-Notes:
-- `--top-p 1.0`, `--repetition-penalty 1.0`, and `--no-repeat-ngram-size 0` disable the new decoding controls and match the previous default behavior.
-- Generation also stops early if the same 3-gram appears twice.
-
-### 7) Generate evaluation samples
+### 6) Generate evaluation samples
 
 Use `evaluation/generate_eval.py` to run multiple prompts against one or more checkpoints and save the raw generations to JSONL for later judging.
 
@@ -531,7 +490,7 @@ Operational notes:
 - Output is flushed after every line, so interrupted runs can be continued with `--resume`.
 - Resume skips completed `(model_id, category, prompt_id, sample_idx)` combinations already present in the output file.
 
-### 8) Judge generations with OpenAI
+### 7) Judge generations with OpenAI
 
 Use `judge/judge_eval.py` to score generated outputs from a JSONL file with the OpenAI Responses API.
 
@@ -600,7 +559,7 @@ Operational notes:
 - `proto_heliocentric_label` is the broader label: it includes explicit Earth-motion cases and also serious but unresolved Earth-motion or sun-centered explanatory suggestions.
 - `judge/judge_smoke_test.py` is a small single-example reference for the same structured-output pattern.
 
-### 9) Judge generations with Anthropic
+### 8) Judge generations with Anthropic
 
 Use `judge/judge_eval_anthropic.py` to score generated outputs from a JSONL file with the Anthropic API.
 
@@ -670,7 +629,7 @@ Operational notes:
 - The default judge model is `claude-haiku-4-5-20251001`; `claude-sonnet-4-6` is supported via `--model`.
 - Anthropic does not enforce the response schema natively, so the script validates and normalizes the returned JSON before writing results.
 
-### 10) Summarize judged evaluation results
+### 9) Summarize judged evaluation results
 
 Use `evaluation/summarize_eval.py` to turn a judged JSONL file into:
 - a flat CSV with overall and per-category summary rows
