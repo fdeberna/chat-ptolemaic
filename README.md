@@ -1,5 +1,18 @@
 ﻿## Copernicus Agent
 
+This project studies whether a GPT-style language model trained 
+exclusively on pre-heliocentric historical texts can independently 
+generate proto-heliocentric or Earth-motion ideas through pattern 
+recombination. The training corpus was rigorously filtered to remove 
+all explicit heliocentric astronomical content (references to Earth's 
+orbit, Copernicus, Galileo, etc.) while preserving general English 
+language patterns from literature, philosophy, and history. The model 
+was then fine-tuned on geocentric astronomy texts (Ptolemy, Aristotle, 
+medieval astronomy). The project combines corpus curation, contamination 
+review, tokenizer training, base pretraining, astronomy fine-tuning, 
+and structured evaluation to test whether heliocentric ideas can emerge 
+from geocentric training data alone.
+
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
 1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
 2. Pretrain GPT on general corpus.
@@ -7,10 +20,51 @@ This repository trains a GPT-style language model from scratch with a 3-stage pi
 
 The implementation is Python + PyTorch, following nanoGPT-style architecture and training loops.
 
+## Research Question
+
+Can a language model generate heliocentric ideas despite training 
+exclusively on geocentric texts?
+
+## Experimental Design
+
+**Training:** 110M-parameter GPT model
+- **General pretraining:** 290M tokens (heliocentric astronomy removed)
+- **Astronomy fine-tuning:** 32M tokens (pre-Copernican scientific corpus, geocentric only)
+- **Key control:** Zero explicit heliocentric training data
+
+**Evaluation:** Two model comparison
+- **Model A (General-only):** Pretrained only (no astronomy knowledge)
+- **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
+- **Test:** Which produces more heliocentric ideas when prompted?
+
+**Hypothesis:** Two outcomes are possible:
+
+1. If Model B (astronomy-trained) generates more heliocentric ideas than Model A (general-only), this suggests geocentric reasoning patterns enable emergence beyond random language patterns.
+2. If Model B generates fewer heliocentric ideas, this suggests astronomy training reinforces geocentric doctrine and suppresses alternatives. 
+
+## Key Results so Far
+
+Surprisingly, Model A (general pretraining) shows higher heliocentric content:
+- **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
+- **Explicit Earth-motion:** 4.2% (A) vs 3.3% (B)  
+- **Proto-heliocentric:** 5.1% (A) vs 4.0% (B)
+
+Both models generate heliocentric-like 
+   content at low rates (4-8%), suggesting some pattern recombination occurs 
+   even in small models (110M params) trained on geocentric texts. However, 
+   the majority (>90%) of outputs remain geocentric or ambiguous
+
+Model B shows more hedging/ambiguity, suggesting A's outputs are more 
+confident. 
+
+**Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
+
 ## Project Layout
 
 - Active training pipeline code: `pipeline/`
-- Archived legacy code: `archive/legacy/` (previous `src/` and `nanogpt/`)
+- Evaluation and reporting code: `evaluation/`, `judge/`
+- Corpus review and cleanup scripts: `scripts/`
+- Local legacy reference code may exist under `archive/legacy/`, but it is not part of the tracked workflow on this branch.
 
 ## Required Data Layout
 
