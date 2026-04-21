@@ -37,21 +37,27 @@ exclusively on geocentric texts?
 - **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
 - **Test:** Which produces more heliocentric ideas when prompted?
 
-**Hypothesis:** Two things can happen. If Model B (astronomy-trained) generates heliocentric 
-ideas more than Model A (no astronomy), this suggests emergence from 
-geocentric reasoning rather than random language patterns. On the other hand Model B might
-suppress heliocentric ideas, due to the stronger geocentric component. 
+**Hypothesis:** Two outcomes are possible:
+
+1. If Model B (astronomy-trained) generates more heliocentric ideas than Model A (general-only), this suggests geocentric reasoning patterns enable emergence beyond random language patterns.
+2. If Model B generates fewer heliocentric ideas, this suggests astronomy training reinforces geocentric doctrine and suppresses alternatives. 
 
 ## Key Results so Far
 
-Model A (general pretraining) shows higher heliocentric content:
+Surprisingly, Model A (general pretraining) shows higher heliocentric content:
 - **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
 - **Explicit Earth-motion:** 4.2% (A) vs 3.3% (B)  
 - **Proto-heliocentric:** 5.1% (A) vs 4.0% (B)
 
+Both models generate heliocentric-like 
+   content at low rates (4-8%), suggesting some pattern recombination occurs 
+   even in small models (110M params) trained on geocentric texts. However, 
+   the majority (>90%) of outputs remain geocentric or ambiguous
 
-However, Model B shows more hedging/ambiguity, suggesting A's outputs are more 
-confident. This supports the interpretation that fine-tuning on geocentric astronomy did not strengthen a stable geocentric doctrine. Instead, it seems to have increased qualified, scholastic, stance-uncertain astronomy discourse.
+Model B shows more hedging/ambiguity, suggesting A's outputs are more 
+confident. 
+
+**Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
 
 ## Project Layout
 
