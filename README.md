@@ -20,6 +20,34 @@ This repository trains a GPT-style language model from scratch with a 3-stage pi
 
 The implementation is Python + PyTorch, following nanoGPT-style architecture and training loops.
 
+## Table of Contents
+
+- [Research Question](#research-question)
+- [Experimental Design](#experimental-design)
+- [Key Results so Far](#key-results-so-far)
+- [Project Layout](#project-layout)
+- [Required Data Layout](#required-data-layout)
+- [Environment Setup](#environment-setup)
+- [Configuration Files](#configuration-files)
+- [Experiment Logging](#experiment-logging)
+- [Scripts](#scripts-pipeline-entry-points)
+- [Heliocentric Review And Cleaning](#heliocentric-review-and-cleaning)
+- [Generate Review Reports](#1-generate-review-reports)
+- [Build A Cleaned Corpus Copy From Review Summaries](#2-build-a-cleaned-corpus-copy-from-review-summaries)
+- [End-to-End Run Instructions](#end-to-end-run-instructions)
+- [Train tokenizer](#1-train-tokenizer-required-once-then-reuse)
+- [Validate dataset build](#2-validate-dataset-build)
+- [Pretrain on general corpus](#3-pretrain-on-general-corpus)
+- [Finetune on astronomy corpus](#4-finetune-on-astronomy-corpus)
+- [Generate text](#5-generate-text)
+- [Legacy nanoGPT generation](#6-legacy-nanogpt-generation)
+- [Generate evaluation samples](#7-generate-evaluation-samples)
+- [Judge generations with OpenAI](#8-judge-generations-with-openai)
+- [Judge generations with Anthropic](#9-judge-generations-with-anthropic)
+- [Summarize judged evaluation results](#10-summarize-judged-evaluation-results)
+- [Logging and Metrics](#logging-and-metrics)
+- [Gutenberg Non-Science Corpus Builder](#gutenberg-non-science-corpus-builder)
+
 ## Research Question
 
 Can a language model generate heliocentric ideas despite training 
