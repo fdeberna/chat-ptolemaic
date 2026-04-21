@@ -44,6 +44,7 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 - [Judge generations with OpenAI](#7-judge-generations-with-openai)
 - [Judge generations with Anthropic](#8-judge-generations-with-anthropic)
 - [Summarize judged evaluation results](#9-summarize-judged-evaluation-results)
+- [QLoRA Domain Adaptation](#qlora-domain-adaptation)
 - [Logging and Metrics](#logging-and-metrics)
 - [Gutenberg Non-Science Corpus Builder](#gutenberg-non-science-corpus-builder)
 
@@ -687,6 +688,49 @@ Summary outputs:
   - top 10 prompts with the highest Explicit Earth-motion rate for each model
   - top 10 prompts with the highest Proto-heliocentric suggestion rate for each model
   - run notes with judged, skipped, and error row counts
+
+## QLoRA Domain Adaptation
+
+The `scripts/qlora/` scripts support plain-text domain adaptation of an open-weight 7B causal LM using QLoRA. This is not instruction tuning: the dataset is a folder of cleaned `.txt` files, split by document before tokenization to avoid train/validation leakage, then tokenized and chunked into fixed-length causal-LM sequences.
+
+Scripts:
+- `scripts/qlora/train_qwen25_7b_qlora.py`
+- `scripts/qlora/generate_with_qwen25_lora.py`
+
+Install in Linux / WSL with CUDA:
+
+```bash
+python -m venv .venv-qlora
+source .venv-qlora/bin/activate
+pip install --upgrade pip
+pip install --index-url https://download.pytorch.org/whl/cu121 torch
+pip install -r requirements-qlora.txt
+```
+
+Train Qwen2.5-7B with QLoRA:
+
+```bash
+python scripts/qlora/train_qwen25_7b_qlora.py \
+  --data-dir ./data/corpus_astronomy_training \
+  --output-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --block-size 512 \
+  --gradient-accumulation-steps 16 \
+  --max-steps 1000
+```
+
+Generate with the saved adapter:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --prompt "Concerning the motion of the planets,"
+```
+
+Notes:
+- QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
+- The base model `Qwen/Qwen2.5-7B` is used rather than an instruct model because this workflow is causal language-model domain adaptation on plain text, not chat or instruction following.
+- Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
+- Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
 ## Logging and Metrics
 
