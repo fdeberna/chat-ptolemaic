@@ -82,7 +82,14 @@ def load_prompts(evaluation_dir: Path, max_prompts_per_category: int | None) -> 
     return categories
 
 
-def load_models(models_json_path: Path) -> list[dict[str, Any]]:
+def repo_relative_label(path: Path, repo_root: Path) -> str:
+    try:
+        return f"./{path.resolve().relative_to(repo_root.resolve()).as_posix()}"
+    except ValueError:
+        return path.as_posix()
+
+
+def load_models(models_json_path: Path, repo_root: Path) -> list[dict[str, Any]]:
     with models_json_path.open("r", encoding="utf-8") as handle:
         data = json.load(handle)
 
@@ -90,19 +97,17 @@ def load_models(models_json_path: Path) -> list[dict[str, Any]]:
         raise ValueError("--models-json must contain a JSON object mapping model ids to checkpoint paths.")
 
     models = []
-    base_dir = models_json_path.parent
     for model_id, checkpoint_value in data.items():
         if not isinstance(model_id, str) or not isinstance(checkpoint_value, str):
             raise ValueError("Each model id and checkpoint path in --models-json must be a string.")
 
-        checkpoint_path = Path(checkpoint_value)
-        if not checkpoint_path.is_absolute():
-            checkpoint_path = (base_dir / checkpoint_path).resolve()
+        checkpoint_path = resolve_repo_path(checkpoint_value, repo_root)
 
         models.append(
             {
                 "model_id": model_id,
                 "checkpoint_path": checkpoint_path,
+                "checkpoint_path_label": repo_relative_label(checkpoint_path, repo_root),
             }
         )
 
@@ -153,14 +158,17 @@ def build_generation_config(args: argparse.Namespace) -> dict[str, Any]:
 
 def resolve_repo_path(path_value: str, repo_root: Path) -> Path:
     path = Path(path_value)
-    if path.is_absolute() or path.exists():
+    if path.is_absolute():
         return path
 
     candidate = repo_root / path
     if candidate.exists():
         return candidate
 
-    return path
+    if path.exists():
+        return path
+
+    return candidate
 
 
 def _load_checkpoint(checkpoint_path: Path) -> dict[str, Any]:
@@ -224,7 +232,7 @@ def resolve_device(device_name: str) -> torch.device:
 def make_record(task: dict[str, Any], generation_config: dict[str, Any]) -> dict[str, Any]:
     return {
         "model_id": task["model_id"],
-        "checkpoint_path": str(task["checkpoint_path"]),
+        "checkpoint_path": task["checkpoint_path_label"],
         "category": task["category"],
         "prompt_id": task["prompt_id"],
         "prompt_idx": task["prompt_idx"],
@@ -244,12 +252,18 @@ def make_seed(task: dict[str, Any]) -> int:
 def load_generation_artifacts(
     checkpoint_path: Path,
     device: torch.device,
+    repo_root: Path,
 ) -> tuple[dict[str, Any], Tokenizer, GPT, int | None]:
     checkpoint = _load_checkpoint(checkpoint_path)
 
     tokenizer_path = _resolve_tokenizer_path(checkpoint)
     if not tokenizer_path.is_absolute():
-        tokenizer_path = (checkpoint_path.parent / tokenizer_path).resolve()
+        repo_tokenizer_path = repo_root / tokenizer_path
+        tokenizer_path = (
+            repo_tokenizer_path
+            if repo_tokenizer_path.exists()
+            else (checkpoint_path.parent / tokenizer_path).resolve()
+        )
     if not tokenizer_path.exists():
         raise FileNotFoundError(f"Tokenizer not found: {tokenizer_path}")
 
@@ -313,7 +327,7 @@ def main() -> None:
 
     repo_root = Path(__file__).resolve().parents[1]
     evaluation_dir = resolve_repo_path(args.evaluation_dir, repo_root)
-    output_path = Path(args.output_jsonl)
+    output_path = resolve_repo_path(args.output_jsonl, repo_root)
     models_json_path = resolve_repo_path(args.models_json, repo_root)
 
     if not evaluation_dir.exists():
@@ -321,7 +335,7 @@ def main() -> None:
     if not models_json_path.exists():
         raise SystemExit(f"Models JSON not found: {models_json_path}")
 
-    models = load_models(models_json_path)
+    models = load_models(models_json_path, repo_root)
     prompt_groups = load_prompts(evaluation_dir, args.max_prompts_per_category)
     generation_config = build_generation_config(args)
     completed = load_completed_keys(output_path) if args.resume else set()
@@ -351,6 +365,7 @@ def main() -> None:
                         {
                             "model_id": model_info["model_id"],
                             "checkpoint_path": model_info["checkpoint_path"],
+                            "checkpoint_path_label": model_info["checkpoint_path_label"],
                             "category": prompt["category"],
                             "prompt_id": prompt["prompt_id"],
                             "prompt_idx": prompt["prompt_idx"],
@@ -375,6 +390,7 @@ def main() -> None:
                 _, tokenizer, model, eos_token_id = load_generation_artifacts(
                     checkpoint_path=model_info["checkpoint_path"],
                     device=device,
+                    repo_root=repo_root,
                 )
                 model_error = None
             except Exception as exc:
