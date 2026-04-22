@@ -4,14 +4,13 @@ from __future__ import annotations
 import argparse
 
 import torch
-from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate text with Qwen2.5-7B + LoRA adapter.")
+    parser = argparse.ArgumentParser(description="Generate text with Qwen2.5-7B, optionally with a LoRA adapter.")
     parser.add_argument("--model-name", default="Qwen/Qwen2.5-7B")
-    parser.add_argument("--adapter-dir", default="./outputs/qwen25-7b-astronomy-qlora")
+    parser.add_argument("--adapter-dir")
     parser.add_argument("--prompt", required=True)
     parser.add_argument("--max-new-tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.8)
@@ -29,7 +28,8 @@ def main() -> None:
         bnb_4bit_compute_dtype=torch.float16,
     )
 
-    tokenizer = AutoTokenizer.from_pretrained(args.adapter_dir, use_fast=True)
+    tokenizer_source = args.adapter_dir if args.adapter_dir else args.model_name
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_source, use_fast=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -40,7 +40,12 @@ def main() -> None:
         torch_dtype=torch.float16,
         attn_implementation="sdpa",
     )
-    model = PeftModel.from_pretrained(base_model, args.adapter_dir)
+    if args.adapter_dir:
+        from peft import PeftModel
+
+        model = PeftModel.from_pretrained(base_model, args.adapter_dir)
+    else:
+        model = base_model
     model.eval()
 
     inputs = tokenizer(args.prompt, return_tensors="pt").to(model.device)

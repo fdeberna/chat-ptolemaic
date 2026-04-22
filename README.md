@@ -718,7 +718,14 @@ python scripts/qlora/train_qwen25_7b_qlora.py \
   --max-steps 1000
 ```
 
-Generate with the saved adapter:
+Generate with the base model only:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --prompt "Concerning the motion of the planets,"
+```
+
+Generate with the saved LoRA adapter:
 
 ```bash
 python scripts/qlora/generate_with_qwen25_lora.py \
@@ -729,6 +736,7 @@ python scripts/qlora/generate_with_qwen25_lora.py \
 Notes:
 - QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
 - The base model `Qwen/Qwen2.5-7B` is used rather than an instruct model because this workflow is causal language-model domain adaptation on plain text, not chat or instruction following.
+- `scripts/qlora/generate_with_qwen25_lora.py` loads only the base model when `--adapter-dir` is omitted. When `--adapter-dir` is provided, it loads the tokenizer from the adapter directory and applies the LoRA adapter on top of the base model.
 - Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
 - Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
