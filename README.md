@@ -696,6 +696,7 @@ The `scripts/qlora/` scripts support plain-text domain adaptation of an open-wei
 Scripts:
 - `scripts/qlora/train_qwen25_7b_qlora.py`
 - `scripts/qlora/generate_with_qwen25_lora.py`
+- `scripts/qlora/generate_eval_qwen.py`
 
 Install in Linux / WSL with CUDA:
 
@@ -733,10 +734,94 @@ python scripts/qlora/generate_with_qwen25_lora.py \
   --prompt "Concerning the motion of the planets,"
 ```
 
+Useful generation options:
+- `--do-sample` enables stochastic token sampling. This is the default.
+- `--no-do-sample` switches to deterministic decoding. In that mode, `--temperature` and `--top-p` are not used.
+- `--temperature` controls how flat or sharp the sampled token distribution is when sampling is enabled.
+- `--top-p` keeps only the smallest set of tokens whose cumulative probability reaches `p`, then samples from that set.
+- `--repetition-penalty` discourages reusing tokens that already appeared in the context or generated text.
+- `--no-repeat-ngram-size` blocks repeated n-grams of the given size.
+
+In practice, `--do-sample` is the switch that decides whether generation is random or greedy:
+- with `--do-sample`, repeated runs can produce different completions from the same prompt
+- with `--no-do-sample`, repeated runs should produce the same completion for the same prompt and model state
+
+Generate with stronger anti-repetition settings:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --prompt "Concerning the motion of the planets," \
+  --do-sample \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3
+```
+
+Run batch evaluation generation with the base model only:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_base_eval.jsonl \
+  --max-new-tokens 200 \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --do-sample \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3 \
+  --num-return-sequences 5 \
+  --seed 1234
+```
+
+Small pilot run with old-eval-style limiting:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_base_eval_pilot.jsonl \
+  --samples-per-prompt 2 \
+  --max-prompts-per-category 3
+```
+
+Run batch evaluation generation with a saved LoRA adapter:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_lora_eval.jsonl \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --max-new-tokens 200 \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --do-sample \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3 \
+  --num-return-sequences 5 \
+  --seed 1234
+```
+
+Resume an interrupted batch evaluation run:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_lora_eval.jsonl \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --num-return-sequences 5 \
+  --seed 1234 \
+  --resume
+```
+
 Notes:
 - QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
 - The base model `Qwen/Qwen2.5-7B` is used rather than an instruct model because this workflow is causal language-model domain adaptation on plain text, not chat or instruction following.
-- `scripts/qlora/generate_with_qwen25_lora.py` loads only the base model when `--adapter-dir` is omitted. When `--adapter-dir` is provided, it loads the tokenizer from the adapter directory and applies the LoRA adapter on top of the base model.
+- `scripts/qlora/generate_with_qwen25_lora.py` loads only the base model when `--adapter-dir` is omitted. When `--adapter-dir` is provided, it applies the LoRA adapter on top of the base model and uses adapter tokenizer files when they are present.
+- `scripts/qlora/generate_eval_qwen.py` mirrors the older evaluation workflow, but keeps the Qwen model resident in memory for the whole run instead of reloading it for every prompt.
+- In `scripts/qlora/generate_eval_qwen.py`, `--num-return-sequences` is the main control for how many samples to generate per prompt, and `--samples-per-prompt` is supported as a compatibility alias.
+- `scripts/qlora/generate_eval_qwen.py` also supports `--max-prompts-per-category`, matching the older evaluator's prompt-cap behavior for small pilot runs.
+- `scripts/qlora/generate_eval_qwen.py` writes one JSON object per generated sample, flushes after every line, and `--resume` skips prompt/sample pairs already present in the output file for the same model and adapter combination.
 - Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
 - Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
