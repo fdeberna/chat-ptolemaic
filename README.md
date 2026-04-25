@@ -814,6 +814,37 @@ python scripts/qlora/generate_eval_qwen.py \
   --resume
 ```
 
+Judge Qwen evaluation outputs with the Anthropic API:
+
+```bash
+python judge/judge_qwen_eval.py \
+  --input-jsonl evaluation/generation_outputs_qwen/qwen25_base_eval.jsonl \
+  --output-jsonl evaluation/judge_outputs_qwen/qwen25_base_judged.jsonl \
+  --judge-model claude-haiku-4-5-20251001 \
+  --max-rows 20
+```
+
+Resume a full Qwen judging run without overwriting existing judged rows:
+
+```bash
+python judge/judge_qwen_eval.py \
+  --input-jsonl evaluation/generation_outputs_qwen/qwen25_lora1000_eval.jsonl \
+  --output-jsonl evaluation/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
+  --judge-model claude-haiku-4-5-20251001 \
+  --resume
+```
+
+Summarize one or more judged Qwen files into CSV and JSON outputs:
+
+```bash
+python evaluation/summarize_qwen_judgments.py \
+  --input-jsonl \
+    evaluation/judge_outputs_qwen/qwen25_base_judged.jsonl \
+    evaluation/judge_outputs_qwen/qwen25_lora500_judged.jsonl \
+    evaluation/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
+  --output-dir evaluation/judge_outputs_qwen/summary
+```
+
 Notes:
 - QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
 - The base model `Qwen/Qwen2.5-7B` is used rather than an instruct model because this workflow is causal language-model domain adaptation on plain text, not chat or instruction following.
@@ -822,6 +853,12 @@ Notes:
 - In `scripts/qlora/generate_eval_qwen.py`, `--num-return-sequences` is the main control for how many samples to generate per prompt, and `--samples-per-prompt` is supported as a compatibility alias.
 - `scripts/qlora/generate_eval_qwen.py` also supports `--max-prompts-per-category`, matching the older evaluator's prompt-cap behavior for small pilot runs.
 - `scripts/qlora/generate_eval_qwen.py` writes one JSON object per generated sample, flushes after every line, and `--resume` skips prompt/sample pairs already present in the output file for the same model and adapter combination.
+- `judge/judge_qwen_eval.py` now uses the Anthropic client pattern from `judge/judge_eval_anthropic.py`. Set `ANTHROPIC_API_KEY` in the shell environment, and install the `anthropic` package in the Python environment running the script.
+- `judge/judge_qwen_eval.py` preserves the old `judge_result` workflow shape while expanding the Qwen schema with Phase 2 labels. The `stance` field keeps the old Phase 1 label space (`geocentric`, `heliocentric_or_earth_moves`, `ambiguous`, `no_relevant_claim`), and `stance_normalized` provides the mapped view (`geocentric`, `heliocentric`, `ambiguous`, `irrelevant_or_unclear`).
+- The default Qwen judge model is `claude-haiku-4-5-20251001`; `claude-sonnet-4-6` is supported through `--judge-model` or `--model`.
+- Anthropic does not enforce the JSON schema natively, so `judge/judge_qwen_eval.py` validates and normalizes the returned JSON and falls back to a repair call if the first response is malformed.
+- `judge/judge_qwen_eval.py` will not overwrite an existing output file unless `--overwrite` is passed. Use `--resume` to append only missing prompt/sample rows.
+- `evaluation/summarize_qwen_judgments.py` writes overall summary CSVs, per-category summary CSVs, prompt-level rate tables, and prompt-level pairwise comparison CSVs for `qwen_base` vs `qwen_lora500`, `qwen_base` vs `qwen_lora1000`, and `qwen_lora500` vs `qwen_lora1000` when those variants are present.
 - Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
 - Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
