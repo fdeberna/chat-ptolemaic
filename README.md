@@ -838,12 +838,14 @@ Summarize one or more judged Qwen files into CSV and JSON outputs:
 
 ```bash
 python evaluation/summarize_qwen_judgments.py \
-  --input-jsonl \
-    evaluation/judge_outputs_qwen/qwen25_base_judged.jsonl \
-    evaluation/judge_outputs_qwen/qwen25_lora500_judged.jsonl \
-    evaluation/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
-  --output-dir evaluation/judge_outputs_qwen/summary
+  --input base=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_base_judged.jsonl \
+  --input lora500=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_lora500_judged.jsonl \
+  --input lora1000=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
+  --output-dir evaluation/generation_outputs_qwen/summary
 ```
+
+Backward compatibility:
+- `--input-jsonl path1 path2 ...` still works if you do not need explicit aliases.
 
 Notes:
 - QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
@@ -858,7 +860,14 @@ Notes:
 - The default Qwen judge model is `claude-haiku-4-5-20251001`; `claude-sonnet-4-6` is supported through `--judge-model` or `--model`.
 - Anthropic does not enforce the JSON schema natively, so `judge/judge_qwen_eval.py` validates and normalizes the returned JSON and falls back to a repair call if the first response is malformed.
 - `judge/judge_qwen_eval.py` will not overwrite an existing output file unless `--overwrite` is passed. Use `--resume` to append only missing prompt/sample rows.
-- `evaluation/summarize_qwen_judgments.py` writes overall summary CSVs, per-category summary CSVs, prompt-level rate tables, and prompt-level pairwise comparison CSVs for `qwen_base` vs `qwen_lora500`, `qwen_base` vs `qwen_lora1000`, and `qwen_lora500` vs `qwen_lora1000` when those variants are present.
+- `evaluation/summarize_qwen_judgments.py` writes overall summary CSVs, per-category summary CSVs, prompt-level rate tables, prompt-level pairwise comparison CSVs, conditional-probability CSVs, sample-paired flip-rate CSVs, and a prompt susceptibility CSV for base vs lora1000 when those variants are present.
+- New summary outputs include:
+  - `qwen_conditional_probabilities_by_model.csv`
+  - `qwen_conditional_probabilities_by_model_and_category.csv`
+  - `qwen_flip_rates_by_pair.csv`
+  - `qwen_flip_rates_by_pair_and_category.csv`
+  - `qwen_prompt_susceptibility_base_vs_lora1000.csv` when aliases `base` and `lora1000` are used
+- Existing prompt-level pairwise comparison CSVs are still written for `qwen_base` vs `qwen_lora500`, `qwen_base` vs `qwen_lora1000`, and `qwen_lora500` vs `qwen_lora1000`.
 - Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
 - Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
