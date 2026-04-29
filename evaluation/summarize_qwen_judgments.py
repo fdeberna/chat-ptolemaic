@@ -6,8 +6,14 @@ import json
 import re
 import statistics
 from collections import defaultdict
+from math import isfinite
 from pathlib import Path
 from typing import Any
+
+try:
+    from scipy.stats import chi2
+except ImportError:
+    chi2 = None
 
 
 PAIR_ORDER = [
@@ -85,6 +91,24 @@ def safe_div(numerator: int, denominator: int) -> float:
 
 def safe_rate_or_none(numerator: int, denominator: int) -> float | None:
     return numerator / denominator if denominator else None
+
+
+def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float | None, float | None]:
+    if n == 0:
+        return (None, None)
+    p = k / n
+    denom = 1 + z**2 / n
+    center = (p + z**2 / (2 * n)) / denom
+    margin = z * ((p * (1 - p) / n + z**2 / (4 * n**2)) ** 0.5) / denom
+    return center - margin, center + margin
+
+
+def mcnemar_test(b: int, c: int) -> tuple[float | None, float | None]:
+    if chi2 is None or b + c == 0:
+        return None, None
+    chi2_stat = (abs(b - c) - 1) ** 2 / (b + c)
+    p_value = 1 - chi2.cdf(chi2_stat, df=1)
+    return chi2_stat, p_value
 
 
 def warn(message: str) -> None:
@@ -988,6 +1012,7 @@ def build_conditional_rows(
                 "denominator": denominator,
                 "rate": safe_rate_or_none(numerator, denominator),
             }
+            row["ci_lower"], row["ci_upper"] = wilson_ci(numerator, denominator)
             if include_prompt_category:
                 row["prompt_category"] = prompt_category
             rows.append(row)
@@ -1137,6 +1162,8 @@ def build_paired_sample_rows(
                     and comparison_hybrid_frame,
                     "earth_motion_suppression": reference_earth_motion
                     and (not comparison_earth_motion),
+                    "earth_motion_activation": (not reference_earth_motion)
+                    and comparison_earth_motion,
                 }
             )
 
@@ -1187,6 +1214,27 @@ def flip_metric_specs() -> list[tuple[str, str]]:
             "earth_motion_suppression",
             "reference earth_motion_mention = true and comparison earth_motion_mention = false",
         ),
+        (
+            "earth_motion_activation",
+            "reference earth_motion_mention = false and comparison earth_motion_mention = true",
+        ),
+    ]
+
+
+def directional_flip_pairs() -> list[tuple[str, str]]:
+    return [
+        (
+            "modern_to_premodern_frame_flip",
+            "premodern_to_modern_frame_flip",
+        ),
+        (
+            "heliocentric_to_geocentric_refined_stance_flip",
+            "geocentric_to_heliocentric_refined_stance_flip",
+        ),
+        (
+            "earth_motion_suppression",
+            "earth_motion_activation",
+        ),
     ]
 
 
@@ -1225,9 +1273,65 @@ def build_flip_rate_rows(
                     "denominator": denominator,
                     "rate": safe_rate_or_none(count, denominator),
                 }
+                row["ci_lower"], row["ci_upper"] = wilson_ci(count, denominator)
                 if include_prompt_category:
                     row["prompt_category"] = prompt_category
                 rows.append(row)
+
+    return rows
+
+
+def build_flip_stats_rows(
+    paired_rows_by_pair: dict[tuple[str, str, str, str], list[dict[str, Any]]]
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    directional_lookup: dict[str, str] = {}
+    for left_metric, right_metric in directional_flip_pairs():
+        directional_lookup[left_metric] = right_metric
+        directional_lookup[right_metric] = left_metric
+
+    for (
+        reference_model_label,
+        comparison_model_label,
+        reference_variant_label,
+        comparison_variant_label,
+    ), pair_rows in sorted(paired_rows_by_pair.items()):
+        denominator = len(pair_rows)
+        if denominator == 0:
+            continue
+
+        counts_by_metric = {
+            metric_id: sum(1 for row in pair_rows if row[metric_id])
+            for metric_id, _ in flip_metric_specs()
+        }
+
+        for metric_name, definition in flip_metric_specs():
+            count = counts_by_metric[metric_name]
+            ci_lower, ci_upper = wilson_ci(count, denominator)
+            reverse_metric = directional_lookup.get(metric_name)
+            reverse_count = counts_by_metric.get(reverse_metric) if reverse_metric else None
+            chi2_stat, p_value = (
+                mcnemar_test(count, reverse_count) if reverse_count is not None else (None, None)
+            )
+
+            rows.append(
+                {
+                    "pair_id": f"{reference_model_label}_vs_{comparison_model_label}",
+                    "reference_model_label": reference_model_label,
+                    "comparison_model_label": comparison_model_label,
+                    "reference_variant_label": reference_variant_label,
+                    "comparison_variant_label": comparison_variant_label,
+                    "metric_name": metric_name,
+                    "count": count,
+                    "denominator": denominator,
+                    "rate": safe_rate_or_none(count, denominator),
+                    "ci_lower": ci_lower,
+                    "ci_upper": ci_upper,
+                    "reverse_count": reverse_count,
+                    "chi2_stat": chi2_stat,
+                    "p_value": p_value,
+                }
+            )
 
     return rows
 
@@ -1358,7 +1462,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
             csv_row: dict[str, Any] = {}
             for key, value in row.items():
                 if isinstance(value, float):
-                    csv_row[key] = f"{value:.6f}"
+                    csv_row[key] = f"{value:.6f}" if isfinite(value) else value
                 else:
                     csv_row[key] = value
             writer.writerow(csv_row)
@@ -1392,6 +1496,7 @@ def main() -> None:
     paired_sample_rows = build_paired_sample_rows(records)
     flip_rows = build_flip_rate_rows(paired_sample_rows, include_prompt_category=False)
     flip_category_rows = build_flip_rate_rows(paired_sample_rows, include_prompt_category=True)
+    flip_stats_rows = build_flip_stats_rows(paired_sample_rows)
     susceptibility_output_name, susceptibility_rows = build_prompt_susceptibility_rows(
         paired_sample_rows
     )
@@ -1406,6 +1511,7 @@ def main() -> None:
     )
     write_csv(output_dir / "qwen_flip_rates_by_pair.csv", flip_rows)
     write_csv(output_dir / "qwen_flip_rates_by_pair_and_category.csv", flip_category_rows)
+    write_csv(output_dir / "flip_rates_with_stats.csv", flip_stats_rows)
 
     summary_manifest = {
         "input_jsonl": [str(path) for _, path in input_specs],
@@ -1419,6 +1525,7 @@ def main() -> None:
         "min_quality": args.min_quality,
         "include_errors": args.include_errors,
         "counts": counts,
+        "scipy_available_for_mcnemar": chi2 is not None,
         "output_files": [
             "qwen_judgment_summary_overall.csv",
             "qwen_judgment_summary_by_category.csv",
@@ -1427,6 +1534,7 @@ def main() -> None:
             "qwen_conditional_probabilities_by_model_and_category.csv",
             "qwen_flip_rates_by_pair.csv",
             "qwen_flip_rates_by_pair_and_category.csv",
+            "flip_rates_with_stats.csv",
         ],
         "pairwise_outputs": [],
         "overall_rows": overall_rows,

@@ -13,7 +13,20 @@ review, tokenizer training, base pretraining, astronomy fine-tuning,
 and structured evaluation to test whether heliocentric ideas can emerge 
 from geocentric training data alone.
 
+In a second phase, the project extends this question to modern large 
+language models using parameter-efficient fine-tuning (QLoRA) on an 
+open-weight 7B model. This allows us to study not only whether 
+heliocentric ideas can emerge, but how fine-tuning reshapes the model’s 
+internal distribution over explanatory frameworks (modern vs premodern), 
+and how this affects the generation of geocentric or heliocentric 
+reasoning under controlled prompting.
+
+This repository supports both:
+- training small GPT-style models from scratch for controlled emergence experiments
+- domain adaptation of larger open-weight models via QLoRA for behavioral analysis
+
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
+
 1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
 2. Pretrain GPT on general corpus.
 3. Finetune GPT on astronomy corpus (with 80/20 astronomy/general mixing).
@@ -86,6 +99,34 @@ Model B shows more hedging/ambiguity, suggesting A's outputs are more
 confident. 
 
 **Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
+
+### QLoRA Domain Adaptation (Qwen2.5-7B)
+
+Extending beyond small models, we apply QLoRA fine-tuning to a 7B open-weight model using the same pre-Copernican astronomy corpus, and evaluate behavior under the same structured prompting and LLM-as-judge framework.
+
+**Key findings:**
+
+- **Strong explanatory frame shift:**  
+  QLoRA significantly increases premodern explanatory framing.  
+  ~25% of paired samples flip from modern → premodern, with reverse flips rare (~1–2%, statistically significant).
+
+- **Frame drives stance:**  
+  Geocentric stance increases modestly (~8% → ~15%), but conditional on premodern framing, stance distributions remain stable.  
+  → Suggests fine-tuning primarily shifts **explanatory framework selection**, not beliefs directly.
+
+- **Earth-motion suppression:**  
+  Mentions of Earth motion are reduced under QLoRA, consistent with decreased heliocentric reasoning.
+
+- **Hybridization effects:**  
+  QLoRA increases outputs that mix modern and premodern reasoning, indicating partial activation of conflicting explanatory regimes.
+
+- **Early saturation:**  
+  Most of the behavioral shift occurs within the first few hundred fine-tuning steps.
+
+**Interpretation:**
+
+Unlike the 110M model experiments, where geocentric fine-tuning primarily increased ambiguity and hedging, QLoRA on a large pretrained model induces a **systematic and directional shift in explanatory regime**. The base model already contains both modern and premodern reasoning modes; QLoRA reweights their relative activation, increasing the likelihood of entering a premodern explanatory framework from which geocentric conclusions naturally follow.
+
 
 ## Project Layout
 
@@ -861,12 +902,14 @@ Notes:
 - Anthropic does not enforce the JSON schema natively, so `judge/judge_qwen_eval.py` validates and normalizes the returned JSON and falls back to a repair call if the first response is malformed.
 - `judge/judge_qwen_eval.py` will not overwrite an existing output file unless `--overwrite` is passed. Use `--resume` to append only missing prompt/sample rows.
 - `evaluation/summarize_qwen_judgments.py` writes overall summary CSVs, per-category summary CSVs, prompt-level rate tables, prompt-level pairwise comparison CSVs, conditional-probability CSVs, sample-paired flip-rate CSVs, and a prompt susceptibility CSV for base vs lora1000 when those variants are present.
-- New summary outputs include:
+  - New summary outputs include:
   - `qwen_conditional_probabilities_by_model.csv`
   - `qwen_conditional_probabilities_by_model_and_category.csv`
   - `qwen_flip_rates_by_pair.csv`
   - `qwen_flip_rates_by_pair_and_category.csv`
+  - `flip_rates_with_stats.csv`
   - `qwen_prompt_susceptibility_base_vs_lora1000.csv` when aliases `base` and `lora1000` are used
+- `flip_rates_with_stats.csv` adds 95% Wilson confidence intervals for each flip rate and McNemar directional-asymmetry tests for the paired frame, refined-stance, and Earth-motion flip comparisons. When `scipy` is unavailable, the script still runs and leaves the McNemar fields blank.
 - Existing prompt-level pairwise comparison CSVs are still written for `qwen_base` vs `qwen_lora500`, `qwen_base` vs `qwen_lora1000`, and `qwen_lora500` vs `qwen_lora1000`.
 - Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
 - Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
