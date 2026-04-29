@@ -13,7 +13,20 @@ review, tokenizer training, base pretraining, astronomy fine-tuning,
 and structured evaluation to test whether heliocentric ideas can emerge 
 from geocentric training data alone.
 
+In a second phase, the project extends this question to modern large 
+language models using parameter-efficient fine-tuning (QLoRA) on an 
+open-weight 7B model. This allows us to study not only whether 
+heliocentric ideas can emerge, but how fine-tuning reshapes the model’s 
+internal distribution over explanatory frameworks (modern vs premodern), 
+and how this affects the generation of geocentric or heliocentric 
+reasoning under controlled prompting.
+
+This repository supports both:
+- training small GPT-style models from scratch for controlled emergence experiments
+- domain adaptation of larger open-weight models via QLoRA for behavioral analysis
+
 This repository trains a GPT-style language model from scratch with a 3-stage pipeline:
+
 1. Train a BPE tokenizer (once per corpus/vocab setup, then reuse it).
 2. Pretrain GPT on general corpus.
 3. Finetune GPT on astronomy corpus (with 80/20 astronomy/general mixing).
@@ -44,6 +57,7 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 - [Judge generations with OpenAI](#7-judge-generations-with-openai)
 - [Judge generations with Anthropic](#8-judge-generations-with-anthropic)
 - [Summarize judged evaluation results](#9-summarize-judged-evaluation-results)
+- [QLoRA Domain Adaptation](#qlora-domain-adaptation)
 - [Logging and Metrics](#logging-and-metrics)
 - [Gutenberg Non-Science Corpus Builder](#gutenberg-non-science-corpus-builder)
 
@@ -52,7 +66,16 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 Can a language model generate heliocentric ideas despite training 
 exclusively on geocentric texts?
 
+More broadly, how do training constraints and fine-tuning shape the 
+model’s selection of explanatory frameworks (e.g., modern heliocentric 
+vs premodern geocentric reasoning), and what mechanisms govern the 
+emergence or suppression of alternative scientific ideas?
+
 ## Experimental Design
+
+The project consists of two complementary experimental settings:
+
+### Phase 1: Small-model emergence (controlled training)
 
 **Training:** 110M-parameter GPT model
 - **General pretraining:** 290M tokens (heliocentric astronomy removed)
@@ -64,12 +87,33 @@ exclusively on geocentric texts?
 - **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
 - **Test:** Which produces more heliocentric ideas when prompted?
 
-**Hypothesis:** Two outcomes are possible:
+**Hypothesis:**
+1. If Model B generates more heliocentric ideas, geocentric reasoning may enable emergence via recombination.
+2. If Model B generates fewer, training reinforces geocentric doctrine and suppresses alternatives.
 
-1. If Model B (astronomy-trained) generates more heliocentric ideas than Model A (general-only), this suggests geocentric reasoning patterns enable emergence beyond random language patterns.
-2. If Model B generates fewer heliocentric ideas, this suggests astronomy training reinforces geocentric doctrine and suppresses alternatives. 
+---
+
+### Phase 2: Large-model adaptation (QLoRA)
+
+**Model:** Qwen2.5-7B (open-weight LLM)
+
+**Training:** Parameter-efficient fine-tuning (QLoRA)
+- Low-rank adapters trained on the same pre-Copernican astronomy corpus
+- Base model already contains modern scientific knowledge
+
+**Evaluation:** Paired comparison
+- **Base model vs QLoRA-adapted model**
+- Same prompts, same sampling seeds
+- Structured LLM-as-judge labeling
+
+**Key question:**
+Does fine-tuning:
+- directly shift scientific stance (heliocentric vs geocentric), or
+- alter the selection of explanatory frameworks from which stance emerges?
 
 ## Key Results so Far
+
+### Phase 1: Controlled Training
 
 Surprisingly, Model A (general pretraining) shows higher heliocentric content:
 - **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
@@ -85,6 +129,34 @@ Model B shows more hedging/ambiguity, suggesting A's outputs are more
 confident. 
 
 **Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
+
+### Phase 2: QLoRA Domain Adaptation (Qwen2.5-7B)
+
+Extending beyond small models, we apply QLoRA fine-tuning to a 7B open-weight model using the same pre-Copernican astronomy corpus, and evaluate behavior under the same structured prompting and LLM-as-judge framework.
+
+**Key findings:**
+
+- **Strong explanatory frame shift:**  
+  QLoRA significantly increases premodern explanatory framing.  
+  ~25% of paired samples flip from modern → premodern, with reverse flips rare (~1–2%, statistically significant).
+
+- **Frame drives stance:**  
+  Geocentric stance increases modestly (~8% → ~15%), but conditional on premodern framing, stance distributions remain stable.  
+  → Suggests fine-tuning primarily shifts **explanatory framework selection**, not beliefs directly.
+
+- **Earth-motion suppression:**  
+  Mentions of Earth motion are reduced under QLoRA, consistent with decreased heliocentric reasoning.
+
+- **Hybridization effects:**  
+  QLoRA increases outputs that mix modern and premodern reasoning, indicating partial activation of conflicting explanatory regimes.
+
+- **Early saturation:**  
+  Most of the behavioral shift occurs within the first few hundred fine-tuning steps.
+
+**Interpretation:**
+
+Unlike the 110M model experiments, where geocentric fine-tuning primarily increased ambiguity and hedging, QLoRA on a large pretrained model induces a **systematic and directional shift in explanatory regime**. The base model already contains both modern and premodern reasoning modes; QLoRA reweights their relative activation, increasing the likelihood of entering a premodern explanatory framework from which geocentric conclusions naturally follow.
+
 
 ## Project Layout
 
@@ -687,6 +759,190 @@ Summary outputs:
   - top 10 prompts with the highest Explicit Earth-motion rate for each model
   - top 10 prompts with the highest Proto-heliocentric suggestion rate for each model
   - run notes with judged, skipped, and error row counts
+
+## QLoRA Domain Adaptation
+
+The `scripts/qlora/` scripts support plain-text domain adaptation of an open-weight 7B causal LM using QLoRA. This is not instruction tuning: the dataset is a folder of cleaned `.txt` files, split by document before tokenization to avoid train/validation leakage, then tokenized and chunked into fixed-length causal-LM sequences.
+
+Scripts:
+- `scripts/qlora/train_qwen25_7b_qlora.py`
+- `scripts/qlora/generate_with_qwen25_lora.py`
+- `scripts/qlora/generate_eval_qwen.py`
+
+Install in Linux / WSL with CUDA:
+
+```bash
+python -m venv .venv-qlora
+source .venv-qlora/bin/activate
+pip install --upgrade pip
+pip install --index-url https://download.pytorch.org/whl/cu121 torch
+pip install -r requirements-qlora.txt
+```
+
+Train Qwen2.5-7B with QLoRA:
+
+```bash
+python scripts/qlora/train_qwen25_7b_qlora.py \
+  --data-dir ./data/corpus_astronomy_training \
+  --output-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --block-size 512 \
+  --gradient-accumulation-steps 16 \
+  --max-steps 1000
+```
+
+Generate with the base model only:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --prompt "Concerning the motion of the planets,"
+```
+
+Generate with the saved LoRA adapter:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --prompt "Concerning the motion of the planets,"
+```
+
+Useful generation options:
+- `--do-sample` enables stochastic token sampling. This is the default.
+- `--no-do-sample` switches to deterministic decoding. In that mode, `--temperature` and `--top-p` are not used.
+- `--temperature` controls how flat or sharp the sampled token distribution is when sampling is enabled.
+- `--top-p` keeps only the smallest set of tokens whose cumulative probability reaches `p`, then samples from that set.
+- `--repetition-penalty` discourages reusing tokens that already appeared in the context or generated text.
+- `--no-repeat-ngram-size` blocks repeated n-grams of the given size.
+
+In practice, `--do-sample` is the switch that decides whether generation is random or greedy:
+- with `--do-sample`, repeated runs can produce different completions from the same prompt
+- with `--no-do-sample`, repeated runs should produce the same completion for the same prompt and model state
+
+Generate with stronger anti-repetition settings:
+
+```bash
+python scripts/qlora/generate_with_qwen25_lora.py \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --prompt "Concerning the motion of the planets," \
+  --do-sample \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3
+```
+
+Run batch evaluation generation with the base model only:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_base_eval.jsonl \
+  --max-new-tokens 200 \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --do-sample \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3 \
+  --num-return-sequences 5 \
+  --seed 1234
+```
+
+Small pilot run with old-eval-style limiting:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_base_eval_pilot.jsonl \
+  --samples-per-prompt 2 \
+  --max-prompts-per-category 3
+```
+
+Run batch evaluation generation with a saved LoRA adapter:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_lora_eval.jsonl \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --max-new-tokens 200 \
+  --temperature 0.8 \
+  --top-p 0.9 \
+  --do-sample \
+  --repetition-penalty 1.1 \
+  --no-repeat-ngram-size 3 \
+  --num-return-sequences 5 \
+  --seed 1234
+```
+
+Resume an interrupted batch evaluation run:
+
+```bash
+python scripts/qlora/generate_eval_qwen.py \
+  evaluation/astro.txt evaluation/declarative.txt evaluation/general.txt evaluation/questions.txt \
+  --output-jsonl evaluation/generation_outputs/qwen25_lora_eval.jsonl \
+  --adapter-dir ./outputs/qwen25-7b-astronomy-qlora \
+  --num-return-sequences 5 \
+  --seed 1234 \
+  --resume
+```
+
+Judge Qwen evaluation outputs with the Anthropic API:
+
+```bash
+python judge/judge_qwen_eval.py \
+  --input-jsonl evaluation/generation_outputs_qwen/qwen25_base_eval.jsonl \
+  --output-jsonl evaluation/judge_outputs_qwen/qwen25_base_judged.jsonl \
+  --judge-model claude-haiku-4-5-20251001 \
+  --max-rows 20
+```
+
+Resume a full Qwen judging run without overwriting existing judged rows:
+
+```bash
+python judge/judge_qwen_eval.py \
+  --input-jsonl evaluation/generation_outputs_qwen/qwen25_lora1000_eval.jsonl \
+  --output-jsonl evaluation/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
+  --judge-model claude-haiku-4-5-20251001 \
+  --resume
+```
+
+Summarize one or more judged Qwen files into CSV and JSON outputs:
+
+```bash
+python evaluation/summarize_qwen_judgments.py \
+  --input base=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_base_judged.jsonl \
+  --input lora500=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_lora500_judged.jsonl \
+  --input lora1000=evaluation/generation_outputs_qwen/judge_outputs_qwen/qwen25_lora1000_judged.jsonl \
+  --output-dir evaluation/generation_outputs_qwen/summary
+```
+
+Backward compatibility:
+- `--input-jsonl path1 path2 ...` still works if you do not need explicit aliases.
+
+Notes:
+- QLoRA is used instead of full LoRA because the base 7B model is loaded in 4-bit NF4, which is much more realistic on an 8GB RTX 3070 while still training LoRA adapter weights.
+- The base model `Qwen/Qwen2.5-7B` is used rather than an instruct model because this workflow is causal language-model domain adaptation on plain text, not chat or instruction following.
+- `scripts/qlora/generate_with_qwen25_lora.py` loads only the base model when `--adapter-dir` is omitted. When `--adapter-dir` is provided, it applies the LoRA adapter on top of the base model and uses adapter tokenizer files when they are present.
+- `scripts/qlora/generate_eval_qwen.py` mirrors the older evaluation workflow, but keeps the Qwen model resident in memory for the whole run instead of reloading it for every prompt.
+- In `scripts/qlora/generate_eval_qwen.py`, `--num-return-sequences` is the main control for how many samples to generate per prompt, and `--samples-per-prompt` is supported as a compatibility alias.
+- `scripts/qlora/generate_eval_qwen.py` also supports `--max-prompts-per-category`, matching the older evaluator's prompt-cap behavior for small pilot runs.
+- `scripts/qlora/generate_eval_qwen.py` writes one JSON object per generated sample, flushes after every line, and `--resume` skips prompt/sample pairs already present in the output file for the same model and adapter combination.
+- `judge/judge_qwen_eval.py` now uses the Anthropic client pattern from `judge/judge_eval_anthropic.py`. Set `ANTHROPIC_API_KEY` in the shell environment, and install the `anthropic` package in the Python environment running the script.
+- `judge/judge_qwen_eval.py` preserves the old `judge_result` workflow shape while expanding the Qwen schema with Phase 2 labels. The `stance` field keeps the old Phase 1 label space (`geocentric`, `heliocentric_or_earth_moves`, `ambiguous`, `no_relevant_claim`), and `stance_normalized` provides the mapped view (`geocentric`, `heliocentric`, `ambiguous`, `irrelevant_or_unclear`).
+- The default Qwen judge model is `claude-haiku-4-5-20251001`; `claude-sonnet-4-6` is supported through `--judge-model` or `--model`.
+- Anthropic does not enforce the JSON schema natively, so `judge/judge_qwen_eval.py` validates and normalizes the returned JSON and falls back to a repair call if the first response is malformed.
+- `judge/judge_qwen_eval.py` will not overwrite an existing output file unless `--overwrite` is passed. Use `--resume` to append only missing prompt/sample rows.
+- `evaluation/summarize_qwen_judgments.py` writes overall summary CSVs, per-category summary CSVs, prompt-level rate tables, prompt-level pairwise comparison CSVs, conditional-probability CSVs, sample-paired flip-rate CSVs, and a prompt susceptibility CSV for base vs lora1000 when those variants are present.
+  - New summary outputs include:
+  - `qwen_conditional_probabilities_by_model.csv`
+  - `qwen_conditional_probabilities_by_model_and_category.csv`
+  - `qwen_flip_rates_by_pair.csv`
+  - `qwen_flip_rates_by_pair_and_category.csv`
+  - `flip_rates_with_stats.csv`
+  - `qwen_prompt_susceptibility_base_vs_lora1000.csv` when aliases `base` and `lora1000` are used
+- `flip_rates_with_stats.csv` adds 95% Wilson confidence intervals for each flip rate and McNemar directional-asymmetry tests for the paired frame, refined-stance, and Earth-motion flip comparisons. When `scipy` is unavailable, the script still runs and leaves the McNemar fields blank.
+- Existing prompt-level pairwise comparison CSVs are still written for `qwen_base` vs `qwen_lora500`, `qwen_base` vs `qwen_lora1000`, and `qwen_lora500` vs `qwen_lora1000`.
+- Only the LoRA adapter and tokenizer files are saved under `./outputs/qwen25-7b-astronomy-qlora`; the base model is not copied into the repo.
+- Manual setup: place cleaned training text files under `./data/corpus_astronomy_training`. If 8GB VRAM is still too tight, reduce `--block-size` to `256`.
 
 ## Logging and Metrics
 

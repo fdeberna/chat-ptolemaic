@@ -5,6 +5,7 @@ python-inst.exe
 /*.png
 /*.txt
 !/requirements.txt
+!/requirements-qlora.txt
 /*.sh
 /categorization_*.csv
 /scripts/plots/
@@ -28,6 +29,7 @@ __pycache__/
 references.txt
 data/corpus_char_counts.tsv
 out/*
+outputs/
 data/rdf-files
 py311-embed/
 finetune.log
