@@ -66,7 +66,16 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 Can a language model generate heliocentric ideas despite training 
 exclusively on geocentric texts?
 
+More broadly, how do training constraints and fine-tuning shape the 
+model’s selection of explanatory frameworks (e.g., modern heliocentric 
+vs premodern geocentric reasoning), and what mechanisms govern the 
+emergence or suppression of alternative scientific ideas?
+
 ## Experimental Design
+
+The project consists of two complementary experimental settings:
+
+### Phase 1: Small-model emergence (controlled training)
 
 **Training:** 110M-parameter GPT model
 - **General pretraining:** 290M tokens (heliocentric astronomy removed)
@@ -78,12 +87,33 @@ exclusively on geocentric texts?
 - **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
 - **Test:** Which produces more heliocentric ideas when prompted?
 
-**Hypothesis:** Two outcomes are possible:
+**Hypothesis:**
+1. If Model B generates more heliocentric ideas, geocentric reasoning may enable emergence via recombination.
+2. If Model B generates fewer, training reinforces geocentric doctrine and suppresses alternatives.
 
-1. If Model B (astronomy-trained) generates more heliocentric ideas than Model A (general-only), this suggests geocentric reasoning patterns enable emergence beyond random language patterns.
-2. If Model B generates fewer heliocentric ideas, this suggests astronomy training reinforces geocentric doctrine and suppresses alternatives. 
+---
+
+### Phase 2: Large-model adaptation (QLoRA)
+
+**Model:** Qwen2.5-7B (open-weight LLM)
+
+**Training:** Parameter-efficient fine-tuning (QLoRA)
+- Low-rank adapters trained on the same pre-Copernican astronomy corpus
+- Base model already contains modern scientific knowledge
+
+**Evaluation:** Paired comparison
+- **Base model vs QLoRA-adapted model**
+- Same prompts, same sampling seeds
+- Structured LLM-as-judge labeling
+
+**Key question:**
+Does fine-tuning:
+- directly shift scientific stance (heliocentric vs geocentric), or
+- alter the selection of explanatory frameworks from which stance emerges?
 
 ## Key Results so Far
+
+### Phase 1: Controlled Training
 
 Surprisingly, Model A (general pretraining) shows higher heliocentric content:
 - **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
@@ -100,7 +130,7 @@ confident.
 
 **Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
 
-### QLoRA Domain Adaptation (Qwen2.5-7B)
+### Phase 2: QLoRA Domain Adaptation (Qwen2.5-7B)
 
 Extending beyond small models, we apply QLoRA fine-tuning to a 7B open-weight model using the same pre-Copernican astronomy corpus, and evaluate behavior under the same structured prompting and LLM-as-judge framework.
 
