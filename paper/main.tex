@@ -1,0 +1,35 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\raggedright
+
+\title{Emergence of}
+\author{Francesco De Bernardis}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We investigate whether language models can generate ideas that lie outside the epistemic scope of their training data. In Phase 1, we train a small language model from scratch on a pre-heliocentric corpus and evaluate its ability to produce heliocentric concepts. In Phase 2, we fine-tune a larger pretrained model using QLoRA on the same corpus to study how adaptation reshapes explanatory frameworks. 
+
+We evaluate model outputs using an LLM-as-judge, labeling both astronomical stance (geocentric vs. heliocentric) and explanatory frame (modern vs. premodern). While the small model shows limited emergence of heliocentric ideas, fine-tuning the larger model induces a strong and statistically significant shift from modern to premodern explanatory frames. This shift is highly directional and largely determines the distribution of stances: conditional on the explanatory frame, stance frequencies remain nearly unchanged. As a result, the observed increase in geocentric outputs arises primarily from a redistribution over explanatory frames rather than a direct change in beliefs.
+
+These results suggest that fine-tuning primarily reshapes which explanatory framework a language model adopts, and the resulting stance follows from this framework rather than being directly modified.
+
+\end{abstract}
+
+\input{sections/intro}
+\input{sections/data}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

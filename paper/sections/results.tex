@@ -1,0 +1,14 @@
+\section{Results}
+
+\subsection{Phase 1}
+Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates $(4\% - 8\%)$, suggesting some pattern recombination occurs even in a small 110M parameter models trained on geocentric texts. As any heliocentric content was completely removed from the training corpus, the emergence of this content occurs solely through pattern recombination. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
+only "partly coherent" output according to our judge manifest. This is not surprising and a known limit of small models (see for example \cite{eldan2023tinystoriessmalllanguagemodels}).
+
+The more interesting result is that 
+
+The final judged summary shows that model B did not become more heliocentric after geocentric astronomy fine-tuning. Instead, the main pattern is:
+Small models generate heliocentric-like content at low rates, with astronomy fine-tuning increasing ambiguity rather than strengthening geocentric doctrine.
+
+\subsection{Phase 2}
+
+QLoRA induces a strong shift toward premodern explanatory framing, with approximately 25\% of paired samples flipping from modern to premodern regimes.

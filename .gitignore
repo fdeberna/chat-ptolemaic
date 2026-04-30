@@ -34,3 +34,8 @@ data/rdf-files
 py311-embed/
 finetune.log
 *.csv
+paper/build/
+*.aux
+*.log
+*.out
+*.toc
