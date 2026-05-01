@@ -1,0 +1,61 @@
+\section{Appendix A}\label{Appendix A}
+\begin{table*}[t]
+\centering
+\caption{Category-level comparison between Model A and Model B across evaluation metrics.}
+\label{tab:phase1_category_results}
+\begin{tabular}{llcccc}
+\hline
+Category & Metric & A & B & Difference (B-A) & $p$-value \\
+\hline
+Astro & Earth-motion mention & 3.8\% & 1.9\% & -1.9\% & 0.3089 \\
+Astro & Proto-heliocentric & 2.9\% & 1.0\% & -1.9\% & 0.1021 \\
+Astro & Ambiguous & 60.0\% & 84.3\% & +24.3\% & $<10^{-4}$ \\
+\hline
+Declarative & Earth-motion mention & 2.1\% & 1.9\% & -0.2\% & 0.9959 \\
+Declarative & Proto-heliocentric & 1.2\% & 1.2\% & 0.0\% & 1.0000 \\
+Declarative & Ambiguous & 41.7\% & 59.1\% & +17.4\% & 0.0002 \\
+\hline
+General & Earth-motion mention & 0.0\% & 0.2\% & +0.2\% & 1.0000 \\
+General & Ambiguous & 1.4\% & 5.2\% & +3.8\% & 0.0034 \\
+\hline
+Questions & Earth-motion mention & 27.4\% & 18.8\% & -8.6\% & 0.0451 \\
+Questions & Proto-heliocentric & 16.2\% & 13.6\% & -2.6\% & 0.3172 \\
+Questions & Ambiguous & 60.7\% & 70.5\% & +9.8\% & 0.0118 \\
+\hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Frequency of scholastic hedging expressions across generated outputs.}
+\label{tab:full_hedging}
+\begin{tabular}{l l r r r}
+\hline
+Model & Phrase & Total Texts & Phrase Count & Rate \\
+\hline
+A & some say & 1680 & 4 & 0.24\% \\
+A & it may be understood & 1680 & 0 & 0.00\% \\
+A & it seems & 1680 & 28 & 1.67\% \\
+A & according to & 1680 & 113 & 6.73\% \\
+A & if one grants & 1680 & 15 & 0.89\% \\
+A & it may be supposed & 1680 & 0 & 0.00\% \\
+A & some have held & 1680 & 0 & 0.00\% \\
+A & it would seem & 1680 & 28 & 1.67\% \\
+A & it may be asked & 1680 & 0 & 0.00\% \\
+A & one may suppose & 1680 & 15 & 0.89\% \\
+A & any hedge phrase & 1680 & 195 & 11.61\% \\
+\hline
+B & some say & 1680 & 4 & 0.24\% \\
+B & it may be understood & 1680 & 0 & 0.00\% \\
+B & it seems & 1680 & 100 & 5.95\% \\
+B & according to & 1680 & 185 & 11.01\% \\
+B & if one grants & 1680 & 15 & 0.89\% \\
+B & it may be supposed & 1680 & 0 & 0.00\% \\
+B & some have held & 1680 & 0 & 0.00\% \\
+B & it would seem & 1680 & 54 & 3.21\% \\
+B & it may be asked & 1680 & 0 & 0.00\% \\
+B & one may suppose & 1680 & 15 & 0.89\% \\
+B & any hedge phrase & 1680 & 340 & 20.24\% \\
+\hline
+\end{tabular}
+\end{table*}

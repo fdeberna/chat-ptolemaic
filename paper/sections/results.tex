@@ -4,10 +4,62 @@
 Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates $(4\% - 8\%)$, suggesting some pattern recombination occurs even in a small 110M parameter models trained on geocentric texts. As any heliocentric content was completely removed from the training corpus, the emergence of this content occurs solely through pattern recombination. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
 only "partly coherent" output according to our judge manifest. This is not surprising and a known limit of small models (see for example \cite{eldan2023tinystoriessmalllanguagemodels}).
 
-The more interesting result is that 
+The more interesting result is that Model A, despite being trained on an astronomy-free corpus, shows higher heliocentric content than Model B. Specifically, higher Earth-motion mentions rates ($8.3\%$ for model A vs $5.7\%$ for model B) and higher explicit Earth-motion mentions ($4.2\%$ (A) vs $3.3\%$ (B))
+and proto-heliocentric content ($5.1\%$ (A) vs $4.0\%$ (B)). At the same time, surprisingly, model B also shows a lower rate of geocentric content ($3.3\%$ for A vs $1.9\%$ for B). This apparent contradiction is explained by the observation that the ambiguity of Model B statements increased compared to Model A, from $41\%$ (A) to $54\%$. In other words, Model B did not become more heliocentric nor more geocentric after the astronomy fine-tuning. Instead, the fine-tuning increased ambiguity rather than strengthening geocentric doctrine. 
 
-The final judged summary shows that model B did not become more heliocentric after geocentric astronomy fine-tuning. Instead, the main pattern is:
-Small models generate heliocentric-like content at low rates, with astronomy fine-tuning increasing ambiguity rather than strengthening geocentric doctrine.
+In order to assess the statistical significance of these results, we conducted a prompt-level paired permutation test \cite{good2005permutation}. Since each prompt was sampled $15$ times per model, the 1680 generations per model are not independent observations. Some prompts are intrinsically more likely than others to elicit Earth-motion or ambiguity, and those within-prompt samples are correlated. For each of the $112$ prompts, the average rate $r$ for a given label was computed separately for A and B. This yields one paired difference per prompt, for each label $\ell$:
+
+$$d^{\ell}_{AB,prompt} = r^{\ell}_{A,prompt} - r^{\ell}_{B,prompt}$$
+
+The permutation test goal is to compare the mean of those paired differences with the expected mean under the null hypothesis that A and B are exchangeable at the prompt level. To accomplish this, the test flipped the sign of each paired difference $10000$ times, at random, and recalculated the mean. The two-sided $p$-value is the proportion of random sign-flips whose absolute mean difference is at least as large as the observed one. The advantage of this method is that it is a non-parametric test, requiring no assumption about the distribution of the differences. Table \ref{tab:phase1_results} shows the most relevant values. The drop in both Earth-motion mentions and Geocentric mentions is significant, but the most statistically significant results is the increase in Ambiguous statements. For a detailed analysis by prompt category see Appendix \ref{Appendix A}.
+%Continue with % and modestly reduces low-bar Earth-motion mention and geocentric commitment.
+% This distinction matters. The fine-tune seems to be reshaping the discourse mode more strongly than it is decisively suppressing Earth-motion assertions.
+
+\begin{table}[t]
+\centering
+\caption{Comparison of heliocentric and ambiguity-related behaviors between Model A (general pre-training only) and Model B (astronomy fine-tuned). Values are averaged over paired prompts.}
+\label{tab:phase1_results}
+\begin{tabular}{lccc}
+\hline
+Metric & A & B & $p$-value \\
+\hline
+Earth-motion mention & 8.3\% & 5.7\% & 0.0226$^{**}$ \\
+Explicit Earth-motion & 4.2\% & 3.3\% & 0.0954 \\
+Proto-heliocentric & 5.1\% & 4.0\% & 0.1500 \\
+Geocentric & 3.3\% & 1.9\% & 0.0136$^{**}$ \\
+Ambiguous & 41.0\% & 54.8\% & $<10^{-4\,***}$ \\
+\hline
+\end{tabular}
+\vspace{0.5em}
+\footnotesize{
+$^{**} p < 0.05$, \quad
+$^{***} p < 0.001$
+}
+\end{table}
+
+
+
+
+
+
+% \begin{table}[t]
+% \centering
+% \caption{Frequency of selected hedging expressions in generated outputs. Model B (astronomy fine-tuned) exhibits substantially more scholastic hedging than Model A.}
+% \label{tab:hedging}
+% \begin{tabular}{lcc}
+% \hline
+% Phrase & Model A & Model B \\
+% \hline
+% it seems & 1.7\% & 6.0\% \\
+% according to & 6.7\% & 11.0\% \\
+% it would seem & 1.7\% & 3.2\% \\
+% any hedge phrase & 11.6\% & 20.2\% \\
+% \hline
+% \end{tabular}
+% \end{table}
+
+
+
 
 \subsection{Phase 2}
 
