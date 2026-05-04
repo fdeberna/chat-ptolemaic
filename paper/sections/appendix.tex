@@ -61,3 +61,27 @@ B & any hedge phrase & 1680 & 340 & 20.24\% \\
 \hline
 \end{tabular}
 \end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Phase 2 results by prompt category.}
+\label{appendix:phase2_categories}
+
+\begin{tabular}{llccc}
+\hline
+Category & Model & Geocentric & Heliocentric & Premodern (strong) \\
+\hline
+Astro & Base & 12.9\% & 40.7\% & 39.3\% \\
+Astro & QLoRA-1000 & 26.4\% & 4.3\% & 95.0\% \\
+\hline
+Declarative & Base & 15.0\% & 6.4\% & 47.1\% \\
+Declarative & QLoRA-1000 & 21.4\% & 2.9\% & 96.4\% \\
+\hline
+General & Base & 0.0\% & 0.0\% & 17.9\% \\
+General & QLoRA-1000 & 1.4\% & 0.0\% & 87.1\% \\
+\hline
+Questions & Base & 5.0\% & 38.6\% & 36.4\% \\
+Questions & QLoRA-1000 & 14.3\% & 3.6\% & 98.6\% \\
+\hline
+\end{tabular}
+\end{table*}

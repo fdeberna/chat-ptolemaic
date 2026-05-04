@@ -1,6 +1,6 @@
 \section{Results}
 
-\subsection{Phase 1}
+\subsection{Phase 1: Controlled Small-Model Experiments}
 Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates ($4\%$--$8\%$), suggesting some pattern recombination occurs even in a small 110M parameter model trained on geocentric texts. As any heliocentric content was completely removed from the training corpus, the emergence of this content must arise through recombination of patterns learned from the remaining corpus. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
 only "partly coherent" output according to our judge manifest. This is not surprising and a known limit of small models (see for example \cite{eldan2023tinystoriessmalllanguagemodels}).
 
@@ -21,7 +21,7 @@ The goal of the permutation test is to compare the observed mean paired differen
 \label{tab:phase1_results}
 \begin{tabular}{lcccc}
 \hline
-Metric & A & B & $\Delta_{AB}$ & $p$ \\
+Label & A & B & $\Delta_{AB}$ & $p$ \\
 \hline
 Earth-motion          & 8.3\%  & 5.7\%    & +2.6\%  & 0.0226$^{**}$ \\
 Explicit Earth-motion & 4.2\%  & 3.3\%    & +0.9\%  & 0.0954 \\
@@ -53,25 +53,69 @@ The primary effect of astronomy fine-tuning was therefore not a direct shift tow
 
 
 
-% \begin{table}[t]
-% \centering
-% \caption{Frequency of selected hedging expressions in generated outputs. Model B (astronomy fine-tuned) exhibits substantially more scholastic hedging than Model A.}
-% \label{tab:hedging}
-% \begin{tabular}{lcc}
-% \hline
-% Phrase & Model A & Model B \\
-% \hline
-% it seems & 1.7\% & 6.0\% \\
-% according to & 6.7\% & 11.0\% \\
-% it would seem & 1.7\% & 3.2\% \\
-% any hedge phrase & 11.6\% & 20.2\% \\
-% \hline
-% \end{tabular}
-% \end{table}
 
 
 
+\subsection{Phase 2: QLoRA Adaptation of Large Models}
 
-\subsection{Phase 2}
+We use the same prompts as in Phase~1 to compare three settings:
 
-QLoRA induces a strong shift toward premodern explanatory framing, with approximately 25\% of paired samples flipping from modern to premodern regimes.
+\begin{itemize}
+    \item Qwen2.5-7B base model;
+    \item Qwen2.5-7B fine-tuned for 500 iterations of QLoRA on the pre-Copernican corpus (QLoRA-500);
+    \item Qwen2.5-7B fine-tuned for 1000 iterations of QLoRA on the pre-Copernican corpus (QLoRA-1000).
+\end{itemize}
+
+In contrast to Phase~1, where models were trained from scratch under strict data constraints, Phase~2 investigates how large pre-trained models behave when exposed to the same domain-specific fine-tuning.
+
+A first striking result is that the base model already produces approximately $8\%$ of outputs classified as \textit{geocentric}. In several cases, these outputs are not merely consistent with a geocentric framework, but explicitly instantiate classical geocentric cosmology, including the motion of celestial spheres around the Earth. These outputs typically arise under prompts that strongly activate historical or scholastic explanatory regimes, suggesting that such frameworks are already present in the pretrained model and can be selectively activated. A typical example is provided below.
+
+\paragraph{Example (Base model, geocentric output).}
+\begin{quote}
+\textbf{Prompt:} \\
+\textit{Of the celestial motions and the place of the Earth, one may begin thus, that}
+
+\vspace{0.5em}
+
+\textbf{Completion:} \\
+\textit{the common people have no knowledge of the matter, but only by hearsay are they told that there is a great sphere in heaven above us which revolves round the earth; for this is the popular opinion. They think that it is like a wheel or rather a plate, and that it has an axle at its centre, upon which it turns and carries with it all the stars. Astronomy, the science of the heavens, is divided into two parts, practical and theoretical. The former is concerned with the use of the instruments of observation, the latter with the actual phenomena observed, and with their causes. We must therefore treat first of the nature of the heavenly bodies, secondly of the instruments used to observe them, thirdly of the places}
+\end{quote}
+
+This example shows how the generated output matches the pre-modern register of the prompt, with a geocentric cosmology involving spheres revolving around the earth.
+
+These geocentric outputs of the base model are mostly caused by astronomical and declarative prompts. The geocentric rate of the base model for each mode category is the following:
+\begin{itemize}
+    \item Astronomy prompts: $13\%$;
+    \item Declarative prompts: $15\%$;
+    \item Questions: $5\%$;
+    \item General prompts: $0\%$.
+\end{itemize}
+
+Therefore, it appears that the base model already contains historical explanatory modes, which can access when prompted with a specific register. This is an important observation as it affects the interpretation of the fine-tuned outputs.
+
+The QLoRA fine-tuning produces a dramatic shift toward premodern explanatory discourse, accompanied by a sharp suppression of heliocentric reasoning and only a modest increase in geocentric outputs (Table \ref{tab:phase2_summary}). The reported rates
+
+\begin{table*}[t]
+\centering
+\caption{Phase 2: Effect of QLoRA fine-tuning on explanatory frame and stance. The reported \textit{Geocentric} or \textit{Heliocentric} stances are the refined stricter version of the Phase~1 labels.}
+\label{tab:phase2_summary}
+
+\begin{tabular}{lccc}
+\hline
+Model & Geocentric & Heliocentric & Premodern (strong) \\
+\hline
+Base & 8.2\% & 21.4\% & 35.2\% \\
+QLoRA-500 & 14.6\% & 5.0\% & 92.0\% \\
+QLoRA-1000 & 15.9\% & 2.7\% & 94.3\% \\
+\hline
+\end{tabular}
+\end{table*}
+
+These rates show how the main effect of fine-tuning is to shift the explanatory framework towards premodern language, with the change in stance being only secondary in magnitude. Additionally, we observe that there is minimal difference between QLoRA-500 and QLoRA-1000, with most of the effects of fine-tuning being visible after 500 iterations only.
+
+When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform across categories. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
+
+% continue with conditional probabilities and flip rates
+
+
+% QLoRA induces a strong shift toward premodern explanatory framing, with approximately 25\% of paired samples flipping from modern to premodern regimes.
