@@ -115,22 +115,28 @@ These rates show how the main effect of fine-tuning is to shift the explanatory 
 
 When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform across categories. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
 
-The increase in geocentric outputs and the decrease in heliocentric outputs are modest in comparison to the induced change in explanatory frame. Given the strong shift toward premodern explanatory language under QLoRA, it is useful to decompose the probability of a geocentric output as in Eq.~\ref{eq:geo_decomposition}.
+The increase in geocentric outputs and the decrease in heliocentric outputs are modest in comparison to the induced change in explanatory frame. Given the strong shift toward premodern explanatory language under QLoRA, it is useful to decompose the probability of a geocentric output as follows.
 
-\begin{equation}
+\begin{equation*}
 \begin{aligned}
 P(\mathrm{Geo})
 &= P(\mathrm{Geo}\mid \mathrm{Premodern})\,P(\mathrm{Premodern}) \\
 &\quad + P(\mathrm{Geo}\mid \neg \mathrm{Premodern})\,P(\neg \mathrm{Premodern}) .
 \end{aligned}
-\label{eq:geo_decomposition}
+\end{equation*}
+
+We find that $P(\mathrm{Geo}\mid \neg \mathrm{Premodern})$ is negligible for all models (on the order of $0$–$1\%$), so that we can approximate:
+
+\begin{equation}\label{eq:geo_decomposition_approx}
+P(\mathrm{Geo}) \simeq P(\mathrm{Geo}\mid \mathrm{Premodern})\,P(\mathrm{Premodern})
 \end{equation}
 
-We observe that the conditional probabilities of stance given explanatory frame remain largely stable across models (see Table~\ref{tab:frame_stance_conditionals}). Importantly, the premodern explanatory frame, while defined using historical astronomical machinery associated with geocentric models, does not imply a geocentric stance (see also Section~\ref{sec:exp_design}). Empirically, most premodern-frame outputs remain ambiguous or non-committal, allowing the relationship between frame and stance to be evaluated as a statistical property rather than a definitional constraint.
+
+Additionally, the conditional probabilities of stance given explanatory frame remain largely stable across models (see Table~\ref{tab:frame_stance_conditionals}). We emphasize that the premodern explanatory frame, while defined using historical astronomical machinery associated with geocentric models, does not imply a geocentric stance (see also Section~\ref{sec:exp_design}). Empirically, most premodern-frame outputs remain ambiguous or non-committal, allowing the relationship between frame and stance to be evaluated empirically rather than being fixed by definition.
 
 In particular, $P(\mathrm{Geo}\mid\mathrm{Premodern})$ remains stable across models, and $P(\mathrm{Helio}\mid\mathrm{Modern})$ varies only marginally. In contrast, $P(\mathrm{Helio}\mid\mathrm{Premodern})$ decreases sharply under QLoRA. This reduction is primarily absorbed by an increase in ambiguous or non-committal outputs within the premodern frame, rather than by a corresponding increase in geocentric assertions.
 
-Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the mapping from explanatory frame to stance. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability of entering a premodern explanatory frame. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ increases primarily through this redistribution, despite largely stable conditional structure within frames.
+Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the stance within the same explanatory frame. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability $P(\mathrm{Premodern})$ of entering a premodern explanatory frame, while leaving the conditional mapping from frame to stance unchanged. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ in (\ref{eq:geo_decomposition_approx}) increases primarily through this redistribution, despite largely stable conditional structure within frames.
 
 \begin{figure*}[t]
 \centering

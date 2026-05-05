@@ -839,6 +839,10 @@ def bool_is_true(judge_result: dict[str, Any], field_name: str) -> bool:
     return judge_result.get(field_name) is True
 
 
+def bool_is_false(judge_result: dict[str, Any], field_name: str) -> bool:
+    return judge_result.get(field_name) is False
+
+
 def has_neither_modern_nor_premodern_frame(judge_result: dict[str, Any]) -> bool:
     return not bool_is_true(judge_result, "modern_explanatory_frame") and not bool_is_true(
         judge_result, "premodern_explanatory_frame"
@@ -942,6 +946,17 @@ def conditional_metric_specs() -> list[dict[str, Any]]:
                 judge_result, "premodern_explanatory_frame"
             )
             and judge_result.get("refined_stance") not in {"heliocentric", "geocentric"},
+        },
+        {
+            "metric_id": "refined_stance_geocentric_given_premodern_explanatory_frame_false",
+            "definition": "P(refined_stance = geocentric | premodern_explanatory_frame = false, model)",
+            "denominator_predicate": lambda judge_result: bool_is_false(
+                judge_result, "premodern_explanatory_frame"
+            ),
+            "numerator_predicate": lambda judge_result: bool_is_false(
+                judge_result, "premodern_explanatory_frame"
+            )
+            and judge_result.get("refined_stance") == "geocentric",
         },
         {
             "metric_id": "refined_stance_heliocentric_given_modern_explanatory_frame_true",
