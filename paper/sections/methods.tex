@@ -1,4 +1,4 @@
-\section{Experimental Design}
+\section{Experimental Design}\label{sec:exp_design}
 
 \subsection{Phase 1: Small-model training}
 
@@ -7,6 +7,9 @@ We train a 110M parameter GPT model on a filtered general corpus, followed by fi
 \subsection{Phase 2: QLoRA adaptation}
 
 We adapt Qwen2.5-7B using QLoRA on the same astronomy corpus. Evaluation is performed using paired prompts and LLM-as-judge labeling.
+
+Although the premodern explanatory frame is defined using historical astronomical machinery associated with geocentric models, it does not imply a geocentric stance. In practice, most premodern-frame outputs remain ambiguous or non-committal, making the mapping between frame and stance an empirical property rather than a definitional constraint.
+
 
 \subsection{LLM-as-judge}
 We generate 1680 prompts per model: 28 prompts, 4 categories, 15 samples

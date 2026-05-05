@@ -29,6 +29,7 @@
     "judged_rows": 1680,
     "included_rows": 1680
   },
+  "scipy_available_for_mcnemar": true,
   "output_files": [
     "qwen_judgment_summary_overall.csv",
     "qwen_judgment_summary_by_category.csv",
@@ -37,6 +38,7 @@
     "qwen_conditional_probabilities_by_model_and_category.csv",
     "qwen_flip_rates_by_pair.csv",
     "qwen_flip_rates_by_pair_and_category.csv",
+    "flip_rates_with_stats.csv",
     "qwen_prompt_pair_qwen_base_vs_qwen_lora500.csv",
     "qwen_prompt_pair_qwen_base_vs_qwen_lora1000.csv",
     "qwen_prompt_pair_qwen_lora500_vs_qwen_lora1000.csv",

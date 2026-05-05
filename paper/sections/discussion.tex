@@ -1,5 +1,11 @@
 \section{Discussion}
 
-The results suggest that fine-tuning primarily alters the selection of explanatory frameworks rather than directly encoding beliefs. This raises the possibility that different reasoning regimes correspond to distinct regions in the model’s activation space.
-%Continue with % and modestly reduces low-bar Earth-motion mention and geocentric commitment.
-% This distinction matters. The fine-tune seems to be reshaping the discourse mode more strongly than it is decisively suppressing Earth-motion assertions.
+% The premodern explanatory frame is associated with geocentric reasoning, but does not imply it. In fact, we have shown that only about one quarter of the premodern statemetns are geocentric. QLoRA substantially increases the probability of entering the premodern frame, while the conditional distribution over stances within that frame remains largely unchanged. As a result, the overall increase in geocentric outputs is modest and arises primarily from the shift in explanatory regime, rather than from a change in stance within that regime.
+
+
+% While the premodern explanatory frame is defined in part by historical astronomical machinery that is often associated with geocentric models, and is therefore not statistically independent of geocentric stance, this coupling alone cannot account for the observed asymmetry. In particular, if the increase in geocentric outputs were purely definitional, one would expect stance transitions to occur at a rate comparable to frame transitions. Instead, the much smaller rate of stance flips indicates that most frame shifts lead to ambiguous or non-committal outputs rather than to explicit geocentric assertions.
+
+
+
+%discuss dependence on system prompt
+%Under a fixed, explicitly defined labeling scheme, fine-tuning primarily shifts the distribution over explanatory frames, while the conditional mapping from frame to stance remains largely stable. The central finding is an asymmetry in what changes: QLoRA induces a large shift in the distribution over frames, whereas the conditional mapping from frame to stance remains largely stable.

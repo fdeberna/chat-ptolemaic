@@ -839,6 +839,18 @@ def bool_is_true(judge_result: dict[str, Any], field_name: str) -> bool:
     return judge_result.get(field_name) is True
 
 
+def has_neither_modern_nor_premodern_frame(judge_result: dict[str, Any]) -> bool:
+    return not bool_is_true(judge_result, "modern_explanatory_frame") and not bool_is_true(
+        judge_result, "premodern_explanatory_frame"
+    )
+
+
+def has_both_modern_and_premodern_frame(judge_result: dict[str, Any]) -> bool:
+    return bool_is_true(judge_result, "modern_explanatory_frame") and bool_is_true(
+        judge_result, "premodern_explanatory_frame"
+    )
+
+
 def conditional_metric_specs() -> list[dict[str, Any]]:
     return [
         {
@@ -887,6 +899,18 @@ def conditional_metric_specs() -> list[dict[str, Any]]:
             ),
         },
         {
+            "metric_id": "anything_given_model",
+            "definition": "P(neither premodern_explanatory_frame nor modern_explanatory_frame is true | model)",
+            "denominator_predicate": lambda _: True,
+            "numerator_predicate": has_neither_modern_nor_premodern_frame,
+        },
+        {
+            "metric_id": "both_modern_and_premodern_given_model",
+            "definition": "P(modern_explanatory_frame = true and premodern_explanatory_frame = true | model)",
+            "denominator_predicate": lambda _: True,
+            "numerator_predicate": has_both_modern_and_premodern_frame,
+        },
+        {
             "metric_id": "refined_stance_geocentric_given_premodern_explanatory_frame_true",
             "definition": "P(refined_stance = geocentric | premodern_explanatory_frame = true, model)",
             "denominator_predicate": lambda judge_result: bool_is_true(
@@ -898,6 +922,28 @@ def conditional_metric_specs() -> list[dict[str, Any]]:
             and judge_result.get("refined_stance") == "geocentric",
         },
         {
+            "metric_id": "refined_stance_heliocentric_given_premodern_explanatory_frame_true",
+            "definition": "P(refined_stance = heliocentric | premodern_explanatory_frame = true, model)",
+            "denominator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "premodern_explanatory_frame"
+            ),
+            "numerator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "premodern_explanatory_frame"
+            )
+            and judge_result.get("refined_stance") == "heliocentric",
+        },
+        {
+            "metric_id": "refined_stance_everything_else_given_premodern_explanatory_frame_true",
+            "definition": "P(refined_stance not in {heliocentric, geocentric} | premodern_explanatory_frame = true, model)",
+            "denominator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "premodern_explanatory_frame"
+            ),
+            "numerator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "premodern_explanatory_frame"
+            )
+            and judge_result.get("refined_stance") not in {"heliocentric", "geocentric"},
+        },
+        {
             "metric_id": "refined_stance_heliocentric_given_modern_explanatory_frame_true",
             "definition": "P(refined_stance = heliocentric | modern_explanatory_frame = true, model)",
             "denominator_predicate": lambda judge_result: bool_is_true(
@@ -907,6 +953,28 @@ def conditional_metric_specs() -> list[dict[str, Any]]:
                 judge_result, "modern_explanatory_frame"
             )
             and judge_result.get("refined_stance") == "heliocentric",
+        },
+        {
+            "metric_id": "refined_stance_geocentric_given_modern_explanatory_frame_true",
+            "definition": "P(refined_stance = geocentric | modern_explanatory_frame = true, model)",
+            "denominator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "modern_explanatory_frame"
+            ),
+            "numerator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "modern_explanatory_frame"
+            )
+            and judge_result.get("refined_stance") == "geocentric",
+        },
+        {
+            "metric_id": "refined_stance_everything_else_given_modern_explanatory_frame_true",
+            "definition": "P(refined_stance not in {heliocentric, geocentric} | modern_explanatory_frame = true, model)",
+            "denominator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "modern_explanatory_frame"
+            ),
+            "numerator_predicate": lambda judge_result: bool_is_true(
+                judge_result, "modern_explanatory_frame"
+            )
+            and judge_result.get("refined_stance") not in {"heliocentric", "geocentric"},
         },
         {
             "metric_id": "hybrid_or_contradictory_frame_true_given_earth_motion_mention_true",

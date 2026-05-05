@@ -115,7 +115,63 @@ These rates show how the main effect of fine-tuning is to shift the explanatory 
 
 When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform across categories. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
 
-% continue with conditional probabilities and flip rates
+The increase in geocentric outputs and the decrease in heliocentric outputs are modest in comparison to the induced change in explanatory frame. Given the strong shift toward premodern explanatory language under QLoRA, it is useful to decompose the probability of a geocentric output as in Eq.~\ref{eq:geo_decomposition}.
+
+\begin{equation}
+\begin{aligned}
+P(\mathrm{Geo})
+&= P(\mathrm{Geo}\mid \mathrm{Premodern})\,P(\mathrm{Premodern}) \\
+&\quad + P(\mathrm{Geo}\mid \neg \mathrm{Premodern})\,P(\neg \mathrm{Premodern}) .
+\end{aligned}
+\label{eq:geo_decomposition}
+\end{equation}
+
+We observe that the conditional probabilities of stance given explanatory frame remain largely stable across models (see Table~\ref{tab:frame_stance_conditionals}). Importantly, the premodern explanatory frame, while defined using historical astronomical machinery associated with geocentric models, does not imply a geocentric stance (see also Section~\ref{sec:exp_design}). Empirically, most premodern-frame outputs remain ambiguous or non-committal, allowing the relationship between frame and stance to be evaluated as a statistical property rather than a definitional constraint.
+
+In particular, $P(\mathrm{Geo}\mid\mathrm{Premodern})$ remains stable across models, and $P(\mathrm{Helio}\mid\mathrm{Modern})$ varies only marginally. In contrast, $P(\mathrm{Helio}\mid\mathrm{Premodern})$ decreases sharply under QLoRA. This reduction is primarily absorbed by an increase in ambiguous or non-committal outputs within the premodern frame, rather than by a corresponding increase in geocentric assertions.
+
+Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the mapping from explanatory frame to stance. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability of entering a premodern explanatory frame. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ increases primarily through this redistribution, despite largely stable conditional structure within frames.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+    node distance=3.5cm,
+    box/.style={draw, rounded corners, align=center, minimum width=4cm, minimum height=1.2cm},
+    arrow/.style={->, thick}
+]
+
+\node[box] (prompt) {Prompt};
+\node[box, right=of prompt] (frame) {Explanatory\\Frame};
+\node[box, right=of frame] (stance) {Cosmological\\Stance};
+
+\draw[arrow] (prompt) -- node[above] {$P(f \mid x, m)$} (frame);
+\draw[arrow] (frame) -- node[above] {$P(s \mid f, x, m)$} (stance);
+
+\node[align=center, below=1.2cm of frame] (qlora) {QLoRA primarily shifts\\this distribution};
+
+\draw[arrow, dashed] (qlora) -- (frame);
+
+\end{tikzpicture}
+\caption{Conceptual decomposition of model behavior into explanatory frame selection and stance realization. Given a prompt $x$ and model $m$, the model first induces a distribution over explanatory frames $f \in \{\mathrm{Premodern}, \mathrm{Modern}\}$ via $P(f \mid x, m)$, and then produces a cosmological stance $s \in \{\mathrm{Geocentric}, \mathrm{Heliocentric}, \mathrm{Ambiguous}\}$ according to $P(s \mid f, x, m)$. Our results indicate that QLoRA primarily shifts the distribution over frames $P(f \mid x, m)$, increasing the probability of premodern framing, while leaving the conditional mapping from frame to stance largely unchanged.}
+\label{fig:frame_stance_model}
+\end{figure*}
+
+\begin{table}[t]
+\centering
+\caption{Relationship between explanatory frame and stance.}
+\label{tab:frame_stance_conditionals}
+\begin{tabular}{lcccc}
+\hline
+Model & $P(\mathrm{Premodern})$ & $P(\mathrm{Geo}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Modern})$ \\
+\hline
+Base & 30.9\% & 24.3\% & 12.7\% & 68.7\% \\
+QLoRA-500 & 64.5\% & 22.7\% & 3.9\% & 71.0\% \\
+QLoRA-1000 & 65.4\% & 23.5\% & 2.2\% & 66.7\% \\
+\hline
+\end{tabular}
+\end{table}
 
 
-% QLoRA induces a strong shift toward premodern explanatory framing, with approximately 25\% of paired samples flipping from modern to premodern regimes.
+% Flip rates: .
+
+% Although the premodern frame is partly defined using geocentric-associated machinery and is therefore correlated with geocentric stance, this alone cannot explain the observed asymmetry. If the effect were purely definitional, stance transitions would occur at a rate comparable to frame transitions, which is not observed.

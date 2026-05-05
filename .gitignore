@@ -39,3 +39,5 @@ paper/build/
 *.log
 *.out
 *.toc
+evaluation/generation_outputs_qwen/test_one_sentence.jsonl
+evaluation/generation_outputs_qwen/smoke_test/test_one_sentence_judged.jsonl
