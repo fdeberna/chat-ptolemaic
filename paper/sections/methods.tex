@@ -1,8 +1,22 @@
 \section{Experimental Design}\label{sec:exp_design}
 
+
 \subsection{Phase 1: Small-model training}
 
-We train a 110M parameter GPT model on a filtered general corpus, followed by fine-tuning on a pre-Copernican astronomy dataset.
+In Phase 1, we train a 110M-parameter GPT model on a filtered general-language corpus with astronomical content removed, followed by fine-tuning on a smaller pre-Copernican astronomy corpus.
+
+The purpose of the general corpus is to provide broad exposure to English syntax, vocabulary, and discourse structure while minimizing direct exposure to modern astronomical concepts. The corpus was constructed from the Project Gutenberg archive \cite{gutenberg}, selecting a total of 2,851 documents using metadata-based filtering to exclude texts explicitly related to astronomy or science.
+
+Because constructing a sufficiently large training corpus exclusively from Medieval or premodern texts was not feasible using publicly available sources, the general corpus also includes relatively recent literary and historical works. However, metadata filtering alone was insufficient to guarantee the removal of modern astronomical knowledge. For example, otherwise unrelated texts could still contain references to heliocentrism, planetary motion, or modern cosmology.
+
+To reduce this contamination, the selected documents were further processed through keyword- and pattern-based filtering designed to remove passages referring to concepts such as Earth's orbit, heliocentrism, Copernicus, Galileo, and related modern astronomical ideas, while preserving general linguistic structure and non-astronomical content from literature, philosophy, and history. While complete removal of all indirect astronomical references cannot be guaranteed, the filtering procedure substantially reduced explicit exposure to heliocentric concepts and modern astronomical explanations.
+
+The astronomy corpus is substantially smaller than the general corpus due to the limited availability of publicly accessible English translations of pre-Copernican texts. The corpus combines classical, late antique, and Medieval works containing geocentric astronomical reasoning, cosmological discussion, and premodern natural philosophy. Representative texts include Sacrobosco’s \textit{Sphaera Mundi}, Ptolemy’s \textit{Almagest}, Plato’s \textit{Timaeus}, Aristotle’s \textit{De Caelo}, Cleomedes’s \textit{On the Heavens}, and Peuerbach’s \textit{Theoricae Novae Planetarum}. Some works are explicitly astronomical, while others embed geocentric cosmology within broader philosophical or theological discussions. For a more comprehensive list see Appendix~\ref{appendix:astronomy_corpus}. Because many modern translations include editorial notes, annotations, or footnotes containing references to contemporary astronomy, the same pattern-based filtering procedure was applied to the astronomy corpus in order to remove translator commentary and other potential sources of modern astronomical leakage.
+
+
+
+
+
 
 \subsection{Phase 2: QLoRA adaptation}
 

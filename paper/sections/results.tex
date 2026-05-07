@@ -43,8 +43,7 @@ The increased ambiguity of Model B can be further confirmed by a comparison of t
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/hedging_phrases_histogram.pdf}
-\caption{
-Frequency of selected scholastic hedging expressions in generated outputs from Model A (general pre-training only) and Model B (astronomy fine-tuned). Astronomy fine-tuning substantially increases the use of non-committal and interpretive language patterns characteristic of premodern scholarly discourse.
+\caption{Frequency of selected scholastic hedging expressions in generated outputs from Model A (general pre-training only) and Model B (astronomy fine-tuned). Astronomy fine-tuning substantially increases the use of non-committal and interpretive language patterns characteristic of premodern scholarly discourse.
 }
 \label{fig:hedging_phrases}
 \end{figure}
@@ -93,7 +92,7 @@ These geocentric outputs of the base model are mostly caused by astronomical and
 
 Therefore, it appears that the base model already contains historical explanatory modes, which can access when prompted with a specific register. This is an important observation as it affects the interpretation of the fine-tuned outputs.
 
-The QLoRA fine-tuning produces a dramatic shift toward premodern explanatory discourse, accompanied by a sharp suppression of heliocentric reasoning and only a modest increase in geocentric outputs (Table \ref{tab:phase2_summary}). The reported rates
+The QLoRA fine-tuning produces a shift toward premodern explanatory discourse, accompanied by a sharp suppression of heliocentric reasoning and only a modest increase in geocentric outputs (Table \ref{tab:phase2_summary}).
 
 \begin{table*}[t]
 \centering
@@ -111,9 +110,9 @@ QLoRA-1000 & 15.9\% & 2.7\% & 94.3\% \\
 \end{tabular}
 \end{table*}
 
-These rates show how the main effect of fine-tuning is to shift the explanatory framework towards premodern language, with the change in stance being only secondary in magnitude. Additionally, we observe that there is minimal difference between QLoRA-500 and QLoRA-1000, with most of the effects of fine-tuning being visible after 500 iterations only.
+The observed rates show how the main effect of fine-tuning is to shift the explanatory framework towards premodern language, with the change in stance being only secondary in magnitude. Additionally, we observe that there is minimal difference between QLoRA-500 and QLoRA-1000, with most of the effects of fine-tuning being visible after 500 iterations only.
 
-When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform across categories. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
+When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
 
 The increase in geocentric outputs and the decrease in heliocentric outputs are modest in comparison to the induced change in explanatory frame. Given the strong shift toward premodern explanatory language under QLoRA, it is useful to decompose the probability of a geocentric output as follows.
 
@@ -136,13 +135,22 @@ Additionally, the conditional probabilities of stance given explanatory frame re
 
 In particular, $P(\mathrm{Geo}\mid\mathrm{Premodern})$ remains stable across models, and $P(\mathrm{Helio}\mid\mathrm{Modern})$ varies only marginally. In contrast, $P(\mathrm{Helio}\mid\mathrm{Premodern})$ decreases sharply under QLoRA. This reduction is primarily absorbed by an increase in ambiguous or non-committal outputs within the premodern frame, rather than by a corresponding increase in geocentric assertions.
 
-Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the stance within the same explanatory frame. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability $P(\mathrm{Premodern})$ of entering a premodern explanatory frame, while leaving the conditional mapping from frame to stance unchanged. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ in (\ref{eq:geo_decomposition_approx}) increases primarily through this redistribution, despite largely stable conditional structure within frames.
+Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the stance within the same explanatory frame. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability $P(\mathrm{Premodern})$ of entering a premodern explanatory frame, while leaving the conditional mapping from frame to stance unchanged. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ in (\ref{eq:geo_decomposition_approx}) increases primarily through this redistribution, despite largely stable conditional structure within frames. This process is summarized in Figure~\ref{fig:frame_stance_model}. The distribution of explanatory frames between different models and of stance labels conditional to the premodern frame is summarized in Figure~\ref{fig:stacked_bars_labels}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/frame_stance_stacked_bars.pdf}
+\caption{
+Distribution over explanatory frames (left) and conditional stance distribution within the premodern frame (right). QLoRA substantially increases the probability of premodern framing, while the conditional distribution over stances within that frame remains comparatively stable. The dominant effect of fine-tuning is therefore a redistribution over explanatory regimes rather than a direct modification of stance within regimes.
+}
+\label{fig:stacked_bars_labels}
+\end{figure*}
 
 \begin{figure*}[t]
 \centering
 \begin{tikzpicture}[
     node distance=3.5cm,
-    box/.style={draw, rounded corners, align=center, minimum width=4cm, minimum height=1.2cm},
+    box/.style={draw, rounded corners, align=center, minimum width=3.5cm, minimum height=1.2cm},
     arrow/.style={->, thick}
 ]
 
@@ -153,7 +161,7 @@ Combined with the substantial increase in premodern language (Table~\ref{tab:pha
 \draw[arrow] (prompt) -- node[above] {$P(f \mid x, m)$} (frame);
 \draw[arrow] (frame) -- node[above] {$P(s \mid f, x, m)$} (stance);
 
-\node[align=center, below=1.2cm of frame] (qlora) {QLoRA primarily shifts\\this distribution};
+\node[align=center, below=1.2cm of frame] (qlora) {QLoRA effect};
 
 \draw[arrow, dashed] (qlora) -- (frame);
 
@@ -162,7 +170,7 @@ Combined with the substantial increase in premodern language (Table~\ref{tab:pha
 \label{fig:frame_stance_model}
 \end{figure*}
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Relationship between explanatory frame and stance.}
 \label{tab:frame_stance_conditionals}
@@ -175,7 +183,65 @@ QLoRA-500 & 64.5\% & 22.7\% & 3.9\% & 71.0\% \\
 QLoRA-1000 & 65.4\% & 23.5\% & 2.2\% & 66.7\% \\
 \hline
 \end{tabular}
-\end{table}
+\end{table*}
+
+We can further support these conclusions by examining paired transition rates between models, i.e., how often the response to the same prompt changes explanatory frame or stance between the base model and the QLoRA fine-tuned models. Because each comparison uses generations produced from identical prompts, these transition rates isolate the effect of fine-tuning conditional on a fixed input distribution. Statistical significance is assessed using McNemar’s test \cite{mcnemar1947}, which is appropriate for paired categorical responses and evaluates whether transitions in one direction occur significantly more often than transitions in the reverse direction. The evaluation consists of 28 prompts for each of 4 prompt categories, with 5 sampled generations per prompt, yielding a total of 28×4×5=560 paired generations for each model comparison. These results are summarized in Table~\ref{tab:flip_rates}.
+
+For the same prompt, we observe that the directional transition from modern to premodern explanatory framing occurs in approximately $25\%$ of paired generations and is highly statistically significant. The reverse transition is rare ($<2\%$). In contrast, the transition from \textit{heliocentric} to \textit{geocentric} stance, while also statistically significant, occurs at a substantially lower rate. Similarly, earth-motion suppression is strongly significant, indicating that QLoRA reduces explicit heliocentric reasoning and shifts many responses toward ambiguous, non-committal, or geocentric interpretations.
+
+The transition rates reported in Table~\ref{tab:flip_rates} correspond to the comparison between the base model and QLoRA-1000. However, when comparing paired responses between the base model and QLoRA-500, we observe qualitatively similar transition asymmetries with comparable statistical significance ($p < 10^{-3}$), indicating that the explanatory frame and stance shifts emerge within a relatively small number of fine-tuning iterations.
+
+\begin{table*}[t]
+\centering
+\caption{Pairwise transition rates between the base model and QLoRA-1000. Reported rates correspond to the fraction of paired generations exhibiting the specified transition. p-values are computed using McNemar's test.}
+\label{tab:flip_rates}
+
+\begin{tabular}{lcccc}
+\hline
+Transition & Count & Rate & Reverse Count & McNemar $p$ \\
+\hline
+
+Modern $\rightarrow$ Premodern
+& 141/560
+& 25.2\%
+& 9
+& $<10^{-6}$ \\
+
+Premodern $\rightarrow$ Modern
+& 9/560
+& 1.6\%
+& 141
+& $<10^{-6}$ \\
+
+Heliocentric $\rightarrow$ Geocentric
+& 19/560
+& 3.4\%
+& 2
+& $4.8\times10^{-4}$ \\
+
+Geocentric $\rightarrow$ Heliocentric
+& 2/560
+& 0.4\%
+& 19
+& $4.8\times10^{-4}$ \\
+
+Earth-motion suppression
+& 100/560
+& 17.9\%
+& 30
+& $<10^{-6}$ \\
+
+Earth-motion activation
+& 30/560
+& 5.4\%
+& 100
+& $<10^{-6}$ \\
+
+\hline
+\end{tabular}
+\end{table*}
+
+
 
 
 % Flip rates: .
