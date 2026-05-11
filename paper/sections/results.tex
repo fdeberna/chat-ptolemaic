@@ -4,6 +4,41 @@
 Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates ($4\%$--$8\%$), suggesting some pattern recombination occurs even in a small 110M parameter model trained on geocentric texts. As any heliocentric content was completely removed from the training corpus, the emergence of this content must arise through recombination of patterns learned from the remaining corpus. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
 only "partly coherent" output according to our judge manifest. This is not surprising and a known limit of small models (see for example \cite{eldan2023tinystoriessmalllanguagemodels}).
 
+Representative local continuations from Phase~1 are shown below. Although the generations are often globally unstable or partially incoherent, they nevertheless occasionally produce locally meaningful astronomical structure associated with both geocentric and Earth-motion reasoning.
+
+\paragraph{Example 1 - Model B Output.}
+\begin{quote}
+\textbf{Prompt:} \\
+\textit{The planets are sometimes seen to move contrary to their former progress, and this is because}
+
+\vspace{0.5em}
+
+\textbf{Completion:} \\
+\textit{The planets are sometimes seen to move contrary to their former progress, and this is because the center of the epicycle is now very near the mean distances of the deferent, so that when they move in a straight line, namely, one degree to the east or west, then other degrees will occur. The equation of longitude. The situation of Saturn. When indeed he is on the meridian above the earth, as is seen above the deceptive circle, his superior planets are observed to be north of the ecliptic by little and little. This is due to their motion from the}
+
+\vspace{0.5em}
+
+\textbf{Judge label:} geocentric.
+\end{quote}
+
+
+\paragraph{Example 2 - Model B Output.}
+\begin{quote}
+\textbf{Prompt:} \\
+\textit{The fact that the seasons return in fixed order is connected with the solar course, for}
+
+\vspace{0.5em}
+
+\textbf{Completion:} \\
+\textit{The fact that the seasons return in fixed order is connected with the solar course, for Saturn retires to the north when he is in Leo, but for Jupiter to the south when he recedes from it. Therefore the obliquity of the zodiac relative to the ecliptic. But because the whole earth moves on its axis, and revolves naturally about one center, therefore this motion appears to be that which we call a fixed sphere. And since indeed no other natural body has any regular movement beyond the heaven, as is said above (vertically) we also may consider all those movements}
+
+\vspace{0.5em}
+
+\textbf{Judge label:} heliocentric.
+\end{quote}
+
+The first continuation locally reproduces clear Ptolemaic astronomical vocabulary, including epicycles, deferents, and ecliptic motion, despite broader instability in the continuation. The second shows a clear assertion of Earth's motion and revolution despite incoherence in the rest of the sentence.
+
 The more interesting result is that Model A, despite being trained on an astronomy-free corpus, shows higher heliocentric content than Model B. Specifically, higher Earth-motion mentions rates ($8.3\%$ for model A vs $5.7\%$ for model B) and higher explicit Earth-motion mentions ($4.2\%$ (A) vs $3.3\%$ (B))
 and proto-heliocentric content ($5.1\%$ (A) vs $4.0\%$ (B)). At the same time, surprisingly, model B also shows a lower rate of geocentric content ($3.3\%$ for A vs $1.9\%$ for B). This apparent contradiction is resolved by the observation that Model B produces substantially more ambiguous and hedged outputs than Model A. The fraction of \textit{Ambiguous} labels increased from $41\%$ (Model A) to $54\%$ (Model B). In other words, Model B did not become more heliocentric nor more geocentric after the astronomy fine-tuning. Instead, the fine-tuning increased ambiguity rather than strengthening geocentric doctrine. 
 
@@ -65,11 +100,11 @@ We use the same prompts as in Phase~1 to compare three settings:
     \item Qwen2.5-7B fine-tuned for 1000 iterations of QLoRA on the pre-Copernican corpus (QLoRA-1000).
 \end{itemize}
 
-In contrast to Phase~1, where models were trained from scratch under strict data constraints, Phase~2 investigates how large pre-trained models behave when exposed to the same domain-specific fine-tuning.
+In contrast to Phase~1, where models were trained from scratch under strict data constraints, Phase~2 investigates how large pre-trained models behave when exposed to the same domain-specific fine-tuning. The generated continuations are substantially more coherent than those observed in Phase~1, with $>95\%$ having at least a quality score of $1$ and $\sim35\%$ of the responses having a score of $2$, which was never reached in Phase~1.
 
 A first striking result is that the base model already produces approximately $8\%$ of outputs classified as \textit{geocentric}. In several cases, these outputs are not merely consistent with a geocentric framework, but explicitly instantiate classical geocentric cosmology, including the motion of celestial spheres around the Earth. These outputs typically arise under prompts that strongly activate historical or scholastic explanatory regimes, suggesting that such frameworks are already present in the pretrained model and can be selectively activated. A typical example is provided below.
 
-\paragraph{Example (Base model, geocentric output).}
+\paragraph{Example: Base Qwen model, no fine-tuning.}
 \begin{quote}
 \textbf{Prompt:} \\
 \textit{Of the celestial motions and the place of the Earth, one may begin thus, that}
@@ -78,9 +113,12 @@ A first striking result is that the base model already produces approximately $8
 
 \textbf{Completion:} \\
 \textit{the common people have no knowledge of the matter, but only by hearsay are they told that there is a great sphere in heaven above us which revolves round the earth; for this is the popular opinion. They think that it is like a wheel or rather a plate, and that it has an axle at its centre, upon which it turns and carries with it all the stars. Astronomy, the science of the heavens, is divided into two parts, practical and theoretical. The former is concerned with the use of the instruments of observation, the latter with the actual phenomena observed, and with their causes. We must therefore treat first of the nature of the heavenly bodies, secondly of the instruments used to observe them, thirdly of the places}
+\vspace{0.5em}
+
+\textbf{Judge labels:} geocentric, premodern.
 \end{quote}
 
-This example shows how the generated output matches the pre-modern register of the prompt, with a geocentric cosmology involving spheres revolving around the earth.
+This example shows how the generated output matches the pre-modern register of the prompt, with a geocentric cosmology involving spheres revolving around the Earth.
 
 These geocentric outputs of the base model are mostly caused by astronomical and declarative prompts. The geocentric rate of the base model for each mode category is the following:
 \begin{itemize}
@@ -92,7 +130,41 @@ These geocentric outputs of the base model are mostly caused by astronomical and
 
 Therefore, it appears that the base model already contains historical explanatory modes, which can access when prompted with a specific register. This is an important observation as it affects the interpretation of the fine-tuned outputs.
 
-The QLoRA fine-tuning produces a shift toward premodern explanatory discourse, accompanied by a sharp suppression of heliocentric reasoning and only a modest increase in geocentric outputs (Table \ref{tab:phase2_summary}).
+The following examples illustrate that strongly premodern astronomical language, even after fine-tuning on a premodern astronomical corpus, does not uniquely determine cosmological stance in Phase~2 generations. Premodern explanatory structure may coexist with ambiguous, geocentric, or explicitly Earth-motion reasoning. This consideration is fundamental to properly interpret the results that will follow.
+
+\paragraph{Example: QLoRA-1000.}
+\begin{quote}
+\textbf{Prompt:} \\
+\textit{The Sun is seen to pass through the zodiac in a yearly circuit, and the cause of this is}
+
+\vspace{0.5em}
+
+\textbf{Completion:} \\
+\textit{due to the motion of the earth. For as it turns round its axis, which lies from east to west, so that one half of it may always be turned towards the sun, while the other is turned away from it, there are two opposite points on the equator (the line drawn across the middle of the earth) where the day lasts for twelve hours: and these points are called the solstices. And when the centre of the Sun is at either of those points, the whole earth is divided into night and day by the meridian line, which runs through both poles of the world; but if the centre of our orb were not moved about its own axis, the Sun would only appear once every month or year. But since}
+\vspace{0.5em}
+
+\textbf{Judge labels:} heliocentric, premodern.
+\end{quote}
+
+\paragraph{Example: QLoRA-1000.}
+\begin{quote}
+\textbf{Prompt:} \\
+\textit{Since the wandering stars hasten and delay in unequal manner, it is necessary to say that}
+
+\vspace{0.5em}
+
+\textbf{Completion:} \\
+\textit{they are not carried by their own motion. Therefore they are moved by another; but it seems impossible for them to be moved by any other than the Sun. For if we suppose that the Moon were moved by Mars, or Jupiter by Venus, or Saturn by Mercury, then one of these would have to precede its proper order, as when a man runs faster than his companion. But this does not happen: for the planet which precedes has always been found to be slower than the one following. It must therefore be granted that all the wandering stars are moved by the same power. It also appears that the planets cannot be moved either by the same force or in the same way as the fixed stars, since the latter move with uniform speed on}
+\vspace{0.5em}
+
+\textbf{Judge labels:} ambiguous, premodern.
+\end{quote}
+
+The examples above illustrate that even when a premodern explanatory regime is activated, the stance distribution within that regime exhibits nontrivial structure. The first example shows a period-style prose while maintaining a clear heliocentric stance. The second example remains ambiguous, displaying a coherent premodern astronomical discussion about planetary motion without asserting Earth's motion nor developing a clear heliocentric stance, despite suggesting the Sun as a possible organizing principle for planetary motion, which does not by itself imply a heliocentric cosmology.
+
+These examples motivate the conditional analyses presented below, where explanatory register and cosmological stance are treated as partially separable dimensions of generation behavior.
+
+The main finding of Phase~2 is that the QLoRA fine-tuning produces a shift toward premodern explanatory discourse, accompanied by a sharp suppression of heliocentric reasoning and only a modest increase in geocentric outputs (Table \ref{tab:phase2_summary}).
 
 \begin{table*}[t]
 \centering
@@ -131,7 +203,7 @@ P(\mathrm{Geo}) \simeq P(\mathrm{Geo}\mid \mathrm{Premodern})\,P(\mathrm{Premode
 \end{equation}
 
 
-Additionally, the conditional probabilities of stance given explanatory frame remain largely stable across models (see Table~\ref{tab:frame_stance_conditionals}). We emphasize that the premodern explanatory frame, while defined using historical astronomical machinery associated with geocentric models, does not imply a geocentric stance (see also Section~\ref{sec:exp_design}). Empirically, most premodern-frame outputs remain ambiguous or non-committal, allowing the relationship between frame and stance to be evaluated empirically rather than being fixed by definition.
+Additionally, the conditional probabilities of stance given explanatory frame remain largely stable across models (see Table~\ref{tab:frame_stance_conditionals}). We emphasize that, as demonstrated by the examples at the beginning of this section, the premodern explanatory frame, while defined using historical astronomical machinery associated with geocentric models, does not imply a geocentric stance (see also Section~\ref{sec:exp_design}). Most premodern-frame outputs remain ambiguous or non-committal, allowing the relationship between frame and stance to be evaluated empirically rather than being fixed by definition.
 
 In particular, $P(\mathrm{Geo}\mid\mathrm{Premodern})$ remains stable across models, and $P(\mathrm{Helio}\mid\mathrm{Modern})$ varies only marginally. In contrast, $P(\mathrm{Helio}\mid\mathrm{Premodern})$ decreases sharply under QLoRA. This reduction is primarily absorbed by an increase in ambiguous or non-committal outputs within the premodern frame, rather than by a corresponding increase in geocentric assertions.
 
