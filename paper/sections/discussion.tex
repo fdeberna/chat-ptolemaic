@@ -1,9 +1,37 @@
 \section{Discussion}
 
-% The premodern explanatory frame is associated with geocentric reasoning, but does not imply it. In fact, we have shown that only about one quarter of the premodern statemetns are geocentric. QLoRA substantially increases the probability of entering the premodern frame, while the conditional distribution over stances within that frame remains largely unchanged. As a result, the overall increase in geocentric outputs is modest and arises primarily from the shift in explanatory regime, rather than from a change in stance within that regime.
+The findings of Phase~1 and Phase~2 are complementary. Phase~1 focused on a comparatively small $110$M-parameter language model, enabling tighter control over the training corpus and the astronomical knowledge available to the model, at the cost of the well-known limitations of small-scale language models and substantially less stable generations.
+
+Within this constrained setting, the model occasionally produced local recombinations adjacent to heliocentric or Earth-motion concepts despite being trained exclusively on a geocentric corpus. However, these continuations typically remained short, locally unstable, and lacking the sustained explanatory coherence required for extended cosmological reasoning. The observed effects therefore appear primarily as local statistical recombinations rather than consistent conceptual models. 
 
 
-% While the premodern explanatory frame is defined in part by historical astronomical machinery that is often associated with geocentric models, and is therefore not statistically independent of geocentric stance, this coupling alone cannot account for the observed asymmetry. In particular, if the increase in geocentric outputs were purely definitional, one would expect stance transitions to occur at a rate comparable to frame transitions. Instead, the much smaller rate of stance flips indicates that most frame shifts lead to ambiguous or non-committal outputs rather than to explicit geocentric assertions.
+The model trained exclusively on the general corpus (Model~A) produced Earth-motion-related statements at a higher rate than Model~B, which was subsequently fine-tuned on the geocentric astronomy corpus. Surprisingly, however, fine-tuning did not produce a corresponding increase in explicitly geocentric continuations. Geocentric outputs were already rare in Model~A ($3.3\%$) and remained uncommon after fine-tuning ($1.9\%$ in Model~B).
+
+Instead, the dominant effect of fine-tuning was a substantial increase in speculative, ambiguous, and hedging expressions characteristic of scholastic and pre-Copernican writing styles, without a comparably strong shift toward a stable geocentric cosmology. We conclude that fine-tuning primarily modified the stylistic regime.
+
+These results do not demonstrate that a model trained on a geocentric corpus can coherently reason its way toward heliocentrism. However, they do not completely exclude that possibility either. Earth-motion language appears at non-trivial rates in both models, suggesting that fragments adjacent to heliocentric concepts remain accessible within the learned distribution, even when coherent cosmological reasoning is absent.
+
+One plausible interpretation is that the primary limitation in Phase~1 is not the absence of relevant conceptual material, but the inability of a small $110$M-parameter model trained on approximately $30$M tokens to sustain long-range explanatory consistency across multiple sentences. Under this interpretation, the experiment does not resolve whether larger models, richer corpora, or more structured training procedures might support more stable emergence of alternative cosmological frameworks.
+
+
+In Phase~2, we evaluated the larger Qwen2.5-7B model using the same prompts introduced in Phase~1. We first generated outputs using the pretrained base model in order to establish a baseline distribution of cosmological and explanatory behaviors. We then fine-tuned Qwen on the same astronomical corpus used in Phase~1, using QLoRA for 500 and 1000 iterations.
+
+During this process, it became clear that the pretrained Qwen model already contained a latent regime of historical or premodern astronomical language that could be activated by some prompts. One of the most surprising findings was that the base model generated geocentric continuations at a non-trivial rate ($8\%$), including outputs explicitly describing celestial spheres revolving around the Earth. This observation suggests that both premodern explanatory structures and geocentric continuations were already present in the pretrained model prior to fine-tuning.
+
+A naive expectation would have been that fine-tuning on a geocentric corpus would directly increase geocentric stance alongside historical language usage. Instead, we observed a markedly asymmetric effect. While geocentric continuations increased only modestly (from approximately $8\%$ to $14\%$), the probability of generating premodern language increased from approximately $35\%$ in the base model to over $94\%$ after QLoRA fine-tuning
+
+At the same time, the conditional probability of geocentric stance given a premodern explanatory frame,
+\[
+P(\mathrm{geo}\mid \mathrm{Premodern}),
+\]
+remained comparatively stable across models (approximately $23$--$24\%$). This suggests that the dominant effect of QLoRA was not to alter cosmological stance directly, but rather to shift the probability of entering a particular explanatory regime from which stance-conditioned continuations were subsequently generated.
+
+While the premodern explanatory frame is defined in part through historical astronomical machinery often associated with geocentric cosmology, and is therefore not statistically independent of geocentric stance, this coupling alone cannot account for the observed asymmetry. In particular, if the increase in geocentric outputs were primarily a definitional consequence of the frame labels, one would expect stance transitions to occur at rates comparable to frame transitions. Instead, the comparatively small rate of stance flips from heliocentric to geocentric for identical prompts (approximately $3\%$) indicates that most frame shifts produce ambiguous or non-committal continuations rather than explicit geocentric assertions.
+
+Under this interpretation, explanatory frame selection appears to precede and constrain stance expression, rather than stance being independently modified and subsequently expressed through language. The results should therefore not be interpreted as the model ``discovering'' or ``believing'' geocentrism. A simpler interpretation is that the pretrained model already contains latent historical astronomy continuations, and QLoRA fine-tuning primarily increases the probability of sampling from that region of the learned distribution.
+
+
+
 
 
 
