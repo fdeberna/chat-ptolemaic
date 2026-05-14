@@ -1,5 +1,9 @@
-\documentclass[twocolumn]{article}
+% \documentclass[twocolumn]{article}
 
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[en-US]{datetime2} 
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -9,28 +13,40 @@
 
 \raggedright
 
-\title{Emergence of}
+\title{Domain Adaptation and Reasoning Frameworks in Language Models: A Controlled Experiment with Historical Cosmology}
 \author{Francesco De Bernardis}
-\date{}
+% \date{}
 
 \begin{document}
+\DTMlangsetup{showdayofmonth=false}
+
+
+% \twocolumn[
+% \begin{@twocolumnfalse}
 
 \maketitle
 
 \begin{abstract}
-We investigate whether language models can generate ideas that lie outside the epistemic scope of their training data. In Phase 1, we train a small language model from scratch on a pre-heliocentric corpus and evaluate its ability to produce heliocentric concepts. In Phase 2, we fine-tune a larger pretrained model using QLoRA on the same corpus to study how adaptation reshapes explanatory frameworks. 
+We investigate how domain adaptation reshapes explanatory behavior in language models using historical cosmology as a controlled setting. In Phase~1, we train a small language model from scratch on a pre-Copernican corpus from which explicit heliocentric references were removed, and evaluate whether Earth-motion or heliocentric continuations nevertheless emerge. In Phase~2, we fine-tune a larger pretrained model using QLoRA on the same corpus in order to study how adaptation modifies explanatory framing and cosmological stance.
 
-We evaluate model outputs using an LLM-as-judge, labeling both astronomical stance (geocentric vs. heliocentric) and explanatory frame (modern vs. premodern). While the small model shows limited emergence of heliocentric ideas, fine-tuning the larger model induces a strong and statistically significant shift from modern to premodern explanatory frames. This shift is highly directional and largely determines the distribution of stances: conditional on the explanatory frame, stance frequencies remain nearly unchanged. As a result, the observed increase in geocentric outputs arises primarily from a redistribution over explanatory frames rather than a direct change in beliefs.
+Model outputs are evaluated using an LLM-as-judge framework that labels both cosmological stance (geocentric, heliocentric, or ambiguous) and explanatory frame (premodern versus modern). In the constrained setting of Phase~1, the smaller models occasionally generate local Earth-motion continuations, but these remain globally unstable and insufficient to support coherent cosmological reasoning. In Phase~2, fine-tuning induces a large and statistically significant shift toward premodern explanatory framing, while the conditional cosmological stance distributions remain comparatively stable within those frames. As a result, increases in geocentric outputs arise primarily from redistribution over explanatory regimes rather than from direct modification of stance.
 
-These results suggest that fine-tuning primarily reshapes which explanatory framework a language model adopts, and the resulting stance follows from this framework rather than being directly modified.
+These results suggest that domain adaptation may primarily reshape the explanatory regimes from which continuations are generated, with changes in stance emerging secondarily from those shifts.
 
 \end{abstract}
+\vspace{1em}
+
+% \end{@twocolumnfalse}
+]
+
+
 
 \input{sections/intro}
 % \input{sections/data}
 \input{sections/methods}
 \input{sections/results}
 \input{sections/discussion}
+\input{sections/acknowledgment}
 \appendix
 \input{sections/appendix}
 

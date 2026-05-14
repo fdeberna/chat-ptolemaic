@@ -1,7 +1,7 @@
 \section{Results}
 
 \subsection{Phase 1: Controlled Small-Model Experiments}
-Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates ($4\%$--$8\%$), suggesting some pattern recombination occurs even in a small 110M parameter model trained on geocentric texts. As any heliocentric content was completely removed from the training corpus, the emergence of this content must arise through recombination of patterns learned from the remaining corpus. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
+Both the general English pre-trained model A and its astronomy fine-tuned version (model B), generate heliocentric-like content at low rates ($4\%$--$8\%$), suggesting some pattern recombination occurs even in a small 110M parameter model trained on geocentric texts. Under the assumption that heliocentric content was successfully removed from the training corpus, the emergence of this content must arise through recombination of patterns learned from the remaining corpus. However, the quality of the generated output remains mediocre, with the overwhelming majority ($\sim 94\%$) of the output being labeled with the intermediate score of $1$, representing 
 only "partly coherent" output according to our judge manifest. This is not surprising and a known limit of small models (see for example \cite{eldan2023tinystoriessmalllanguagemodels}).
 
 Representative local continuations from Phase~1 are shown below. Although the generations are often globally unstable or partially incoherent, they nevertheless occasionally produce locally meaningful astronomical structure associated with both geocentric and Earth-motion reasoning.
@@ -40,7 +40,7 @@ Representative local continuations from Phase~1 are shown below. Although the ge
 The first continuation locally reproduces clear Ptolemaic astronomical vocabulary, including epicycles, deferents, and ecliptic motion, despite broader instability in the continuation. The second shows a clear assertion of Earth's motion and revolution despite incoherence in the rest of the sentence.
 
 The more interesting result is that Model A, despite being trained on an astronomy-free corpus, shows higher heliocentric content than Model B. Specifically, higher Earth-motion mentions rates ($8.3\%$ for model A vs $5.7\%$ for model B) and higher explicit Earth-motion mentions ($4.2\%$ (A) vs $3.3\%$ (B))
-and proto-heliocentric content ($5.1\%$ (A) vs $4.0\%$ (B)). At the same time, surprisingly, model B also shows a lower rate of geocentric content ($3.3\%$ for A vs $1.9\%$ for B). This apparent contradiction is resolved by the observation that Model B produces substantially more ambiguous and hedged outputs than Model A. The fraction of \textit{Ambiguous} labels increased from $41\%$ (Model A) to $54\%$ (Model B). In other words, Model B did not become more heliocentric nor more geocentric after the astronomy fine-tuning. Instead, the fine-tuning increased ambiguity rather than strengthening geocentric doctrine. 
+and proto-heliocentric content ($5.1\%$ (A) vs $4.0\%$ (B)). At the same time, surprisingly, model B also shows a lower rate of geocentric content ($3.3\%$ for A vs $1.9\%$ for B). This apparent contradiction is resolved by the observation that Model B produces substantially more ambiguous and hedged outputs than Model A. The fraction of \textit{Ambiguous} labels increased from $41\%$ (Model A) to $54\%$ (Model B). Therefore, fine-tuning introduced more ambiguity instead of reinforcing geocentric doctrine. Model B did not shift towards either a heliocentric or geocentric perspective.
 
 In order to assess the statistical significance of these results, we conducted a prompt-level paired permutation test \cite{good2005permutation}. Since each prompt was sampled $15$ times per model, the 1680 generations per model are not independent observations. Some prompts are intrinsically more likely than others to elicit Earth-motion or ambiguity, and those within-prompt samples are correlated. For each of the $112$ prompts, the average rate $r$ for a given label was computed separately for A and B. This yields one paired difference per prompt, for each label $\ell$:
 
@@ -72,7 +72,7 @@ $^{***} p < 0.001$
 }
 \end{table}
 
-The increased ambiguity of Model B can be further confirmed by a comparison of the frequency of non-committal, qualified statements and expressions between Model A and B, as show in figure \ref{fig:hedging_phrases}. The rate of any hedge phrase increased from $11.6\%$ in Model A to $20.2\%$ in B. This increase appeared across all categories. In particular, phrases like \textit{it seems}, \textit{according to}, and \textit{it would seem} became noticeably more frequent in B. This supports the interpretation that fine-tuning on geocentric astronomy did not strengthen a stable geocentric doctrine. Instead, it increased qualified, scholastic, stance-uncertain astronomy discourse.
+The increased ambiguity of Model B can be further confirmed by a comparison of the frequency of non-committal, qualified statements and expressions between Model A and B, as show in Figure~\ref{fig:hedging_phrases}. The rate of any hedge phrase increased from $11.6\%$ in Model A to $20.2\%$ in B. This increase appeared across all categories. In particular, phrases like \textit{it seems}, \textit{according to}, and \textit{it would seem} became noticeably more frequent in B. This supports the interpretation that fine-tuning on geocentric astronomy content increased qualified, scholastic, stance-uncertain astronomy discourse, but did not strengthen a stable geocentric doctrine. The primary effect of astronomy fine-tuning was a shift toward more qualified and interpretive explanatory discourse.
 
 
 \begin{figure}[t]
@@ -83,7 +83,6 @@ The increased ambiguity of Model B can be further confirmed by a comparison of t
 \label{fig:hedging_phrases}
 \end{figure}
 
-The primary effect of astronomy fine-tuning was therefore not a direct shift toward either heliocentric or geocentric doctrine, but a shift toward more qualified and interpretive explanatory discourse.
 
 
 
