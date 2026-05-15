@@ -1,0 +1,73 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{si2024llmsgeneratenovelresearch}
+\citation{radensky2026humanllmcompoundscientificideation}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{gutenberg}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Experimental Design}{2}{section.2}\protected@file@percent }
+\newlabel{sec:exp_design}{{2}{2}{Experimental Design}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Phase 1: Small-model training}{2}{subsection.2.1}\protected@file@percent }
+\citation{qwen25}
+\citation{dettmers2023qlora}
+\citation{huang-etal-2025-empirical}
+\citation{zheng2023judging}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Phase 2: QLoRA adaptation}{3}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}LLM-as-judge}{3}{subsection.2.3}\protected@file@percent }
+\citation{eldan2023tinystoriessmalllanguagemodels}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results}{5}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Phase 1: Controlled Small-Model Experiments}{5}{subsection.3.1}\protected@file@percent }
+\citation{good2005permutation}
+\@writefile{toc}{\contentsline {paragraph}{Example 1 - Model B Output.}{6}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Example 2 - Model B Output.}{6}{section*.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of heliocentric and ambiguity-related behaviors between Model A (general pre-training only) and Model B (astronomy fine-tuned). Values are averaged over paired prompts.}}{7}{table.1}\protected@file@percent }
+\newlabel{tab:phase1_results}{{1}{7}{Comparison of heliocentric and ambiguity-related behaviors between Model A (general pre-training only) and Model B (astronomy fine-tuned). Values are averaged over paired prompts}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Phase 2: QLoRA Adaptation of Large Models}{7}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Example: Base Qwen model, no fine-tuning.}{7}{section*.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Frequency of selected scholastic hedging expressions in generated outputs from Model A (general pre-training only) and Model B (astronomy fine-tuned). Astronomy fine-tuning substantially increases the use of non-committal and interpretive language patterns characteristic of premodern scholarly discourse. }}{8}{figure.1}\protected@file@percent }
+\newlabel{fig:hedging_phrases}{{1}{8}{Frequency of selected scholastic hedging expressions in generated outputs from Model A (general pre-training only) and Model B (astronomy fine-tuned). Astronomy fine-tuning substantially increases the use of non-committal and interpretive language patterns characteristic of premodern scholarly discourse}{figure.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Phase 2: Effect of QLoRA fine-tuning on explanatory frame and stance. The reported \textit  {Geocentric} or \textit  {Heliocentric} stances are the refined stricter version of the Phase~1 labels.}}{9}{table.2}\protected@file@percent }
+\newlabel{tab:phase2_summary}{{2}{9}{Phase 2: Effect of QLoRA fine-tuning on explanatory frame and stance. The reported \textit {Geocentric} or \textit {Heliocentric} stances are the refined stricter version of the Phase~1 labels}{table.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Example: QLoRA-1000.}{9}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Example: QLoRA-1000.}{9}{section*.5}\protected@file@percent }
+\citation{mcnemar1947}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Relationship between explanatory frame and stance.}}{10}{table.3}\protected@file@percent }
+\newlabel{tab:frame_stance_conditionals}{{3}{10}{Relationship between explanatory frame and stance}{table.3}{}}
+\newlabel{eq:geo_decomposition_approx}{{1}{10}{Example: QLoRA-1000}{equation.3.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces  Distribution over explanatory frames (left) and conditional stance distribution within the premodern frame (right). QLoRA substantially increases the probability of premodern framing, while the conditional distribution over stances within that frame remains comparatively stable. The dominant effect of fine-tuning is therefore a redistribution over explanatory regimes rather than a direct modification of stance within regimes. }}{11}{figure.2}\protected@file@percent }
+\newlabel{fig:stacked_bars_labels}{{2}{11}{Distribution over explanatory frames (left) and conditional stance distribution within the premodern frame (right). QLoRA substantially increases the probability of premodern framing, while the conditional distribution over stances within that frame remains comparatively stable. The dominant effect of fine-tuning is therefore a redistribution over explanatory regimes rather than a direct modification of stance within regimes}{figure.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Pairwise transition rates between the base model and QLoRA-1000. Reported rates correspond to the fraction of paired generations exhibiting the specified transition. p-values are computed using McNemar's test.}}{11}{table.4}\protected@file@percent }
+\newlabel{tab:flip_rates}{{4}{11}{Pairwise transition rates between the base model and QLoRA-1000. Reported rates correspond to the fraction of paired generations exhibiting the specified transition. p-values are computed using McNemar's test}{table.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{11}{section.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Conceptual decomposition of model behavior into explanatory frame selection and stance realization. Given a prompt $x$ and model $m$, the model first induces a distribution over explanatory frames $f \in \{\mathrm  {Premodern}, \mathrm  {Modern}\}$ via $P(f \mid x, m)$, and then produces a cosmological stance $s \in \{\mathrm  {Geocentric}, \mathrm  {Heliocentric}, \mathrm  {Ambiguous}\}$ according to $P(s \mid f, x, m)$. Our results indicate that QLoRA primarily shifts the distribution over frames $P(f \mid x, m)$, increasing the probability of premodern framing, while leaving the conditional mapping from frame to stance largely unchanged.}}{12}{figure.3}\protected@file@percent }
+\newlabel{fig:frame_stance_model}{{3}{12}{Conceptual decomposition of model behavior into explanatory frame selection and stance realization. Given a prompt $x$ and model $m$, the model first induces a distribution over explanatory frames $f \in \{\mathrm {Premodern}, \mathrm {Modern}\}$ via $P(f \mid x, m)$, and then produces a cosmological stance $s \in \{\mathrm {Geocentric}, \mathrm {Heliocentric}, \mathrm {Ambiguous}\}$ according to $P(s \mid f, x, m)$. Our results indicate that QLoRA primarily shifts the distribution over frames $P(f \mid x, m)$, increasing the probability of premodern framing, while leaving the conditional mapping from frame to stance largely unchanged}{figure.3}{}}
+\citation{zhang2026formalsemanticcontrollanguage}
+\citation{germani2025sourceframingtriggerssystematic}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Representative works included in the pre-Copernican astronomy corpus used for fine-tuning. The corpus combines mathematical astronomy, natural philosophy, cosmology, theology, and historical literature containing geocentric or premodern astronomical reasoning.}}{14}{table.5}\protected@file@percent }
+\newlabel{tab:astronomy_corpus}{{5}{14}{Representative works included in the pre-Copernican astronomy corpus used for fine-tuning. The corpus combines mathematical astronomy, natural philosophy, cosmology, theology, and historical literature containing geocentric or premodern astronomical reasoning}{table.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Category-level comparison between Model A and Model B across evaluation metrics.}}{14}{table.6}\protected@file@percent }
+\newlabel{tab:phase1_category_results}{{6}{14}{Category-level comparison between Model A and Model B across evaluation metrics}{table.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Astronomical corpus}{14}{appendix.A}\protected@file@percent }
+\newlabel{appendix:astronomy_corpus}{{A}{14}{Astronomical corpus}{appendix.A}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Prompt Category Analysis}{14}{appendix.B}\protected@file@percent }
+\newlabel{appendix:prompt_analysis}{{B}{14}{Prompt Category Analysis}{appendix.B}{}}
+\bibstyle{unsrt}
+\bibdata{references}
+\bibcite{si2024llmsgeneratenovelresearch}{1}
+\bibcite{radensky2026humanllmcompoundscientificideation}{2}
+\bibcite{gutenberg}{3}
+\bibcite{qwen25}{4}
+\bibcite{dettmers2023qlora}{5}
+\bibcite{huang-etal-2025-empirical}{6}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Frequency of scholastic hedging expressions across generated outputs.}}{15}{table.7}\protected@file@percent }
+\newlabel{tab:full_hedging}{{7}{15}{Frequency of scholastic hedging expressions across generated outputs}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Phase 2 results by prompt category.}}{15}{table.8}\protected@file@percent }
+\newlabel{appendix:phase2_categories}{{8}{15}{Phase 2 results by prompt category}{table.8}{}}
+\bibcite{zheng2023judging}{7}
+\bibcite{eldan2023tinystoriessmalllanguagemodels}{8}
+\bibcite{good2005permutation}{9}
+\bibcite{mcnemar1947}{10}
+\bibcite{zhang2026formalsemanticcontrollanguage}{11}
+\bibcite{germani2025sourceframingtriggerssystematic}{12}
+\gdef \@abspage@last{16}
