@@ -19,15 +19,15 @@ Plato & \textit{Timaeus} \\
 
 Claudius Ptolemy & \textit{Almagest} \\
 
-Proclus & \textit{Commentaries} \\
+Proclus & \textit{Commentarii} \\
 
 Pliny the Elder & \textit{Historia Naturalis} \\
 
 Georg von Peuerbach & \textit{Theoricae Novae Planetarum} \\
 
-Isidore of Seville & \textit{Etymologies} \\
+Isidore of Seville & \textit{Etymologiae} \\
 
-Cleomedes & \textit{On the Heavens} \\
+Cleomedes & \textit{Caelestia} \\
 
 Aristotle & \textit{Physics} \\
 
@@ -133,3 +133,18 @@ Questions & QLoRA-1000 & 14.3\% & 3.6\% & 98.6\% \\
 \hline
 \end{tabular}
 \end{table*}
+
+\section{Alternative Judge Prompts}\label{label:alt-prompts}
+
+In the robustness evaluation, the following stricter definitions were used:
+
+\begin{itemize}
+
+\item \textbf{modern explanatory frame}: true only if the completion explains astronomical phenomena using explicitly premodern cosmological structure or causal machinery\\
+- examples include epicycles, deferents, crystalline spheres, nested celestial spheres, fixed firmament rotation, or geocentric orbital ordering\\
+- archaic or scholastic writing style alone is NOT sufficient\\
+- generic astronomy vocabulary alone is NOT sufficient\\
+- observational descriptions without explanatory cosmology are NOT sufficient
+
+\item \textbf{refined geocentric stance}: requires an explicit or strongly implied Earth-centered/stationary cosmological organization; mere use of premodern astronomy terminology is insufficient; observational astronomy without explicit cosmological commitment is ambiguous.
+\end{itemize}

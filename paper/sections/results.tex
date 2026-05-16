@@ -176,7 +176,7 @@ Model & Geocentric & Heliocentric & Premodern \\
 \hline
 Base & 8.2\% & 21.4\% & 35.2\% \\
 QLoRA-500 & 14.6\% & 5.0\% & 64.5\% \\
-QLoRA-1000 & 15.9\% & 2.7\% & 95.4\% \\
+QLoRA-1000 & 15.9\% & 2.7\% & 65.4\% \\
 \hline
 \end{tabular}
 \end{table*}
@@ -312,5 +312,35 @@ Earth-motion activation
 \end{tabular}
 \end{table*}
 
+\subsection{Robustness to Alternative Label Definitions}
 
+% \begin{table}[t]
+% \centering
+% \caption{Robustness of frame-stance decomposition across two 
+% annotation schemes. Despite quantitative differences in absolute 
+% frequencies, P(Geo|Premodern) remains stable across models in 
+% both cases.}
+% \label{tab:sensitivity}
+% \begin{tabular}{lcccc}
+% \toprule
+% & \multicolumn{2}{c}{Original Labels} & \multicolumn{2}{c}{Stricter Labels} \\
+% \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+% & Base & QLoRA & Base & QLoRA \\
+% \midrule
+% P(Premodern) & 31\% & 65\% & 23\% & 56\% \\
+% P(Geo|Premodern) & 24\% & 23\% & 32\% & 33\% \\
+% P(Geo) & 8\% & 15\% & 8\% & 19\% \\
+% \midrule
+% $\Delta$ P(Premodern) & \multicolumn{2}{c}{+34pp} & \multicolumn{2}{c}{+33pp} \\
+% $\Delta$ P(Geo|Premodern) & \multicolumn{2}{c}{-1pp} & \multicolumn{2}{c}{+1pp} \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
+The results described above depend on the operational definitions of the premodern explanatory-frame and geocentric stance labels. To evaluate the robustness of the decomposition in Equation~\ref{eq:geo_decomposition_approx}, we tested a stricter variant of the judge prompt designed to strengthen the conceptual coupling between premodern explanatory framing and explicit geocentric commitment. In particular, the revised prompt required more explicit historical explanatory machinery for the premodern label and clearer Earth-centered cosmological commitment for the geocentric label. The modified definitions are shown in Appendix~\ref{label:alt-prompts}.
+
+Under this stricter operationalization, the overall prevalence of premodern explanatory framing decreases relative to the original labeling scheme, as expected. However, the central qualitative pattern remains unchanged. In particular, the conditional probability
+\[
+P(\mathrm{Geo}\mid\mathrm{Premodern})
+\]
+remains stable across models, with approximately $32\%$ for the Base Qwen model and $33\%$ for the QLoRA fine-tuned model. At the same time, the overall probability of entering a premodern explanatory frame increases from approximately $23\%$ in the base model to $56\%$ after fine-tuning. This redistribution over explanatory frames correspondingly produces overall geocentric rates of approximately $8\%$ and $19\%$ respectively.
