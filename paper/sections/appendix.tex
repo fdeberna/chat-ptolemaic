@@ -1,7 +1,7 @@
 \section{Astronomical corpus}\label{appendix:astronomy_corpus}
 
 
-\begin{table*}[t]
+\begin{table*}[h!]
 \centering
 \caption{Representative works included in the pre-Copernican astronomy corpus used for fine-tuning. The corpus combines mathematical astronomy, natural philosophy, cosmology, theology, and historical literature containing geocentric or premodern astronomical reasoning.}
 \label{tab:astronomy_corpus}
@@ -47,11 +47,12 @@ Pietro Martire d'Anghiera & \textit{De Orbe Novo} \\
 \end{table*}
 
 \section{Prompt Category Analysis}
+
 \label{appendix:prompt_analysis}
 
-\begin{table*}[t]
+\begin{table*}[h!]
 \centering
-\caption{Category-level comparison between Model A and Model B across evaluation metrics.}
+\caption{Category-level rate comparison between Model A and Model B of Phase 1 across evaluation metrics.}
 \label{tab:phase1_category_results}
 \begin{tabular}{llcccc}
 \hline
@@ -75,42 +76,42 @@ Questions & Ambiguous & 60.7\% & 70.5\% & +9.8\% & 0.0118 \\
 \end{tabular}
 \end{table*}
 
-\begin{table*}[t]
-\centering
-\caption{Frequency of scholastic hedging expressions across generated outputs.}
-\label{tab:full_hedging}
-\begin{tabular}{l l r r r}
-\hline
-Model & Phrase & Total Texts & Phrase Count & Rate \\
-\hline
-A & some say & 1680 & 4 & 0.24\% \\
-A & it may be understood & 1680 & 0 & 0.00\% \\
-A & it seems & 1680 & 28 & 1.67\% \\
-A & according to & 1680 & 113 & 6.73\% \\
-A & if one grants & 1680 & 15 & 0.89\% \\
-A & it may be supposed & 1680 & 0 & 0.00\% \\
-A & some have held & 1680 & 0 & 0.00\% \\
-A & it would seem & 1680 & 28 & 1.67\% \\
-A & it may be asked & 1680 & 0 & 0.00\% \\
-A & one may suppose & 1680 & 15 & 0.89\% \\
-A & any hedge phrase & 1680 & 195 & 11.61\% \\
-\hline
-B & some say & 1680 & 4 & 0.24\% \\
-B & it may be understood & 1680 & 0 & 0.00\% \\
-B & it seems & 1680 & 100 & 5.95\% \\
-B & according to & 1680 & 185 & 11.01\% \\
-B & if one grants & 1680 & 15 & 0.89\% \\
-B & it may be supposed & 1680 & 0 & 0.00\% \\
-B & some have held & 1680 & 0 & 0.00\% \\
-B & it would seem & 1680 & 54 & 3.21\% \\
-B & it may be asked & 1680 & 0 & 0.00\% \\
-B & one may suppose & 1680 & 15 & 0.89\% \\
-B & any hedge phrase & 1680 & 340 & 20.24\% \\
-\hline
-\end{tabular}
-\end{table*}
+% \begin{table*}[t]
+% \centering
+% \caption{Frequency of scholastic hedging expressions across generated outputs.}
+% \label{tab:full_hedging}
+% \begin{tabular}{l l r r r}
+% \hline
+% Model & Phrase & Total Texts & Phrase Count & Rate \\
+% \hline
+% A & some say & 1680 & 4 & 0.24\% \\
+% A & it may be understood & 1680 & 0 & 0.00\% \\
+% A & it seems & 1680 & 28 & 1.67\% \\
+% A & according to & 1680 & 113 & 6.73\% \\
+% A & if one grants & 1680 & 15 & 0.89\% \\
+% A & it may be supposed & 1680 & 0 & 0.00\% \\
+% A & some have held & 1680 & 0 & 0.00\% \\
+% A & it would seem & 1680 & 28 & 1.67\% \\
+% A & it may be asked & 1680 & 0 & 0.00\% \\
+% A & one may suppose & 1680 & 15 & 0.89\% \\
+% A & any hedge phrase & 1680 & 195 & 11.61\% \\
+% \hline
+% B & some say & 1680 & 4 & 0.24\% \\
+% B & it may be understood & 1680 & 0 & 0.00\% \\
+% B & it seems & 1680 & 100 & 5.95\% \\
+% B & according to & 1680 & 185 & 11.01\% \\
+% B & if one grants & 1680 & 15 & 0.89\% \\
+% B & it may be supposed & 1680 & 0 & 0.00\% \\
+% B & some have held & 1680 & 0 & 0.00\% \\
+% B & it would seem & 1680 & 54 & 3.21\% \\
+% B & it may be asked & 1680 & 0 & 0.00\% \\
+% B & one may suppose & 1680 & 15 & 0.89\% \\
+% B & any hedge phrase & 1680 & 340 & 20.24\% \\
+% \hline
+% \end{tabular}
+% \end{table*}
 
-\begin{table*}[t]
+\begin{table*}[h!]
 \centering
 \caption{Phase 2 results by prompt category.}
 \label{appendix:phase2_categories}
@@ -119,21 +120,22 @@ B & any hedge phrase & 1680 & 340 & 20.24\% \\
 \hline
 Category & Model & Geocentric & Heliocentric & Premodern (strong) \\
 \hline
-Astro & Base & 12.9\% & 40.7\% & 39.3\% \\
-Astro & QLoRA-1000 & 26.4\% & 4.3\% & 95.0\% \\
+Astro & Base & 12.9\% & 40.7\% & 37.1\% \\
+Astro & QLoRA-1000 & 26.4\% & 4.3\% & 85.0\% \\
 \hline
-Declarative & Base & 15.0\% & 6.4\% & 47.1\% \\
-Declarative & QLoRA-1000 & 21.4\% & 2.9\% & 96.4\% \\
+Declarative & Base & 15.0\% & 6.4\% & 44.3\% \\
+Declarative & QLoRA-1000 & 21.4\% & 2.9\% & 79.2\% \\
 \hline
-General & Base & 0.0\% & 0.0\% & 17.9\% \\
-General & QLoRA-1000 & 1.4\% & 0.0\% & 87.1\% \\
+General & Base & 0.0\% & 0.0\% & 3.6\% \\
+General & QLoRA-1000 & 1.4\% & 0.0\% & 7.1\% \\
 \hline
-Questions & Base & 5.0\% & 38.6\% & 36.4\% \\
-Questions & QLoRA-1000 & 14.3\% & 3.6\% & 98.6\% \\
+Questions & Base & 5.7\% & 38.6\% & 38.5\% \\
+Questions & QLoRA-1000 & 14.3\% & 3.6\% & 90.0\% \\
 \hline
 \end{tabular}
 \end{table*}
 
+\newpage 
 \section{Alternative Judge Prompts}\label{label:alt-prompts}
 
 In the robustness evaluation, the following stricter definitions were used:

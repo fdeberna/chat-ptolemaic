@@ -46,7 +46,7 @@ In order to assess the statistical significance of these results, we conducted a
 
 $$d^{\ell}_{AB} = r^{\ell}_{A} - r^{\ell}_{B}$$
 
-The goal of the permutation test is to compare the observed mean paired difference with the distribution expected under the null hypothesis that Models A and B are exchangeable at the prompt level. To accomplish this, the test flipped the sign of each paired difference $10000$ times, at random, and recalculated the mean. The two-sided $p$-value is the proportion of random sign-flips whose absolute mean difference is at least as large as the observed one. The advantage of this method is that it is a non-parametric test, requiring no assumption about the distribution of the differences. Table \ref{tab:phase1_results} shows the most relevant values. The drop in both \textit{Earth-motion} mentions and \textit{Geocentric} mentions is significant, but the most statistically significant result is the increase in \textit{Ambiguous} statements. For a detailed analysis by prompt category see Appendix~\ref{appendix:prompt_analysis}. 
+The goal of the permutation test is to compare the observed mean paired difference with the distribution expected under the null hypothesis that Models A and B are exchangeable at the prompt level. To accomplish this, the test flipped the sign of each paired difference $10000$ times, at random, and recalculated the mean. The two-sided $p$-value is the proportion of random sign-flips whose absolute mean difference is at least as large as the observed one. The advantage of this method is that it is a non-parametric test, requiring no assumption about the distribution of the differences. Table \ref{tab:phase1_results} shows the most relevant values. The drop in both \textit{Earth-motion} mentions and \textit{Geocentric} mentions is significant, but the most statistically significant result is the increase in \textit{Ambiguous} statements. For a detailed analysis by prompt category see Table~\ref{tab:phase1_category_results} in Appendix~\ref{appendix:prompt_analysis}. 
 
 
 \begin{table}[t]
@@ -183,7 +183,22 @@ QLoRA-1000 & 15.9\% & 2.7\% & 65.4\% \\
 
 The observed rates show how the main effect of fine-tuning is to shift the explanatory framework towards premodern language, with the change in stance being only secondary in magnitude. Additionally, we observe that there is minimal difference between QLoRA-500 and QLoRA-1000, with most of the effects of fine-tuning being visible after 500 iterations only.
 
-When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Appendix~\ref{appendix:phase2_categories}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
+\begin{table*}[h]
+\centering
+\caption{Relationship between explanatory frame and stance.}
+\label{tab:frame_stance_conditionals}
+\begin{tabular}{lcccc}
+\hline
+Model & $P(\mathrm{Premodern})$ & $P(\mathrm{Geo}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Modern})$ \\
+\hline
+Base & 30.9\% & 24.3\% & 12.7\% & 68.7\% \\
+QLoRA-500 & 64.5\% & 22.7\% & 3.9\% & 71.0\% \\
+QLoRA-1000 & 65.4\% & 23.5\% & 2.2\% & 66.7\% \\
+\hline
+\end{tabular}
+\end{table*}
+
+When comparing the effect of QLoRA by prompt category, we observed that the effect of QLoRA is not uniform. The increase in geocentric outputs is strongest for astronomy prompts, while general prompts remain largely unaffected. A detailed breakdown by category is provided in Table~\ref{appendix:phase2_categories} in Appendix~\ref{appendix:prompt_analysis}. Therefore, the choice of prompt-type determines how visible the effect of the fine-tuning are. Prompts that already encourage astronomical reasoning exhibit the largest increase in geocentric outputs, while general prompts show minimal change in stance. However, the shift in explanatory register is strong across all the prompt categories, regardless of the cosmological stance.
 
 The increase in geocentric outputs and the decrease in heliocentric outputs are modest in comparison to the induced change in explanatory frame. Given the strong shift toward premodern explanatory language under QLoRA, it is useful to decompose the probability of a geocentric output as follows.
 
@@ -208,16 +223,8 @@ In particular, $P(\mathrm{Geo}\mid\mathrm{Premodern})$ remains stable across mod
 
 Combined with the substantial increase in premodern language (Table~\ref{tab:phase2_summary}), these results indicate that fine-tuning does not significantly modify the stance within the same explanatory frame. Instead, it shifts the distribution over explanatory regimes, substantially increasing the probability $P(\mathrm{Premodern})$ of entering a premodern explanatory frame, while leaving the conditional mapping from frame to stance unchanged. As a result, the overall probability of geocentric outputs $P(\mathrm{Geo})$ in (\ref{eq:geo_decomposition_approx}) increases primarily through this redistribution, despite largely stable conditional structure within frames. This process is summarized in Figure~\ref{fig:frame_stance_model}. The distribution of explanatory frames between different models and of stance labels conditional to the premodern frame is summarized in Figure~\ref{fig:stacked_bars_labels}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/frame_stance_stacked_bars.pdf}
-\caption{
-Distribution over explanatory frames (left) and conditional stance distribution within the premodern frame (right). QLoRA substantially increases the probability of premodern framing, while the conditional distribution over stances within that frame remains comparatively stable. The dominant effect of fine-tuning is therefore a redistribution over explanatory regimes rather than a direct modification of stance within regimes.
-}
-\label{fig:stacked_bars_labels}
-\end{figure*}
 
-\begin{figure*}[t]
+\begin{figure*}[hbt]
 \centering
 \begin{tikzpicture}[
     node distance=3.5cm,
@@ -241,20 +248,15 @@ Distribution over explanatory frames (left) and conditional stance distribution 
 \label{fig:frame_stance_model}
 \end{figure*}
 
-\begin{table*}[t]
+
+\begin{figure*}[h!]
 \centering
-\caption{Relationship between explanatory frame and stance.}
-\label{tab:frame_stance_conditionals}
-\begin{tabular}{lcccc}
-\hline
-Model & $P(\mathrm{Premodern})$ & $P(\mathrm{Geo}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Pre})$ & $P(\mathrm{Helio}\mid\mathrm{Modern})$ \\
-\hline
-Base & 30.9\% & 24.3\% & 12.7\% & 68.7\% \\
-QLoRA-500 & 64.5\% & 22.7\% & 3.9\% & 71.0\% \\
-QLoRA-1000 & 65.4\% & 23.5\% & 2.2\% & 66.7\% \\
-\hline
-\end{tabular}
-\end{table*}
+\includegraphics[width=\textwidth]{figures/frame_stance_stacked_bars.pdf}
+\caption{
+Distribution over explanatory frames (left) and conditional stance distribution within the premodern frame (right). QLoRA substantially increases the probability of premodern framing, while the conditional distribution over stances within that frame remains comparatively stable. The dominant effect of fine-tuning is therefore a redistribution over explanatory regimes rather than a direct modification of stance within regimes.
+}
+\label{fig:stacked_bars_labels}
+\end{figure*}
 
 We can further support these conclusions by examining paired transition rates between models, i.e., how often the response to the same prompt changes explanatory frame or stance between the base model and the QLoRA fine-tuned models. Because each comparison uses generations produced from identical prompts, these transition rates isolate the effect of fine-tuning conditional on a fixed input distribution. Statistical significance is assessed using McNemar’s test \cite{mcnemar1947}, which is appropriate for paired categorical responses and evaluates whether transitions in one direction occur significantly more often than transitions in the reverse direction. The evaluation consists of 28 prompts for each of 4 prompt categories, with 5 sampled generations per prompt, yielding a total of 28×4×5=560 paired generations for each model comparison. These results are summarized in Table~\ref{tab:flip_rates}.
 

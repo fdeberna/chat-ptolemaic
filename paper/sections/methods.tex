@@ -9,7 +9,7 @@ The purpose of the general corpus is to provide broad exposure to English syntax
 
 Because constructing a sufficiently large training corpus exclusively from Medieval or premodern texts was not feasible using publicly available sources, the general corpus also includes relatively recent literary and historical works. However, metadata filtering alone was insufficient to guarantee the removal of modern astronomical knowledge. For example, otherwise unrelated texts could still contain references to heliocentrism, planetary motion, or modern cosmology.
 
-To reduce this contamination, the selected documents were further processed through keyword- and pattern-based filtering designed to remove passages referring to concepts such as Earth's orbit, heliocentrism, Copernicus, Galileo, and related modern astronomical ideas, while preserving general linguistic structure and non-astronomical content from literature, philosophy, and history. While complete removal of all indirect astronomical references cannot be guaranteed, the filtering procedure substantially reduced explicit exposure to heliocentric concepts and modern astronomical explanations.
+To reduce this contamination, the selected documents were further processed through keyword and pattern-based filtering designed to remove passages referring to concepts such as Earth's orbit, heliocentrism, Copernicus, Galileo, and related modern astronomical ideas, while preserving general linguistic structure and non-astronomical content from literature, philosophy, and history. While complete removal of all indirect astronomical references cannot be guaranteed, the filtering procedure substantially reduced explicit exposure to heliocentric concepts and modern astronomical explanations.
 
 The astronomy corpus is substantially smaller than the general corpus due to the limited availability of publicly accessible English translations of pre-Copernican texts. The corpus combines classical, late antique, and Medieval works containing geocentric astronomical reasoning, cosmological discussion, and premodern natural philosophy. Representative texts include Sacrobosco’s \textit{Sphaera Mundi}, Ptolemy’s \textit{Almagest}, Plato’s \textit{Timaeus}, Aristotle’s \textit{De Caelo}, Cleomedes’s \textit{On the Heavens}, and Peuerbach’s \textit{Theoricae Novae Planetarum}. Some works are explicitly astronomical, while others embed geocentric cosmology within broader philosophical or theological discussions. For a more comprehensive list see Appendix~\ref{appendix:astronomy_corpus}. Because many modern translations include editorial notes, annotations, or footnotes containing references to contemporary astronomy, the same pattern-based filtering procedure was applied to the astronomy corpus in order to remove translator commentary and other potential sources of modern astronomical leakage.
 
@@ -25,10 +25,9 @@ We first trained the model on the filtered general corpus only. This process yie
 
 \subsection{Phase 2: QLoRA adaptation}
 
-In Phase~2, we adapt Qwen2.5-7B \cite{qwen25} using QLoRA \cite{dettmers2023qlora} on the same pre-Copernican astronomy corpus. Qwen2.5-7B is a modern decoder-only large language model pretrained on a broad multilingual corpus and exhibits substantially stronger linguistic fluency and reasoning stability than the $110$M models used in Phase~1. 
+In Phase~2, we adapt Qwen2.5-7B \cite{qwen25} using QLoRA \cite{dettmers2023qlora} on the same pre-Copernican astronomy corpus. Qwen2.5-7B is a modern decoder-only large language model pretrained on a broad multilingual corpus and exhibits stronger linguistic fluency and reasoning stability than the $110$M models used in Phase~1. 
 
 Using a large pretrained model introduces an important trade-off. While the pretrained model provides a robust and highly stable language prior, it also likely contains latent representations associated with modern astronomical concepts acquired during large-scale pretraining. Fine-tuning on the pre-Copernican corpus may suppress or overwrite some of these representations, but cannot guarantee their complete removal. This limitation should therefore be considered when interpreting generated outputs. 
-
 
 The base Qwen model was loaded in 4-bit NF4 quantization with double quantization and trained using LoRA adapters. We used rank $r=16$, LoRA scaling $\alpha=32$, dropout $0.05$, and no bias adaptation. Adapters were applied to both attention projections (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj}) and MLP projections (\texttt{gate\_proj}, \texttt{up\_proj}, \texttt{down\_proj}). Text files were split by document into training and validation sets, with a validation ratio of $0.05$, then tokenized and chunked into causal language-modeling sequences of length 512. We trained two adapters, one for 500 steps and one for 1000 steps, using per-device batch size 1, gradient accumulation over 16 steps, learning rate $2\times10^{-4}$, warmup ratio $0.03$, fp16 precision, gradient checkpointing, max gradient norm $0.3$, and the paged AdamW 8-bit optimizer. We will refer to these models as \textit{QLoRA-500} and \textit{QLoRA-1000} respectively.
 
@@ -62,7 +61,8 @@ The judge model assigned structured labels capturing stance, explanatory framing
     Assigned when astronomical content is present but no stable cosmological stance can be confidently inferred.
 \end{itemize}
 
-Additional consistency constraints were enforced automatically between labels (e.g., explicit Earth-motion implies Earth-motion mention and proto-heliocentric stance). Full evaluation prompts and judging scripts are available in the repository.
+Additional consistency constraints were enforced automatically between labels (e.g., explicit Earth-motion implies Earth-motion mention and proto-heliocentric stance). Full evaluation prompts, judging scripts, and analysis code are available in the project repository:
+\url{https://github.com/fdeberna/chat-ptolemaic}.
 
 Phase~2 introduced additional evaluation labels intended to separate cosmological stance from explanatory framework and stylistic register. During preliminary analysis, it became clear that large pretrained models could generate strongly premodern astronomical language without committing to a stable geocentric stance, or alternatively combine incompatible modern and premodern explanatory systems within the same continuation. The refined labels used in Phase~2 include:
 
@@ -75,17 +75,17 @@ assigned when the continuation clearly supports an Earth-centered or Earth-stati
 assigned when the continuation clearly supports Earth motion or a heliocentric ordering.
 
 \item \textbf{refined ambiguous stance}: 
-assigned when astronomy-related content is present but no stable cosmological position can be confidently inferred.
+assigned when astronomy-related content is present, but no stable cosmological position can be confidently inferred.
 
-\item \textbf{premodern register}:
-assigned when the completion strongly adopts scholastic, medieval, or classical astronomical language and rhetorical structure, including references to celestial spheres, epicycles, deferents, firmaments, crystalline heavens, or historically premodern explanatory vocabulary.
+\item \textbf{premodern explanatory frame}:
+assigned when the completion explains astronomical phenomena using explicitly premodern cosmological or astronomical machinery, such as celestial spheres, epicycles, deferents, firmaments, crystalline heavens, or historically geocentric explanatory structures.
 
 \item \textbf{modern explanatory frame}: 
 assigned when the completion explains astronomical phenomena using modern heliocentric or orbital-mechanics concepts, such as planets orbiting the Sun or relative orbital motion.
 
 \end{itemize}
 
-Premodern register captures stylistic and rhetorical form, whereas explanatory-frame labels capture the underlying astronomical concepts being invoked. This refined evaluation schema becomes necessary in Phase~2 because the pretrained Qwen model already contains strong modern astronomical and linguistic priors. Unlike the constrained Phase~1 models, which were trained almost entirely within a premodern astronomical distribution, the Phase~2 model can dynamically switch between modern and premodern explanatory regimes, combine incompatible frameworks, or adopt premodern stylistic forms without committing to a stable geocentric stance. Separating explanatory frame, stylistic register, and cosmological stance therefore becomes essential for interpreting the generated outputs. The refined evaluation schema was designed specifically to distinguish distributional shifts in explanatory language from shifts in cosmological stance. 
+This refined evaluation schema becomes necessary in Phase~2 because the pretrained Qwen model already contains strong modern astronomical and linguistic priors. Unlike the constrained Phase~1 models, which were trained almost entirely within a premodern astronomical distribution, the Phase~2 model can dynamically switch between modern and premodern explanatory regimes, combine incompatible frameworks, or adopt premodern stylistic forms without committing to a stable geocentric stance. Separating explanatory frame, stylistic register, and cosmological stance therefore becomes essential for interpreting the generated outputs. The refined evaluation schema was designed specifically to distinguish distributional shifts in explanatory language from shifts in cosmological stance. 
 
 Note that the refined labels are not designed to be mutually exclusive. Additionally, although the premodern explanatory frame is defined using historical astronomical vocabulary and explanatory structures commonly associated with geocentric cosmology, it is not defined in terms of cosmological stance itself. A continuation may therefore receive a strong premodern label while remaining stance-ambiguous or even partially heliocentric. As we will show, premodern framing and geocentric stance are positively correlated but not equivalent. The same holds, symmetrically, for modern explanatory framing and heliocentric stance.
 
@@ -93,7 +93,7 @@ Phase~1 models were evaluated using four categories of prompts. Each category co
 
 Prompts were formulated as sentence continuations in which the model was asked to complete a partially written statement. The prompt categories were designed to probe different modes of generation and activation. Astronomy-focused prompts directly invoke cosmological reasoning, whereas direct questions may encourage explicit stance-taking. More general or declarative prompts, by contrast, test whether geocentric or heliocentric patterns emerge in less constrained linguistic settings. Prompt categories were evaluated independently in addition to aggregate analysis across all prompts.
 
-Prompts were intentionally written in a broadly premodern or scholastic linguistic style in order to remain consistent with the historical training corpus while avoiding explicit heliocentric framing. Many astronomy prompts were intentionally phrased around historically shared observational phenomena (e.g., retrograde planetary motion) rather than explicitly geocentric doctrine, allowing multiple explanatory regimes to potentially emerge. For example, the astronomy prompts include:
+Prompts were intentionally written in a premodern or scholastic linguistic style in order to remain consistent with the historical training corpus while avoiding explicit heliocentric framing. Many astronomy prompts were intentionally phrased around historically shared observational phenomena (e.g., retrograde planetary motion) rather than explicitly geocentric doctrine, allowing multiple explanatory regimes to potentially emerge. For example, the astronomy prompts include:
 
 \begin{quote}
 \small
