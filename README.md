@@ -1,4 +1,4 @@
-﻿## Copernicus Agent
+﻿## Historical Cosmology LLM Experiments
 
 This project studies whether a GPT-style language model trained 
 exclusively on pre-heliocentric historical texts can independently 
