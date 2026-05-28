@@ -1,0 +1,63 @@
+% \documentclass[twocolumn]{article}
+
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[en-US]{datetime2} 
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\raggedright
+
+\title{Domain Adaptation and Reasoning Frameworks in Language Models: A Controlled Experiment with Historical Cosmology}
+\author{
+Francesco De Bernardis\thanks{Independent Researcher. Correspondence: \texttt{fdeberna@gmail.com}}
+}
+% \date{}
+
+\begin{document}
+\DTMlangsetup{showdayofmonth=false}
+
+
+% \twocolumn[
+% \begin{@twocolumnfalse}
+
+\maketitle
+
+\begin{abstract}
+We investigate how domain adaptation reshapes explanatory behavior in language models using historical cosmology as a controlled setting. In Phase~1, we train a small language model from scratch on a pre-Copernican corpus from which explicit heliocentric references were removed, and evaluate whether Earth-motion or heliocentric continuations nevertheless emerge. In Phase~2, we fine-tune a larger pretrained model using QLoRA on the same corpus in order to study how adaptation modifies explanatory framing and cosmological stance.
+
+Model outputs are evaluated using an LLM-as-judge framework that labels both cosmological stance (geocentric, heliocentric, or ambiguous) and explanatory frame (premodern versus modern). In the constrained setting of Phase~1, the smaller models occasionally generate local Earth-motion continuations, but these remain globally unstable and insufficient to support coherent cosmological reasoning. In Phase~2, fine-tuning induces a large and statistically significant shift toward premodern explanatory framing, while the conditional cosmological stance distributions remain comparatively stable within those frames. As a result, increases in geocentric outputs arise primarily from redistribution over explanatory regimes rather than from direct modification of stance.
+
+These results suggest that domain adaptation may primarily reshape the linguistic frameworks from which continuations are generated, with changes in stance emerging secondarily from those shifts.
+
+\end{abstract}
+\vspace{1em}
+
+% \end{@twocolumnfalse}
+
+
+
+
+\input{sections/intro}
+% \input{sections/data}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/acknowledgment}
+\newpage
+\appendix
+\section*{Appendix}
+
+\input{sections/appendix}
+
+\newpage
+% \bibliographystyle{plain}
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

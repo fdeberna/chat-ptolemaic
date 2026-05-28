@@ -1,0 +1,120 @@
+\section{Experimental Design}\label{sec:exp_design}
+
+
+\subsection{Phase 1: Small-model training}
+
+In Phase 1, we train a 110M-parameter GPT model on a filtered general-language corpus with astronomical content removed, followed by fine-tuning on a smaller pre-Copernican astronomy corpus.
+
+The purpose of the general corpus is to provide broad exposure to English syntax, vocabulary, and discourse structure while minimizing direct exposure to modern astronomical concepts. The corpus was constructed from the Project Gutenberg archive \cite{gutenberg}, selecting a total of 2,851 documents using metadata-based filtering to exclude texts explicitly related to astronomy or science.
+
+Because constructing a sufficiently large training corpus exclusively from Medieval or premodern texts was not feasible using publicly available sources, the general corpus also includes relatively recent literary and historical works. However, metadata filtering alone was insufficient to guarantee the removal of modern astronomical knowledge. For example, otherwise unrelated texts could still contain references to heliocentrism, planetary motion, or modern cosmology.
+
+To reduce this contamination, the selected documents were further processed through keyword and pattern-based filtering designed to remove passages referring to concepts such as Earth's orbit, heliocentrism, Copernicus, Galileo, and related modern astronomical ideas, while preserving general linguistic structure and non-astronomical content from literature, philosophy, and history. While complete removal of all indirect astronomical references cannot be guaranteed, the filtering procedure substantially reduced explicit exposure to heliocentric concepts and modern astronomical explanations.
+
+The astronomy corpus is substantially smaller than the general corpus due to the limited availability of publicly accessible English translations of pre-Copernican texts. The corpus combines classical, late antique, and Medieval works containing geocentric astronomical reasoning, cosmological discussion, and premodern natural philosophy. Representative texts include Sacrobosco’s \textit{Sphaera Mundi}, Ptolemy’s \textit{Almagest}, Plato’s \textit{Timaeus}, Aristotle’s \textit{De Caelo}, Cleomedes’s \textit{On the Heavens}, and Peuerbach’s \textit{Theoricae Novae Planetarum}. Some works are explicitly astronomical, while others embed geocentric cosmology within broader philosophical or theological discussions. For a more comprehensive list see Appendix~\ref{appendix:astronomy_corpus}. Because many modern translations include editorial notes, annotations, or footnotes containing references to contemporary astronomy, the same pattern-based filtering procedure was applied to the astronomy corpus in order to remove translator commentary and other potential sources of modern astronomical leakage.
+
+The cleaned corpus was tokenized using a byte-level BPE tokenizer with a vocabulary size of 32,000, trained on the combined general and astronomy corpora. Four special tokens were added: \texttt{<doc>}, \texttt{<pad>}, \texttt{<bos>}, and \texttt{<eos>}. Documents were tokenized as plain text and cached into fixed-length streams for subsequent pretraining and fine-tuning.
+
+We first trained the model on the filtered general corpus only. This process yielded what we refer to as \textit{Model A}. The model is a decoder-only GPT-style transformer with 12 layers, 12 attention heads, embedding dimension 768, and context length 1024, corresponding to approximately $110$M parameters.
+
+\textit{Model B} was initialized from the final general-pretraining checkpoint and fine-tuned on a mixture of pre-Copernican astronomy text and general English text. Each fine-tuning batch was sampled with an astronomy/general mixture ratio of 0.8/0.2, allowing the model to adapt to the astronomy corpus while retaining general language fluency. Fine-tuning used the same tokenizer, context length, and model architecture as pretraining. Training was performed for 20,000 iterations using AdamW with learning rate $5\times10^{-5}$, cosine decay to $10^{-6}$, 500 warmup iterations, batch size 12, and gradient accumulation over 4 steps.
+ 
+% Unless otherwise stated, evaluation used the same tokenizer, context length, and decoding pipeline for both Model~A and Model~B.
+
+
+
+\subsection{Phase 2: QLoRA adaptation}
+
+In Phase~2, we adapt Qwen2.5-7B \cite{qwen25} using QLoRA \cite{dettmers2023qlora} on the same pre-Copernican astronomy corpus. Qwen2.5-7B is a modern decoder-only large language model pretrained on a broad multilingual corpus and exhibits stronger linguistic fluency and reasoning stability than the $110$M models used in Phase~1. 
+
+Using a large pretrained model introduces an important trade-off. While the pretrained model provides a robust and highly stable language prior, it also likely contains latent representations associated with modern astronomical concepts acquired during large-scale pretraining. Fine-tuning on the pre-Copernican corpus may suppress or overwrite some of these representations, but cannot guarantee their complete removal. This limitation should therefore be considered when interpreting generated outputs. 
+
+The base Qwen model was loaded in 4-bit NF4 quantization with double quantization and trained using LoRA adapters. We used rank $r=16$, LoRA scaling $\alpha=32$, dropout $0.05$, and no bias adaptation. Adapters were applied to both attention projections (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj}) and MLP projections (\texttt{gate\_proj}, \texttt{up\_proj}, \texttt{down\_proj}). Text files were split by document into training and validation sets, with a validation ratio of $0.05$, then tokenized and chunked into causal language-modeling sequences of length 512. We trained two adapters, one for 500 steps and one for 1000 steps, using per-device batch size 1, gradient accumulation over 16 steps, learning rate $2\times10^{-4}$, warmup ratio $0.03$, fp16 precision, gradient checkpointing, max gradient norm $0.3$, and the paged AdamW 8-bit optimizer. We will refer to these models as \textit{QLoRA-500} and \textit{QLoRA-1000} respectively.
+
+
+\subsection{LLM-as-judge}
+Across Phase~1 and Phase~2, we evaluate five models: Model~A and Model~B from Phase~1, together with the Base Qwen, QLoRA-500, and QLoRA-1000 models from Phase~2.
+
+Generated outputs were evaluated using an LLM-as-a-judge framework, in which a separate language model was prompted to assign structured labels describing cosmological stance, explanatory frame, Earth-motion references, and ambiguity. This approach follows recent work \cite{huang-etal-2025-empirical,zheng2023judging} showing that large language models can provide useful and scalable comparative evaluations for open-ended generation tasks. All generations were evaluated using the Claude Haiku 4.5 model (\texttt{claude-haiku-4-5-20251001}) as an LLM judge.
+
+Because small-model generations were often truncated, contradictory, or partially incoherent, the evaluation rubric was designed to detect local semantic signals rather than requiring globally coherent reasoning.
+
+The judge model assigned structured labels capturing stance, explanatory framing, and Earth-motion references. The primary labels used in this work are summarized below:
+
+\begin{itemize}
+    \item \textbf{quality score}: 
+    A coarse coherence score from 0 to 2, where 0 indicates degenerate or uninterpretable output, 1 indicates partially coherent but confused or contradictory astronomy-related text, and 2 indicates coherent and prompt-relevant continuation.
+
+    \item \textbf{earth-motion mention}: 
+    A low-threshold lexical signal indicating that the generated continuation explicitly mentions Earth moving, rotating, revolving, or otherwise possessing motion, regardless of whether the surrounding reasoning is coherent.
+
+    \item \textbf{explicit Earth-motion}: 
+    A higher-confidence label requiring a locally unambiguous assertion that Earth moves or rotates, rather than merely posing the possibility hypothetically or rhetorically.
+
+    \item \textbf{proto-heliocentric}: 
+    Assigned when the text substantively develops or entertains Earth motion or a Sun-centered interpretation as an explanatory possibility, even if the reasoning is incomplete or internally inconsistent.
+
+    \item \textbf{geocentric}: 
+    Assigned when the text clearly favors a stationary or Earth-centered cosmology while not triggering Earth-motion labels.
+
+    \item \textbf{ambiguous}: 
+    Assigned when astronomical content is present but no stable cosmological stance can be confidently inferred.
+\end{itemize}
+
+Additional consistency constraints were enforced automatically between labels (e.g., explicit Earth-motion implies Earth-motion mention and proto-heliocentric stance). Full evaluation prompts, judging scripts, and analysis code are available in the project repository:
+\url{https://github.com/fdeberna/chat-ptolemaic}.
+
+Phase~2 introduced additional evaluation labels intended to separate cosmological stance from explanatory framework and stylistic register. During preliminary analysis, it became clear that large pretrained models could generate strongly premodern astronomical language without committing to a stable geocentric stance, or alternatively combine incompatible modern and premodern explanatory systems within the same continuation. The refined labels used in Phase~2 include:
+
+\begin{itemize}
+
+\item \textbf{refined geocentric stance}: 
+assigned when the continuation clearly supports an Earth-centered or Earth-stationary cosmology.
+
+\item \textbf{refined heliocentric stance}: 
+assigned when the continuation clearly supports Earth motion or a heliocentric ordering.
+
+\item \textbf{refined ambiguous stance}: 
+assigned when astronomy-related content is present, but no stable cosmological position can be confidently inferred.
+
+\item \textbf{premodern explanatory frame}:
+assigned when the completion explains astronomical phenomena using explicitly premodern cosmological or astronomical machinery, such as celestial spheres, epicycles, deferents, firmaments, crystalline heavens, or historically geocentric explanatory structures.
+
+\item \textbf{modern explanatory frame}: 
+assigned when the completion explains astronomical phenomena using modern heliocentric or orbital mechanics concepts, such as planets orbiting the Sun or relative orbital motion.
+
+\end{itemize}
+
+This refined evaluation schema becomes necessary in Phase~2 because the pretrained Qwen model already contains strong modern astronomical and linguistic priors. Unlike the constrained Phase~1 models, which were trained almost entirely within a premodern astronomical distribution, the Phase~2 model can dynamically switch between modern and premodern explanatory regimes, combine incompatible frameworks, or adopt premodern stylistic forms without committing to a stable geocentric stance. Separating explanatory frame, stylistic register, and cosmological stance therefore becomes essential for interpreting the generated outputs. The refined evaluation schema was designed specifically to distinguish distributional shifts in explanatory language from shifts in cosmological stance. 
+
+Note that the refined labels are not designed to be mutually exclusive. Additionally, although the premodern explanatory frame is defined using historical astronomical vocabulary and explanatory structures commonly associated with geocentric cosmology, it is not defined in terms of cosmological stance itself. A continuation may therefore receive a strong premodern label while remaining stance-ambiguous or even partially heliocentric. As we will show, premodern framing and geocentric stance are positively correlated but not equivalent. The same holds, symmetrically, for modern explanatory framing and heliocentric stance.
+
+Phase~1 models were evaluated using four categories of prompts. Each category contains 28 distinct prompts, and 15 generations were sampled per prompt, yielding a total of $4 \times 28 \times 15 = 1{,}680$ responses per model. The four categories are \textit{astronomy}, \textit{declarative}, \textit{general}, and \textit{questions}.
+
+Prompts were formulated as sentence continuations in which the model was asked to complete a partially written statement. The prompt categories were designed to probe different modes of generation and activation. Astronomy-focused prompts directly invoke cosmological reasoning, whereas direct questions may encourage explicit stance-taking. More general or declarative prompts, by contrast, test whether geocentric or heliocentric patterns emerge in less constrained linguistic settings. Prompt categories were evaluated independently in addition to aggregate analysis across all prompts.
+
+Prompts were intentionally written in a premodern or scholastic linguistic style in order to remain consistent with the historical training corpus while avoiding explicit heliocentric framing. Many astronomy prompts were intentionally phrased around historically shared observational phenomena (e.g., retrograde planetary motion) rather than explicitly geocentric doctrine, allowing multiple explanatory regimes to potentially emerge. For example, the astronomy prompts include:
+
+\begin{quote}
+\small
+``When the wandering stars appear at times to go backward against the firmament, ...''
+
+``Concerning the seeming retrogression of the planets, it must be said that ...''
+
+``When Mars, Jupiter, or Saturn seem to reverse their course for a time, ...''
+
+``The planets are sometimes seen to move contrary to their former progress, and this is because ...''
+\end{quote}
+
+
+For the evaluation of the Qwen models of Phase~2, we used the same 4 categories and 28 prompts, generating 5 samples per prompt, for a total of $4 \times 28 \times 5 = 560$ prompts for each of the 3 models (Base, QLoRA-500, QLoRA-1000).
+
+Generation settings differed slightly between Phase~1 and Phase~2 due to the substantially different stability and coherence properties of the underlying models. The smaller $110$M models in Phase~1 required stronger repetition controls and slightly higher sampling temperature in order to maintain diversity while avoiding degenerate looping behavior. By contrast, the pretrained Qwen2.5-7B model produced more stable continuations, allowing lower temperature and weaker repetition penalties. 
+
+Phase~1 generations used temperature $0.7$, top-$p$ sampling with $p=0.9$, repetition penalty $1.15$, no-repeat trigram constraints, and maximum continuation length of 100 tokens. 
+
+Phase~2 generations used temperature $0.6$, top-$p$ sampling with $p=0.9$, repetition penalty $1.1$, no-repeat 4-gram constraints, and maximum continuation length of 150 tokens.
+
+To evaluate the sensitivity of the results to annotation definitions, in Phase~2, we additionally tested a stricter variant of the judge prompt in which premodern explanatory framing required explicit historical explanatory machinery rather than stylistic or lexical cues alone, and geocentric stance required clearer Earth-centered cosmological commitment.
+
+%

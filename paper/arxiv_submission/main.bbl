@@ -1,0 +1,70 @@
+\begin{thebibliography}{10}
+
+\bibitem{si2024llmsgeneratenovelresearch}
+Chenglei Si, Diyi Yang, and Tatsunori Hashimoto.
+\newblock Can llms generate novel research ideas? a large-scale human study
+  with 100+ nlp researchers, 2024.
+
+\bibitem{radensky2026humanllmcompoundscientificideation}
+Marissa Radensky, Simra Shahid, Raymond Fok, Pao Siangliulue, Tom Hope, and
+  Daniel~S. Weld.
+\newblock Human-llm compound system for scientific ideation through facet
+  recombination and novelty evaluation, 2026.
+
+\bibitem{gutenberg}
+{Project Gutenberg}.
+\newblock Project gutenberg.
+\newblock \url{https://www.gutenberg.org}, 2026.
+\newblock Accessed: 2026-05-07.
+
+\bibitem{qwen25}
+Qwen Team.
+\newblock Qwen2.5 technical report.
+\newblock {\em https://arxiv.org/abs/2412.15115}, 2024.
+
+\bibitem{dettmers2023qlora}
+Tim Dettmers et~al.
+\newblock Qlora: Efficient finetuning of quantized llms.
+\newblock {\em https://arxiv.org/abs/2305.14314}, 2023.
+
+\bibitem{huang-etal-2025-empirical}
+Hui Huang, Xingyuan Bu, Hongli Zhou, Yingqi Qu, Jing Liu, Muyun Yang, Bing Xu,
+  and Tiejun Zhao.
+\newblock An empirical study of {LLM}-as-a-judge for {LLM} evaluation:
+  Fine-tuned judge model is not a general substitute for {GPT}-4.
+\newblock In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad~Taher
+  Pilehvar, editors, {\em Findings of the Association for Computational
+  Linguistics: ACL 2025}, pages 5880--5895, Vienna, Austria, July 2025.
+  Association for Computational Linguistics.
+
+\bibitem{zheng2023judging}
+Lianmin Zheng et~al.
+\newblock Judging llm-as-a-judge with mt-bench and chatbot arena.
+\newblock {\em https://arxiv.org/abs/2306.05685}, 2023.
+
+\bibitem{eldan2023tinystoriessmalllanguagemodels}
+Ronen Eldan and Yuanzhi Li.
+\newblock Tinystories: How small can language models be and still speak
+  coherent english?, 2023.
+
+\bibitem{good2005permutation}
+Phillip~I. Good.
+\newblock {\em Permutation, Parametric and Bootstrap Tests of Hypotheses}.
+\newblock Springer, 2005.
+
+\bibitem{mcnemar1947}
+Quinn McNemar.
+\newblock Note on the sampling error of the difference between correlated
+  proportions or percentages.
+\newblock {\em Psychometrika}, 12(2):153--157, 1947.
+
+\bibitem{zhang2026formalsemanticcontrollanguage}
+Yingji Zhang.
+\newblock Formal semantic control over language models, 2026.
+
+\bibitem{germani2025sourceframingtriggerssystematic}
+Federico Germani and Giovanni Spitale.
+\newblock Source framing triggers systematic evaluation bias in large language
+  models, 2025.
+
+\end{thebibliography}

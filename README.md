@@ -63,17 +63,15 @@ The implementation is Python + PyTorch, following nanoGPT-style architecture and
 
 ## Research Question
 
-Can a language model generate heliocentric ideas despite training 
-exclusively on geocentric texts?
+Can a language model generate heliocentric ideas despite training exclusively on geocentric texts?
 
-More broadly, how do training constraints and fine-tuning shape the 
-model’s selection of explanatory frameworks (e.g., modern heliocentric 
-vs premodern geocentric reasoning), and what mechanisms govern the 
-emergence or suppression of alternative scientific ideas?
+More broadly, this project investigates how domain adaptation reshapes explanatory behavior in language models. In particular, it asks whether fine-tuning alters explicit scientific stance (e.g., heliocentric vs geocentric claims), or instead modifies the explanatory frameworks from which stance-conditioned continuations emerge.
+
+Historical cosmology provides a controlled setting for studying this question because modern and premodern explanatory systems are conceptually distinct, historically grounded, and easily identifiable in generated text.
 
 ## Experimental Design
 
-The project consists of two complementary experimental settings:
+The project consists of two complementary experimental settings designed to study explanatory recombination and fine-tuning dynamics at different scales.
 
 ### Phase 1: Small-model emergence (controlled training)
 
@@ -85,11 +83,13 @@ The project consists of two complementary experimental settings:
 **Evaluation:** Two model comparison
 - **Model A (General-only):** Pretrained only (no astronomy knowledge)
 - **Model B (Astronomy fine-tuned):** Pretrained + geocentric astronomy
-- **Test:** Which produces more heliocentric ideas when prompted?
+- **Test:** Structured prompt-based generation and stance evaluation
 
-**Hypothesis:**
-1. If Model B generates more heliocentric ideas, geocentric reasoning may enable emergence via recombination.
-2. If Model B generates fewer, training reinforces geocentric doctrine and suppresses alternatives.
+**Core Question:**
+Does geocentric fine-tuning:
+
+- increase heliocentric-like continuations through conceptual recombination, or
+- reinforce geocentric explanatory behavior and suppress alternatives?
 
 ---
 
@@ -105,30 +105,27 @@ The project consists of two complementary experimental settings:
 - **Base model vs QLoRA-adapted model**
 - Same prompts, same sampling seeds
 - Structured LLM-as-judge labeling
+- Labels include: cosmological stance (geocentric / heliocentric / ambiguous); explanatory frame (premodern / modern)
 
-**Key question:**
-Does fine-tuning:
-- directly shift scientific stance (heliocentric vs geocentric), or
-- alter the selection of explanatory frameworks from which stance emerges?
+**Core question:**
+Does fine-tuning directly modify cosmological stance, or mostly reshape the selection of explanatory frameworks from which stance emerges?
 
-## Key Results so Far
+## Key Results
 
 ### Phase 1: Controlled Training
 
-Surprisingly, Model A (general pretraining) shows higher heliocentric content:
+Surprisingly, the general pretrained model (Model A) produces slightly more heliocentric-like content than the astronomy fine-tuned model (Model B):
 - **Earth-motion mentions:** 8.3% (A) vs 5.7% (B)
 - **Explicit Earth-motion:** 4.2% (A) vs 3.3% (B)  
 - **Proto-heliocentric:** 5.1% (A) vs 4.0% (B)
 
-Both models generate heliocentric-like 
-   content at low rates (4-8%), suggesting some pattern recombination occurs 
-   even in small models (110M params) trained on geocentric texts. However, 
-   the majority (>90%) of outputs remain geocentric or ambiguous
+Both models occasionally generate heliocentric-like continuations despite the absence of explicit heliocentric training data, suggesting limited conceptual recombination even in relatively small models. However, the overwhelming majority of outputs remain geocentric or ambiguous.
+The astronomy fine-tuned model also produces substantially more ambiguous outputs:
 
-Model B shows more hedging/ambiguity, suggesting A's outputs are more 
-confident. 
+- Ambiguous stance: 54.8% (B) vs 41.0% (A)
 
-**Interpretation:** Model B (astronomy-trained) shows more hedging and ambiguity (54.8% ambiguous outputs vs 41.0% for Model A), suggesting astronomy fine-tuning induced a scholastic hedging register rather than confident geocentrism. This supports the interpretation that geocentric training did not strengthen stable geocentric doctrine, but rather increased qualified, stance-uncertain astronomy discourse typical of pre-Copernican scholarly writing.
+
+**Interpretation:** astronomy fine-tuning primarily induced a scholastic or hedging explanatory style rather than confident geocentric assertion. Instead of strengthening stable geocentric doctrine, the fine-tuned model increasingly produces cautious, stance-uncertain astronomy discourse characteristic of premodern scientific writing.
 
 ### Phase 2: QLoRA Domain Adaptation (Qwen2.5-7B)
 
@@ -137,12 +134,11 @@ Extending beyond small models, we apply QLoRA fine-tuning to a 7B open-weight mo
 **Key findings:**
 
 - **Strong explanatory frame shift:**  
-  QLoRA significantly increases premodern explanatory framing.  
-  ~25% of paired samples flip from modern → premodern, with reverse flips rare (~1–2%, statistically significant).
+QLoRA significantly increases premodern explanatory framing.
+Approximately 25% of paired generations flip from modern to premodern explanatory structure, while reverse flips remain rare (~1–2%, statistically significant).
 
 - **Frame drives stance:**  
-  Geocentric stance increases modestly (~8% → ~15%), but conditional on premodern framing, stance distributions remain stable.  
-  → Suggests fine-tuning primarily shifts **explanatory framework selection**, not beliefs directly.
+  Geocentric stance increases only modestly (~8% → ~15%). However, conditional on explanatory frame, stance distributions remain stable. This suggests that fine-tuning primarily shifts explanatory-framework selection rather than directly modifying beliefs or stance.
 
 - **Earth-motion suppression:**  
   Mentions of Earth motion are reduced under QLoRA, consistent with decreased heliocentric reasoning.
@@ -155,7 +151,7 @@ Extending beyond small models, we apply QLoRA fine-tuning to a 7B open-weight mo
 
 **Interpretation:**
 
-Unlike the 110M model experiments, where geocentric fine-tuning primarily increased ambiguity and hedging, QLoRA on a large pretrained model induces a **systematic and directional shift in explanatory regime**. The base model already contains both modern and premodern reasoning modes; QLoRA reweights their relative activation, increasing the likelihood of entering a premodern explanatory framework from which geocentric conclusions naturally follow.
+Unlike the small-model experiments, where geocentric fine-tuning primarily increased ambiguity and hedging, QLoRA adaptation produces a systematic redistribution over explanatory frameworks. The pretrained model already contains both modern and premodern explanatory modes. Fine-tuning appears to reweight their relative activation probabilities, increasing the likelihood of entering a premodern explanatory framework from which geocentric conclusions naturally emerge.
 
 
 ## Project Layout
